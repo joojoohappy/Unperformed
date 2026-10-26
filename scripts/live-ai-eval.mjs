@@ -22,7 +22,9 @@ import { join } from "node:path";
 import { root } from "./lib/bundle-core.mjs";
 
 if (!process.env.ANTHROPIC_API_KEY) {
-  console.error("ANTHROPIC_API_KEY is not set. This script makes real, billed API calls; see docs/en/evaluation.md.");
+  console.error(
+    "ANTHROPIC_API_KEY is not set. This script makes real, billed API calls; see docs/en/evaluation.md.",
+  );
   process.exit(1);
 }
 
@@ -32,7 +34,9 @@ const PORT = 5182;
 const BASE = `http://127.0.0.1:${PORT}/`;
 const date = new Date().toISOString().slice(0, 10);
 const out = join(root, "evaluation", "live-ai", date);
-const { chromium } = createRequire(join(web, "package.json"))("@playwright/test");
+const { chromium } = createRequire(join(web, "package.json"))(
+  "@playwright/test",
+);
 
 const SESSION_KEY = "unperformed.session.v1";
 const PREFS_KEY = "unperformed.prefs.v1";
@@ -50,6 +54,39 @@ async function waitFor(url, what) {
   throw new Error(`${what} did not start`);
 }
 
+// Errors that will fail every later run too, so the script stops instead of
+// paying for (or waiting on) five more.
+const isFatal = (e) =>
+  e.code === "not_configured" || /HTTP 40[13]|connection error/.test(e.message);
+
+/**
+ * Waits for `locator` to appear, but gives up as soon as the matching /api
+ * call has come back as an error: a failed interpret leaves the studio on
+ * Imagine, so the next button never appears.
+ */
+async function until(page, locator, calls, kind, timeoutMs = 180000) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeoutMs) {
+    if (await locator.count()) return;
+    const failed = calls.find((c) => c.kind === kind && c.status >= 400);
+    if (failed) throw new CallFailed(kind, failed.error);
+    await page.waitForTimeout(250);
+  }
+  throw new Error(`timed out after ${timeoutMs} ms waiting for ${kind}`);
+}
+
+class CallFailed extends Error {
+  constructor(kind, error) {
+    const code =
+      typeof error === "object" && error ? error.code : String(error);
+    super(
+      `${kind} failed: ${code}${error?.detail ? ` (${error.detail})` : ""}`,
+    );
+    this.code = code;
+    this.name = "CallFailed";
+  }
+}
+
 async function run(page, locale, n, calls) {
   await page.goto(`${BASE}?lang=${locale}`);
   await page.evaluate(
@@ -57,29 +94,40 @@ async function run(page, locale, n, calls) {
       localStorage.clear();
       localStorage.setItem(key, JSON.stringify(prefs));
     },
-    [PREFS_KEY, { reducedMotion: true, sound: false }]
+    [PREFS_KEY, { reducedMotion: true, sound: false }],
   );
   await page.goto(`${BASE}?lang=${locale}`);
   const liveBtn = page.getByTestId("mode-live");
   await liveBtn.waitFor();
-  await page.waitForFunction(() => !document.querySelector('[data-testid="mode-live"]')?.hasAttribute("disabled"), null, { timeout: 15000 });
+  await page.waitForFunction(
+    () =>
+      !document
+        .querySelector('[data-testid="mode-live"]')
+        ?.hasAttribute("disabled"),
+    null,
+    { timeout: 15000 },
+  );
   await liveBtn.click();
 
   await page.locator(".example").nth(n).click();
   await page.getByTestId("compose").click();
-  await page.getByTestId("to-negotiate").waitFor({ timeout: 180000 });
-  const approve = page.getByRole("button", { name: APPROVE[locale], exact: true });
+  await until(page, page.getByTestId("to-negotiate"), calls, "interpret");
+  const approve = page.getByRole("button", {
+    name: APPROVE[locale],
+    exact: true,
+  });
   while (await approve.count()) await approve.first().click();
 
   await page.getByTestId("to-negotiate").click();
   await page.getByTestId("suggest-1").click();
   await page.getByTestId("send-request").click();
-  await page.getByTestId("round").last().waitFor({ timeout: 180000 });
+  await until(page, page.getByTestId("round"), calls, "negotiate");
 
   if (await page.getByTestId("combine").count()) {
     await page.getByTestId("combine").click();
     // Wait for the combine response itself, success or failure, then let the UI settle.
-    for (let i = 0; i < 720 && !calls.some((c) => c.kind === "combine"); i++) await page.waitForTimeout(250);
+    for (let i = 0; i < 720 && !calls.some((c) => c.kind === "combine"); i++)
+      await page.waitForTimeout(250);
     await page.waitForTimeout(500);
   }
   for (const id of ["combined", "ai", "human"]) {
@@ -89,35 +137,69 @@ async function run(page, locale, n, calls) {
       break;
     }
   }
-  return page.evaluate((key) => JSON.parse(localStorage.getItem(key)), SESSION_KEY);
+  return page.evaluate(
+    (key) => JSON.parse(localStorage.getItem(key)),
+    SESSION_KEY,
+  );
 }
 
 function stats(xs) {
   if (!xs.length) return null;
   const s = [...xs].sort((a, b) => a - b);
   const mid = s.length >> 1;
-  return { n: s.length, median: s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2, max: s[s.length - 1] };
+  return {
+    n: s.length,
+    median: s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2,
+    max: s[s.length - 1],
+  };
 }
 
 async function main() {
   mkdirSync(out, { recursive: true });
-  const service = spawn("uv", ["run", "uvicorn", "unperformed_ai.app:app", "--port", "8787"], { cwd: ai, stdio: "inherit" });
-  const vite = spawn("pnpm", ["exec", "vite", "--port", String(PORT), "--strictPort", "--host", "127.0.0.1"], { cwd: web, stdio: "ignore" });
+  const service = spawn(
+    "uv",
+    ["run", "uvicorn", "unperformed_ai.app:app", "--port", "8787"],
+    { cwd: ai, stdio: "inherit" },
+  );
+  const vite = spawn(
+    "pnpm",
+    [
+      "exec",
+      "vite",
+      "--port",
+      String(PORT),
+      "--strictPort",
+      "--host",
+      "127.0.0.1",
+    ],
+    { cwd: web, stdio: "ignore" },
+  );
   const all = [];
+  const runs = [];
   try {
     await waitFor("http://127.0.0.1:8787/api/health", "Live AI service");
     await waitFor(BASE, "vite dev server");
-    const health = await (await fetch("http://127.0.0.1:8787/api/health")).json();
-    if (!health.liveAvailable) throw new Error("service reports Live AI unavailable");
+    const health = await (
+      await fetch("http://127.0.0.1:8787/api/health")
+    ).json();
+    if (!health.liveAvailable)
+      throw new Error("service reports Live AI unavailable");
 
-    const browser = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader"] });
+    let fatal = null;
+    const browser = await chromium.launch({
+      args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader"],
+    });
     for (const locale of ["en", "zh-TW"]) {
       for (let n = 0; n < 3; n++) {
-        const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+        const context = await browser.newContext({
+          viewport: { width: 1280, height: 900 },
+        });
         const page = await context.newPage();
         const calls = [];
         page.on("response", async (res) => {
-          const m = /\/api\/(interpret|negotiate|combine)$/.exec(new URL(res.url()).pathname);
+          const m = /\/api\/(interpret|negotiate|combine)$/.exec(
+            new URL(res.url()).pathname,
+          );
           if (!m) return;
           let body = null;
           try {
@@ -125,7 +207,13 @@ async function main() {
           } catch {
             // recorded as unreadable below
           }
-          calls.push({ kind: m[1], status: res.status(), meta: body?.meta ?? null, error: res.ok() ? null : (body?.detail ?? `HTTP ${res.status()}`), body });
+          calls.push({
+            kind: m[1],
+            status: res.status(),
+            meta: body?.meta ?? null,
+            error: res.ok() ? null : (body?.detail ?? `HTTP ${res.status()}`),
+            body,
+          });
         });
         const tag = `${locale}-${n + 1}`;
         let session = null;
@@ -135,15 +223,29 @@ async function main() {
         } catch (e) {
           failure = String(e);
           console.error(`${tag}: ${failure}`);
+          if (e instanceof CallFailed && isFatal(e)) fatal = e;
         }
-        if (session) writeFileSync(join(out, `${tag}.session.json`), JSON.stringify(session, null, 2));
-        writeFileSync(join(out, `${tag}.calls.json`), JSON.stringify({ calls, failure }, null, 2));
+        if (session)
+          writeFileSync(
+            join(out, `${tag}.session.json`),
+            JSON.stringify(session, null, 2),
+          );
+        writeFileSync(
+          join(out, `${tag}.calls.json`),
+          JSON.stringify({ calls, failure }, null, 2),
+        );
         all.push(...calls.map((c) => ({ ...c, run: tag })));
-        console.log(`${tag}: ${calls.map((c) => `${c.kind} ${c.status} ${c.meta?.latencyMs ?? "-"}ms`).join(", ")}${failure ? " (run failed)" : ""}`);
+        runs.push({ run: tag, ok: !failure, failure });
+        console.log(
+          `${tag}: ${calls.map((c) => `${c.kind} ${c.status} ${c.meta?.latencyMs ?? "-"}ms`).join(", ")}${failure ? " (run failed)" : ""}`,
+        );
         await context.close();
+        if (fatal) break;
       }
+      if (fatal) break;
     }
     await browser.close();
+    if (fatal) console.error(`Stopped early: ${fatal.message}`);
   } finally {
     service.kill();
     vite.kill();
@@ -154,16 +256,26 @@ async function main() {
     const ok = all.filter((c) => c.kind === kind && c.meta);
     byKind[kind] = {
       calls: all.filter((c) => c.kind === kind).length,
-      failures: all.filter((c) => c.kind === kind && !c.meta).map((c) => ({ run: c.run, error: c.error })),
+      failures: all
+        .filter((c) => c.kind === kind && !c.meta)
+        .map((c) => ({ run: c.run, error: c.error })),
       latencyMs: stats(ok.map((c) => c.meta.latencyMs)),
       attempts: stats(ok.map((c) => c.meta.attempts)),
       inputTokens: stats(ok.map((c) => c.meta.inputTokens)),
       outputTokens: stats(ok.map((c) => c.meta.outputTokens)),
-      costUsd: ok.reduce((a, c) => a + (c.meta.estimatedCostUsd ?? 0), 0)
+      costUsd: ok.reduce((a, c) => a + (c.meta.estimatedCostUsd ?? 0), 0),
     };
   }
-  const models = [...new Set(all.filter((c) => c.meta).map((c) => c.meta.model))];
-  const summary = { date, models, runs: 6, totalCostUsd: Object.values(byKind).reduce((a, k) => a + k.costUsd, 0), byKind };
+  const models = [
+    ...new Set(all.filter((c) => c.meta).map((c) => c.meta.model)),
+  ];
+  const summary = {
+    date,
+    models,
+    runs,
+    totalCostUsd: Object.values(byKind).reduce((a, k) => a + k.costUsd, 0),
+    byKind,
+  };
   writeFileSync(join(out, "summary.json"), JSON.stringify(summary, null, 2));
   console.log(JSON.stringify(summary, null, 2));
 }
