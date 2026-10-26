@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AdaptiveQuality, FRAME_BUDGET_MS, p95, pixelRatio, QUALITY, qualityModeFromSearch, WARMUP_FRAMES, WINDOW_MS } from "./quality";
+import { AdaptiveQuality, FRAME_BUDGET_MS, p95, pixelRatio, QUALITY, qualityModeFromSearch, STRIKES, WARMUP_FRAMES, WINDOW_MS } from "./quality";
 
 function feed(q: AdaptiveQuality, ms: number | ((i: number) => number), n: number): number | null {
   for (let i = 0; i < n; i++) if (q.push(typeof ms === "number" ? ms : ms(i))) return i;
@@ -17,17 +17,15 @@ describe("adaptive quality", () => {
     const q = new AdaptiveQuality();
     const changedAt = feed(q, 33, 2000);
     expect(changedAt).not.toBeNull();
-    // Not before warm-up plus a 2 s window, and within one check after it.
-    const after = WARMUP_FRAMES + Math.ceil(WINDOW_MS / 33);
-    expect(changedAt!).toBeGreaterThanOrEqual(after - 1);
-    expect(changedAt!).toBeLessThan(after + 10);
+    // After warm-up and three consecutive slow one-second windows.
+    expect(changedAt).toBe(WARMUP_FRAMES + STRIKES * Math.ceil(WINDOW_MS / 33) - 1);
     expect(q.level).toBe("reduced");
   });
 
   it("reacts within a few seconds on a very slow device", () => {
     const q = new AdaptiveQuality();
     const changedAt = feed(q, 100, 1000)!;
-    expect(changedAt * 100).toBeLessThan(5000);
+    expect(changedAt * 100).toBeLessThanOrEqual(5000);
     expect(q.level).toBe("reduced");
   });
 
@@ -41,6 +39,18 @@ describe("adaptive quality", () => {
     const q = new AdaptiveQuality();
     expect(feed(q, (i) => (i % 25 === 0 ? 40 : 16.7), 3000)).toBeNull();
     expect(q.level).toBe("full");
+  });
+
+  it("ignores a hitch shorter than a second, wherever it falls", () => {
+    for (let start = 100; start < 160; start += 7) {
+      const q = new AdaptiveQuality();
+      expect(feed(q, (i) => (i >= start && i < start + 28 ? 33 : 16.7), 3000)).toBeNull();
+    }
+  });
+
+  it("reduces on sustained jank at a 60 Hz cap (every fourth frame missed)", () => {
+    const q = new AdaptiveQuality();
+    expect(feed(q, (i) => (i % 4 === 0 ? 33.3 : 16.7), 3000)).not.toBeNull();
   });
 
   it("treats long pauses (hidden tab) as gaps, not slow frames", () => {

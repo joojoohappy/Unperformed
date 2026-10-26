@@ -13,7 +13,7 @@ estimated or borrowed. Raw results are in
 | Suite | Command | Tests | Result (2026-10-26) |
 | --- | --- | --- | --- |
 | Core unit tests (vitest) | `pnpm --filter @unperformed/performance-core test` | 106 | all pass |
-| Web unit tests (vitest) | `pnpm --filter @unperformed/web test` | 16 | all pass |
+| Web unit tests (vitest) | `pnpm --filter @unperformed/web test` | 18 | all pass |
 | End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 14 × 2 projects = 28 | all pass |
 | Live AI service (pytest) | `pnpm test:ai` | 28 | all pass; ruff and mypy (strict) clean |
 | Lint and types | `pnpm lint && pnpm typecheck` | | clean |
@@ -126,9 +126,13 @@ from `requestAnimationFrame` intervals while a performance plays.
 ## Adaptive quality
 
 The stage measures its own frame intervals from the first frame. After 20
-warm-up frames it keeps the last 120 intervals and, once the window is full or
-spans 2 s, checks every 10 frames. If the 95th percentile is above **20 ms** it
-switches to reduced quality:
+warm-up frames it groups them into consecutive windows of about one second
+(120 frames at most, 10 at least). If the 95th percentile is above **20 ms** in
+**three windows in a row** it switches to reduced quality. A hitch shorter
+than a second can never fill three windows, so it is ignored. (The first
+version reduced after a single two-second window; on an iPhone 17 Pro that
+reduced quality in every auto run although full quality ran within budget,
+see below.)
 
 | | Full | Reduced |
 | --- | --- | --- |
@@ -148,11 +152,12 @@ Override with `?quality=full` or `?quality=reduced` (for example to measure).
 
 Measured by the project owner on 2026-10-26 on the public demo (demo mode),
 one full performance per row, values read from the in-app review. Each value
-comes from one run; no phone has been measured yet.
+comes from one run.
 
 | Device | Browser | WebGL full | WebGL auto | Canvas2D |
 | --- | --- | --- | --- | --- |
 | Microsoft Surface Laptop 7th Edition, Snapdragon X X1P64100 (10 cores, 3.4 GHz), Windows 11 (ARM64) | Microsoft Edge | **68 fps**, p95 18.6 ms | **68 fps**, p95 18.9 ms, stayed at full quality | not measured |
+| Apple iPhone 17 Pro, iOS | Safari | **60 fps**, p95 18 ms | 60 fps, p95 17 ms; 60 fps, p95 17 ms; 59 fps, p95 18 ms; all three switched to reduced quality (first rule, see below) | not measured |
 | Mid-range phone | — | not measured | not measured | not measured |
 
 **What this means.** On this laptop the full stage runs within the 20 ms p95
@@ -161,6 +166,15 @@ budget (about 1 ms under), so a slower integrated GPU, a larger window or a
 busy machine would likely switch to reduced quality. The display's refresh
 rate and the window size were not recorded, and an average of 68 fps shows the
 display is faster than 60 Hz; the GL renderer string was not recorded either.
+
+On the iPhone, Safari limits `requestAnimationFrame` to 60 Hz, so 60 fps is the
+ceiling there, and full quality reached it with a p95 of 18 ms, inside the
+budget. The full-quality run was stopped before the end (the review logs a
+stop). The three auto runs used the first rule (one two-second window over
+budget), which reduced quality every time, most likely on short hitches; that
+is why the rule now needs three slow one-second windows in a row. The auto
+column has not been measured again with the new rule, and no mid-range phone
+has been measured.
 
 How to measure:
 

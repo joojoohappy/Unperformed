@@ -30,16 +30,18 @@ export const QUALITY: Record<Quality, QualitySettings> = {
 export const FRAME_BUDGET_MS = 20;
 /** Frames ignored at start (shader compile, first layout). */
 export const WARMUP_FRAMES = 20;
-/** At most this many recent frames are kept. */
+/** A window holds at most this many frames... */
 export const WINDOW_FRAMES = 120;
+/** ...or ends once it spans this long (with at least MIN_FRAMES). */
+export const WINDOW_MS = 1000;
+const MIN_FRAMES = 10;
 /**
- * The window is judged once it is full, or once it spans this long: a device
- * at 12 fps should not wait 10 s at full quality for 120 frames.
+ * Consecutive slow windows needed to reduce. One window is not enough: on an
+ * iPhone 17 Pro a full-quality run had a p95 of 18 ms overall, but short
+ * hitches (starting playback, the browser's own work) pushed single windows
+ * over budget. A burst under about 1 s can never fill three windows in a row.
  */
-export const WINDOW_MS = 2000;
-const MIN_FRAMES = 20;
-/** How often (in frames) the window is checked. */
-const CHECK_EVERY = 10;
+export const STRIKES = 3;
 /** Intervals longer than this are pauses (hidden tab, debugger), not slow frames. */
 const MAX_INTERVAL_MS = 250;
 
@@ -64,8 +66,8 @@ export class AdaptiveQuality {
   private seen = 0;
   private window = new Float64Array(WINDOW_FRAMES);
   private filled = 0;
-  private next = 0;
   private spanMs = 0;
+  private strikes = 0;
 
   constructor(mode: QualityMode = "auto") {
     this.auto = mode === "auto";
@@ -77,13 +79,14 @@ export class AdaptiveQuality {
     if (!this.auto || this.level === "reduced") return false;
     if (!(ms > 0) || ms > MAX_INTERVAL_MS) return false;
     if (++this.seen <= WARMUP_FRAMES) return false;
-    this.spanMs += ms - (this.filled === WINDOW_FRAMES ? this.window[this.next]! : 0);
-    this.window[this.next] = ms;
-    this.next = (this.next + 1) % WINDOW_FRAMES;
-    if (this.filled < WINDOW_FRAMES) this.filled++;
-    const ready = this.filled === WINDOW_FRAMES || (this.filled >= MIN_FRAMES && this.spanMs >= WINDOW_MS);
-    if (!ready || this.seen % CHECK_EVERY !== 0) return false;
-    if (p95(this.window.subarray(0, this.filled)) <= FRAME_BUDGET_MS) return false;
+    this.window[this.filled++] = ms;
+    this.spanMs += ms;
+    if (this.filled < WINDOW_FRAMES && (this.filled < MIN_FRAMES || this.spanMs < WINDOW_MS)) return false;
+    const slow = p95(this.window.subarray(0, this.filled)) > FRAME_BUDGET_MS;
+    this.filled = 0;
+    this.spanMs = 0;
+    this.strikes = slow ? this.strikes + 1 : 0;
+    if (this.strikes < STRIKES) return false;
     this.level = "reduced";
     return true;
   }

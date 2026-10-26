@@ -37,10 +37,11 @@ do.
 ## Rendering and audio
 
 - Measured in headless Chromium with SwiftShader (software WebGL) and on one
-  GPU-backed laptop (Edge on a Snapdragon X Surface Laptop). No phone has been
-  measured. Safari and Firefox have not been tested.
-- Adaptive quality has one reduced level and only steps down. Its 20 ms
-  threshold has not yet been tuned on real devices.
+  GPU-backed laptop (Edge on a Snapdragon X Surface Laptop) and one flagship
+  phone (Safari on an iPhone 17 Pro). No mid-range phone has been measured. Safari and Firefox have not been tested.
+- Adaptive quality has one reduced level and only steps down. Its rule was
+  tuned once, from a single iPhone measurement; the new rule has not yet been
+  measured on a device.
 - The 3D stage is a single instanced mesh of 240 elements with simple lights. It
   is deliberately restrained and not yet art-directed per section.
 - The 2D fallback has no lighting model and draws a flat projection.
