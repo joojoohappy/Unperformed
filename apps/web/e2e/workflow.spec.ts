@@ -220,6 +220,17 @@ test("2D canvas fallback renders the performance when WebGL is not used", async 
   await expect(page.locator(".hud")).toContainText("canvas2d");
 });
 
+test("rehearsal play starts the whole piece from the beginning", async ({ page }) => {
+  await fresh(page);
+  await composeExample(page);
+  await page.locator('.stepper button[data-stage="rehearse"]').click();
+  const seconds = async () => parseFloat(/([\d.]+)s \//.exec(await page.locator(".transport").innerText())?.[1] ?? "NaN");
+  expect(await seconds()).toBeGreaterThan(10); // the preview opens after the climax
+  await page.getByTestId("rehearse-play").click();
+  await page.waitForTimeout(500);
+  expect(await seconds()).toBeLessThan(5);
+});
+
 test("adaptive quality: slow frames reduce the stage and the review records it", async ({ page }) => {
   // Make every animation frame take at least 30 ms, whatever the machine.
   await page.addInitScript(() => {

@@ -14,7 +14,7 @@ estimated or borrowed. Raw results are in
 | --- | --- | --- | --- |
 | Core unit tests (vitest) | `pnpm --filter @unperformed/performance-core test` | 106 | all pass |
 | Web unit tests (vitest) | `pnpm --filter @unperformed/web test` | 18 | all pass |
-| End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 14 × 2 projects = 28 | all pass |
+| End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 15 × 2 projects = 30 | all pass |
 | Live AI service (pytest) | `pnpm test:ai` | 28 (+2 live, opt-in) | all pass; ruff and mypy (strict) clean; the live tests pass against the real API |
 | Lint and types | `pnpm lint && pnpm typecheck` | | clean |
 

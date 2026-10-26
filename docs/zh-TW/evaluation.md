@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | 核心單元測試（vitest） | `pnpm --filter @unperformed/performance-core test` | 106 | 全部通過 |
 | Web 單元測試（vitest） | `pnpm --filter @unperformed/web test` | 18 | 全部通過 |
-| 端對端測試（Playwright，桌面 1440×900 與 Pixel 7） | `pnpm test:e2e` | 14 × 2 個 project = 28 | 全部通過 |
+| 端對端測試（Playwright，桌面 1440×900 與 Pixel 7） | `pnpm test:e2e` | 15 × 2 個 project = 30 | 全部通過 |
 | Live AI 服務（pytest） | `pnpm test:ai` | 28（另有 2 個選用的 live 測試） | 全部通過；ruff 與 mypy（strict）無問題；live 測試對真實 API 通過 |
 | Lint 與型別檢查 | `pnpm lint && pnpm typecheck` | | 無問題 |
 

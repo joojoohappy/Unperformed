@@ -20,6 +20,8 @@ export function Rehearse() {
   const [selected, setSelected] = useState<string>(climax?.id ?? score.sections[0]!.id);
   const section = score.sections.find((s) => s.id === selected) ?? score.sections[0]!;
   const lastUi = useRef(0);
+  // The opening frame is a preview; until the user seeks, Play runs the whole piece from the start.
+  const moved = useRef(false);
 
   useEffect(() => {
     const tr = transport.current;
@@ -56,12 +58,17 @@ export function Rehearse() {
       tr.stop();
       setPlaying(false);
     } else {
+      if (!moved.current) {
+        moved.current = true;
+        scrub.current = 0;
+      }
       await tr.play(score, scrub.current, prefs.sound);
       setPlaying(true);
     }
   }
 
   function seek(b: number) {
+    moved.current = true;
     scrub.current = b;
     setBeat(b);
     if (transport.current.state === "playing") void transport.current.play(score, b, prefs.sound);
