@@ -182,6 +182,7 @@ export const zhTW: Record<MessageKey, string> = {
   "perform.again": "再演一次",
   "perform.renderer": "渲染器：{name}",
   "perform.fps": "{fps} fps",
+  "perform.quality.reduced": "已降低畫質",
   "perform.noAudio": "此瀏覽器無法播放音訊；演出改以視覺時鐘執行。",
 
   "review.kicker": "06 — 回顧",

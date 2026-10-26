@@ -220,6 +220,43 @@ test("2D canvas fallback renders the performance when WebGL is not used", async 
   await expect(page.locator(".hud")).toContainText("canvas2d");
 });
 
+test("adaptive quality: slow frames reduce the stage and the review records it", async ({ page }) => {
+  // Make every animation frame take at least 30 ms, whatever the machine.
+  await page.addInitScript(() => {
+    const raf = window.requestAnimationFrame.bind(window);
+    window.requestAnimationFrame = (cb) =>
+      raf((t) => {
+        const end = performance.now() + 30;
+        while (performance.now() < end) {
+          // busy-wait
+        }
+        cb(t);
+      });
+  });
+  const errors = watchConsole(page);
+  await fresh(page);
+  await composeExample(page);
+  await page.locator('.stepper button[data-stage="perform"]').click();
+  await page.getByTestId("begin").click();
+  const stage = page.locator(".stage-perform");
+  await expect(stage).toHaveAttribute("data-renderer", "webgl");
+  await expect(stage).toHaveAttribute("data-quality", "reduced", { timeout: 45_000 });
+  await expect(page.locator(".hud")).toContainText("reduced quality");
+  await page.getByTestId("stop").click();
+  await page.getByTestId("to-review").click();
+  await expect(page.getByTestId("telemetry")).toContainText("reduced quality");
+  expect(errors).toEqual([]);
+});
+
+test("adaptive quality: ?quality=full keeps full quality", async ({ page }) => {
+  await fresh(page, "?quality=full");
+  await composeExample(page);
+  await page.locator('.stepper button[data-stage="perform"]').click();
+  await page.getByTestId("begin").click();
+  await expect(page.locator(".hud")).toContainText("fps");
+  await expect(page.locator(".stage-perform")).toHaveAttribute("data-quality", "full");
+});
+
 test.describe("Live AI mode (service mocked at the network boundary)", () => {
   test.beforeEach(async ({ page }) => {
     await page.route("**/api/health", (r) =>

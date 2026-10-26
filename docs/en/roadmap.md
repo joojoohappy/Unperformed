@@ -12,9 +12,10 @@ order. Each is sized to be one focused piece of work.
    cost in [evaluation](evaluation.md). Tune the system prompt on 10–20 varied
    ideas in both languages. Add an opt-in integration test that runs only when a
    key is present.
-2. **Measure on real hardware.** Run `pnpm bench:browser` (or the in-app HUD)
-   on a GPU-backed desktop and a mid-range phone, and publish the numbers.
-   Add adaptive quality (fewer elements, no haze) when frames run long.
+2. **Measure on real hardware.** Run `BENCH_GPU=1 pnpm bench:browser` on a
+   GPU-backed desktop and the in-app review on a mid-range phone, and publish
+   the numbers (see [evaluation](evaluation.md#real-hardware)). Adaptive
+   quality is in place; its thresholds may need tuning once real numbers exist.
 3. **Native review of Traditional Chinese.** Review the interface strings,
    README and docs with a native editor.
 

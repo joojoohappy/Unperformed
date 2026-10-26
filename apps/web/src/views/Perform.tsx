@@ -149,7 +149,7 @@ export function Perform() {
             <span>
               {hud.seconds.toFixed(1)} / {durationSeconds(score).toFixed(0)} s
             </span>
-            {stats && <span className="muted">{t("perform.fps", { fps: stats.avgFps })} · {t("perform.renderer", { name: stats.renderer })}</span>}
+            {stats && <span className="muted">{t("perform.fps", { fps: stats.avgFps })} · {t("perform.renderer", { name: stats.renderer })}{stats.quality === "reduced" && <> · {t("perform.quality.reduced")}</>}</span>}
             {noAudio && <span className="warn">{t("perform.noAudio")}</span>}
           </div>
           <div className="hud-controls">

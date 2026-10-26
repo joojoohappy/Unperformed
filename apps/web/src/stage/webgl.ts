@@ -2,6 +2,7 @@
 import type { StageFrame } from "@unperformed/performance-core";
 import * as THREE from "three";
 import { computeLayout, createLayout, ELEMENT_COUNT } from "./layout";
+import { pixelRatio, QUALITY, type QualitySettings } from "./quality";
 import type { StageRenderer } from "./types";
 
 const HAZE = 420;
@@ -30,6 +31,7 @@ export class WebGLStage implements StageRenderer {
   private hazeMat: THREE.PointsMaterial;
   private floorMat: THREE.MeshStandardMaterial;
   private layout = createLayout();
+  private quality: QualitySettings = QUALITY.full;
   private m = new THREE.Matrix4();
   private q = new THREE.Quaternion();
   private e = new THREE.Euler();
@@ -89,7 +91,7 @@ export class WebGLStage implements StageRenderer {
   }
 
   resize(width: number, height: number, dpr: number): void {
-    this.renderer.setPixelRatio(Math.min(dpr, 2));
+    this.renderer.setPixelRatio(pixelRatio(dpr, this.quality));
     this.renderer.setSize(width, height, false);
     this.camera.aspect = width / Math.max(1, height);
     this.camera.updateProjectionMatrix();
@@ -114,15 +116,18 @@ export class WebGLStage implements StageRenderer {
 
     computeLayout(f, seed, this.layout, reducedMotion);
     const { position, rotation, scale } = this.layout;
-    for (let i = 0; i < ELEMENT_COUNT; i++) {
+    // At reduced quality every n-th element is packed into the first instance slots.
+    let n = 0;
+    for (let i = 0; i < ELEMENT_COUNT; i += this.quality.elementStride) {
       const k = i * 3;
       this.v.set(position[k]!, position[k + 1]!, position[k + 2]!);
       this.e.set(rotation[k]!, rotation[k + 1]!, rotation[k + 2]!);
       this.q.setFromEuler(this.e);
       this.s.set(scale[k]!, scale[k + 1]!, scale[k + 2]!);
       this.m.compose(this.v, this.q, this.s);
-      this.mesh.setMatrixAt(i, this.m);
+      this.mesh.setMatrixAt(n++, this.m);
     }
+    this.mesh.count = n;
     this.mesh.instanceMatrix.needsUpdate = true;
 
     const c = f.camera;
@@ -131,6 +136,11 @@ export class WebGLStage implements StageRenderer {
     this.camera.updateProjectionMatrix();
     this.camera.lookAt(c.target[0], c.target[1], c.target[2]);
     this.renderer.render(this.scene, this.camera);
+  }
+
+  setQuality(q: QualitySettings): void {
+    this.quality = q;
+    this.haze.visible = q.haze;
   }
 
   dispose(): void {

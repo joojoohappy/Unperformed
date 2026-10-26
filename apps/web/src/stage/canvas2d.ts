@@ -4,6 +4,7 @@
  */
 import { resolveForm, CANVAS2D_CAPABILITIES, type StageFrame } from "@unperformed/performance-core";
 import { computeLayout, createLayout, ELEMENT_COUNT } from "./layout";
+import { pixelRatio, QUALITY, type QualitySettings } from "./quality";
 import type { StageRenderer } from "./types";
 
 export class Canvas2DStage implements StageRenderer {
@@ -13,6 +14,7 @@ export class Canvas2DStage implements StageRenderer {
   private w = 1;
   private h = 1;
   private dpr = 1;
+  private quality: QualitySettings = QUALITY.full;
 
   constructor(private canvas: HTMLCanvasElement) {
     const ctx = canvas.getContext("2d");
@@ -23,7 +25,7 @@ export class Canvas2DStage implements StageRenderer {
   resize(width: number, height: number, dpr: number): void {
     this.w = width;
     this.h = height;
-    this.dpr = Math.min(dpr, 2);
+    this.dpr = pixelRatio(dpr, this.quality);
     this.canvas.width = Math.round(width * this.dpr);
     this.canvas.height = Math.round(height * this.dpr);
   }
@@ -64,7 +66,7 @@ export class Canvas2DStage implements StageRenderer {
     const focal = (this.h / 2) / Math.tan((f.camera.fov * Math.PI) / 360);
     const { position: p, scale: s } = this.layout;
     const brightness = (0.25 + 0.75 * f.intensity) * vis;
-    for (let i = 0; i < ELEMENT_COUNT; i++) {
+    for (let i = 0; i < ELEMENT_COUNT; i += this.quality.elementStride) {
       const k = i * 3;
       if (s[k + 1]! <= 0.001) continue;
       const dx = p[k]! - cx, dy = p[k + 1]! - cy, dz = p[k + 2]! - cz;
@@ -78,6 +80,10 @@ export class Canvas2DStage implements StageRenderer {
       ctx.fillStyle = `rgba(${kr},${kg},${kb},${Math.min(1, brightness * fog)})`;
       ctx.fillRect(sx - w / 2, sy - h / 2, w, h);
     }
+  }
+
+  setQuality(q: QualitySettings): void {
+    this.quality = q;
   }
 
   dispose(): void {

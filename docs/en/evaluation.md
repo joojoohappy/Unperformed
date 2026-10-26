@@ -13,8 +13,8 @@ estimated or borrowed. Raw results are in
 | Suite | Command | Tests | Result (2026-10-26) |
 | --- | --- | --- | --- |
 | Core unit tests (vitest) | `pnpm --filter @unperformed/performance-core test` | 101 | all pass |
-| Web unit tests (vitest) | `pnpm --filter @unperformed/web test` | 5 | all pass |
-| End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 11 × 2 projects = 22 | all pass |
+| Web unit tests (vitest) | `pnpm --filter @unperformed/web test` | 16 | all pass |
+| End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 13 × 2 projects = 26 | all pass |
 | Live AI service (pytest) | `pnpm test:ai` | 28 | all pass; ruff and mypy (strict) clean |
 | Lint and types | `pnpm lint && pnpm typecheck` | | clean |
 
@@ -36,6 +36,11 @@ What they cover:
   blackout, reduced motion, flicker cap, flash check.
 - **Rendering fallback:** form substitution chain and renderer choice; in the
   browser, `?renderer=canvas` runs a performance on the 2D renderer.
+- **Adaptive quality:** the controller (budget, warm-up, pauses ignored,
+  occasional slow frames tolerated, no step back up, fixed modes) in unit
+  tests; in the browser, frames slowed to 30 ms drop the WebGL stage to
+  reduced quality and the HUD and review say so, and `?quality=full` stays at
+  full quality.
 - **Session:** the reducer, event log and review.
 - **i18n:** key and placeholder parity between English and Traditional Chinese,
   and coverage of every key the core emits.
@@ -48,7 +53,8 @@ What they cover:
 
 ## Environment for measurements
 
-- 4-core Intel Xeon @ 2.10 GHz Linux container, **no GPU**.
+- 4-core Intel Xeon Linux container, **no GPU** (2.10 GHz for the core
+  timings, 2.80 GHz for the browser run; the container host varies).
 - Node.js 22.22.0.
 - Headless Chromium 153 (Playwright 1.63), **WebGL rendered on the CPU by
   SwiftShader**, viewport 1440×900.
@@ -78,27 +84,84 @@ Median and 95th percentile over many runs after warm-up.
 
 ## Browser (`pnpm bench:browser`)
 
-Production build served by `vite preview`, measured in the environment above.
-Each renderer ran the 76 s demo score for 20 s.
+Production build served by `vite preview`, measured in the environment above
+on 2026-10-26. Each run played the 76 s demo score for 20 s. `full` and
+`reduced` fix the quality with `?quality=`; `auto` is what users get.
 
-| | WebGL (SwiftShader) | Canvas2D |
-| --- | --- | --- |
-| First load to heading visible | 123 ms | 64 ms |
-| DOMContentLoaded | 80 ms | 24 ms |
-| Score compile in the browser | 2.4 ms | 2.1 ms |
-| Average frame rate during performance | **12 fps** | 60 fps |
-| 95th percentile frame time | 96 ms | 17 ms |
+| | WebGL full | WebGL reduced | WebGL auto | Canvas2D |
+| --- | --- | --- | --- | --- |
+| First load to heading visible | 108 ms | 83 ms | 108 ms | 85 ms |
+| DOMContentLoaded | 67 ms | 38 ms | 45 ms | 36 ms |
+| Score compile in the browser | 3.0 ms | 2.2 ms | 2.4 ms | 2.7 ms |
+| Average frame rate during performance | **12 fps** | **26 fps** | 23 fps | 60 fps |
+| 95th percentile frame time | 94.5 ms | 45.2 ms | 75.8 ms | 16.9 ms |
+| Quality at the end | full | reduced | reduced | full |
 
-Bundle: one JavaScript file of 782 KB (216 KB gzip) and 33 KB of CSS (13 KB gzip).
+Bundle: one JavaScript file of 784 KB (216 KB gzip) and 33 KB of CSS (13 KB gzip).
 
 **What this means.** 12 fps is what a CPU emulating a GPU achieves; it is a
-floor, not the experience on a normal computer. The 2D renderer runs at the
-display rate in the same environment. **No measurements on GPU-backed browsers
-or phones have been made yet.** Load times are from a local server, so they
+floor, not the experience on a normal computer. Reduced quality doubles it
+here, but software WebGL still misses the 20 ms budget. The `auto` column mixes
+the frames before and after the switch. The 2D renderer runs at the display
+rate in the same environment. Load times are from a local server, so they
 exclude network transfer.
+
+In the same environment, halving the viewport (720×450, a quarter of the
+pixels) took full quality from 12 to 41 fps, while halving the elements and
+removing the haze alone gained about 2 fps. The stage is fill-bound, which is
+why reduced quality also lowers the resolution.
 
 The in-app frame rate (shown in the performance HUD and the review) is measured
 from `requestAnimationFrame` intervals while a performance plays.
+
+## Adaptive quality
+
+The stage measures its own frame intervals from the first frame. After 20
+warm-up frames it keeps the last 120 intervals and, once the window is full or
+spans 2 s, checks every 10 frames. If the 95th percentile is above **20 ms** it
+switches to reduced quality:
+
+| | Full | Reduced |
+| --- | --- | --- |
+| Elements drawn | 240 | 120 (every second one, so forms keep their shape) |
+| Haze | on | off |
+| Pixel ratio | device, capped at 2 | 1 × 0.7 (about half the pixels at 1×, a sixth at 3×) |
+
+The choreography, timeline, light colours and safety limits are the same. The
+switch only goes down: a slow device would otherwise flip between levels in the
+middle of a performance. Once one stage on the page has reduced, later stages
+on that page start reduced. Pauses longer than 250 ms (a hidden tab) are
+ignored. The HUD and the review show "reduced quality" when it happened.
+
+Override with `?quality=full` or `?quality=reduced` (for example to measure).
+
+## Real hardware
+
+**Not measured yet.** No GPU-backed browser or phone has been measured. This
+table will be filled with measured values only.
+
+| Device | Browser | GL renderer | WebGL full | WebGL auto | Canvas2D |
+| --- | --- | --- | --- | --- | --- |
+| GPU desktop | — | — | not measured | not measured | not measured |
+| Mid-range phone | — | — | not measured | not measured | not measured |
+
+How to measure:
+
+- **Desktop with a GPU.** `pnpm install`, then
+  `pnpm --filter @unperformed/web exec playwright install chromium` once, then
+  `BENCH_GPU=1 pnpm bench:browser`. A visible Chromium window opens on this
+  machine's GPU; leave it in front and do not use the computer until it closes
+  (about 2 minutes). Results, including the GL renderer string, are written to
+  `docs/evaluation/bench-browser-gpu.json`.
+- **Phone.** Turn off battery saver (it caps the frame rate) and open the
+  public demo at
+  [`https://joojoohappy.github.io/Unperformed/?quality=full`](https://joojoohappy.github.io/Unperformed/?quality=full)
+  (or, for a local build, `pnpm build` and
+  `pnpm --filter @unperformed/web exec vite preview --host` on a computer on the
+  same Wi-Fi, then `http://<computer's LAN IP>:4173/?quality=full`). Choose an example, go to Perform, let the whole
+  performance play, and open Review: "Performance FPS" shows the average frame
+  rate, p95 frame time and renderer. Repeat without `?quality=full` (auto) and
+  with `?renderer=canvas`. Record the phone model and browser version.
 
 ## Live AI: model calls, latency and cost
 

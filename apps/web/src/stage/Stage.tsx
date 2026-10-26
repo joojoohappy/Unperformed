@@ -1,6 +1,7 @@
 import { chooseRenderer, sample, type PerformanceScore, type SampleOptions, type StageFrame } from "@unperformed/performance-core";
 import { useEffect, useRef, useState } from "react";
 import { Canvas2DStage } from "./canvas2d";
+import { AdaptiveQuality, QUALITY, qualityModeFromSearch, type Quality } from "./quality";
 import type { StageRenderer } from "./types";
 import { WebGLStage, webglAvailable } from "./webgl";
 
@@ -9,6 +10,8 @@ export interface FrameStats {
   avgFps: number;
   p95FrameMs: number;
   renderer: string;
+  /** Render quality at the end of the measurement. */
+  quality: Quality;
 }
 
 interface Props {
@@ -24,6 +27,17 @@ interface Props {
   className?: string;
   label: string;
 }
+
+function qualityMode() {
+  try {
+    return qualityModeFromSearch(location.search);
+  } catch {
+    return "auto" as const;
+  }
+}
+
+/** Once a stage on this page has had to reduce quality, later stages start reduced. */
+let reducedThisPage = false;
 
 function forceCanvas(): boolean {
   try {
@@ -54,6 +68,13 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
     }
     setRendererName(r.name);
     wrap.dataset["renderer"] = r.name;
+    const mode = qualityMode();
+    const quality = new AdaptiveQuality(mode === "auto" && reducedThisPage ? "reduced" : mode);
+    const applyQuality = () => {
+      r.setQuality(QUALITY[quality.level]);
+      wrap.dataset["quality"] = quality.level;
+    };
+    applyQuality();
 
     const resize = () => {
       const rect = wrap.getBoundingClientRect();
@@ -70,13 +91,18 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
     const loop = () => {
       const t = performance.now();
       const L = live.current;
+      if (quality.push(t - last)) {
+        reducedThisPage = true;
+        applyQuality();
+        resize();
+      }
       const frame = sample(L.score, L.beat(), L.options);
       r.render(frame, L.score.seed, L.reducedMotion);
       if (veilRef.current) veilRef.current.style.opacity = String(frame.blackout);
       L.onFrame?.(frame);
       if (L.measure) {
         times.push(t - last);
-        if (++statTick % 30 === 0 && L.onStats) L.onStats(stats(times, r.name));
+        if (++statTick % 30 === 0 && L.onStats) L.onStats(stats(times, r.name, quality.level));
       }
       last = t;
       raf = requestAnimationFrame(loop);
@@ -85,7 +111,7 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
-      if (live.current.measure && live.current.onStats && times.length) live.current.onStats(stats(times, r.name));
+      if (live.current.measure && live.current.onStats && times.length) live.current.onStats(stats(times, r.name, quality.level));
       r.dispose();
     };
   }, []);
@@ -98,10 +124,10 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
   );
 }
 
-function stats(times: number[], renderer: string): FrameStats {
+function stats(times: number[], renderer: string, quality: Quality): FrameStats {
   const t = times.slice(1).filter((x) => x > 0 && x < 1000);
-  if (!t.length) return { frames: 0, avgFps: 0, p95FrameMs: 0, renderer };
+  if (!t.length) return { frames: 0, avgFps: 0, p95FrameMs: 0, renderer, quality };
   const avg = t.reduce((a, b) => a + b, 0) / t.length;
   const sorted = [...t].sort((a, b) => a - b);
-  return { frames: t.length, avgFps: Math.round(1000 / avg), p95FrameMs: Math.round(sorted[Math.floor(sorted.length * 0.95)]! * 10) / 10, renderer };
+  return { frames: t.length, avgFps: Math.round(1000 / avg), p95FrameMs: Math.round(sorted[Math.floor(sorted.length * 0.95)]! * 10) / 10, renderer, quality };
 }

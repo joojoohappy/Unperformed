@@ -62,7 +62,7 @@ export interface Metrics {
   estimatedCostUsd: number;
   latenciesMs: { kind: "interpret" | "negotiate" | "combine"; ms: number; source: string }[];
   compileMs: number[];
-  performances: { avgFps: number; p95FrameMs: number; frames: number; renderer: string }[];
+  performances: { avgFps: number; p95FrameMs: number; frames: number; renderer: string; quality?: "full" | "reduced" }[];
 }
 
 export interface SessionState {

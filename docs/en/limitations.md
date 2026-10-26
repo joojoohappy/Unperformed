@@ -39,6 +39,8 @@ do.
 - Measured only in headless Chromium with SwiftShader (software WebGL). No
   GPU-backed browser, Firefox or Safari measurements have been made. Safari
   and Firefox have not been tested.
+- Adaptive quality has one reduced level and only steps down. Its 20 ms
+  threshold has not yet been tuned on real devices.
 - The 3D stage is a single instanced mesh of 240 elements with simple lights. It
   is deliberately restrained and not yet art-directed per section.
 - The 2D fallback has no lighting model and draws a flat projection.

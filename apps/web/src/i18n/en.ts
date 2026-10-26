@@ -180,6 +180,7 @@ export const en = {
   "perform.again": "Perform again",
   "perform.renderer": "Renderer: {name}",
   "perform.fps": "{fps} fps",
+  "perform.quality.reduced": "reduced quality",
   "perform.noAudio": "Audio unavailable in this browser; the show runs on the visual clock.",
 
   "review.kicker": "06 — Review",

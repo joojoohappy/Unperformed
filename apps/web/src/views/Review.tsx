@@ -124,7 +124,7 @@ export function Review() {
               <dt>{t("review.telemetry.compile")}</dt>
               <dd>{m.compileMs.map((x) => `${x.toFixed(2)} ms`).join(", ") || "—"}</dd>
               <dt>{t("review.telemetry.fps")}</dt>
-              <dd>{m.performances.map((p) => `${p.avgFps} fps / ${p.p95FrameMs} ms (${p.renderer})`).join(" · ") || "—"}</dd>
+              <dd>{m.performances.map((p) => `${p.avgFps} fps / ${p.p95FrameMs} ms (${p.renderer}${p.quality === "reduced" ? `, ${t("perform.quality.reduced")}` : ""})`).join(" · ") || "—"}</dd>
             </dl>
             {m.modelCalls === 0 && <p className="small muted">{t("review.telemetry.none")}</p>}
           </div>
