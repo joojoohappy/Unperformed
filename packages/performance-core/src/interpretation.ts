@@ -7,6 +7,7 @@
  * full PerformanceScore, so the model never writes the score directly.
  */
 import { z } from "zod";
+import { REQUEST_KINDS } from "./negotiation";
 import { Archetype, ConstraintKind, GeometryForm, Mood, Palette, ReleaseMode, SoundTexture } from "./schema";
 
 const unit = z.number().min(0).max(1);
@@ -66,9 +67,10 @@ export type Interpretation = z.infer<typeof Interpretation>;
 /** Live AI: the model's reading of a change request. Mirrors services/ai RequestAnalysis. */
 export const RequestAnalysis = z
   .object({
-    kind: z.enum(["climax-burst", "end-loud", "add-strobe", "warmer", "more-chaos", "unknown"]),
+    kind: z.enum(REQUEST_KINDS),
     creativeDifference: z.boolean(),
     rationale: z.string().max(280),
+    /** Climax only. For other kinds the rules compute the counter and the model only phrases it. */
     counter: z.object({ releaseMode: z.enum(["held", "staggered"]), holdBeats: z.number().int().min(0).max(16) }).strict().nullable()
   })
   .strict();

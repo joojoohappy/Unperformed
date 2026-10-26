@@ -12,10 +12,10 @@ estimated or borrowed. Raw results are in
 
 | Suite | Command | Tests | Result (2026-10-26) |
 | --- | --- | --- | --- |
-| Core unit tests (vitest) | `pnpm --filter @unperformed/performance-core test` | 77 | all pass |
+| Core unit tests (vitest) | `pnpm --filter @unperformed/performance-core test` | 101 | all pass |
 | Web unit tests (vitest) | `pnpm --filter @unperformed/web test` | 5 | all pass |
-| End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 8 × 2 projects = 16 | all pass |
-| Live AI service (pytest) | `pnpm test:ai` | 22 | all pass; ruff and mypy (strict) clean |
+| End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 11 × 2 projects = 22 | all pass |
+| Live AI service (pytest) | `pnpm test:ai` | 28 | all pass; ruff and mypy (strict) clean |
 | Lint and types | `pnpm lint && pnpm typecheck` | | clean |
 
 What they cover:
@@ -23,9 +23,10 @@ What they cover:
 - **Schema:** valid and invalid scores, cross-field rules, JSON Schema export.
 - **Authority:** each level, locked fields, approval, constraint preservation
   for every actor, all-or-nothing application.
-- **Negotiation:** the climax proposal, no objection when there is no genuine
-  difference, combined option, deferral on repeat, constraint conflict with
-  keep / alternative / unlock, safety notice, out-of-range model advice.
+- **Negotiation:** the climax, warm-ending, more-chaos and tempo proposals,
+  no objection when there is no genuine difference, combined option, deferral
+  on repeat, constraint conflict with keep / alternative / unlock, safety
+  notice, out-of-range or uninvited model advice.
 - **Invalid model output:** shared fixtures (wrong climax index, unknown enum,
   extra field, too few phases) are rejected by both zod and Pydantic; the
   service retries with the validation error and reports `invalid_model_output`

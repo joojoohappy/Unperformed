@@ -20,7 +20,7 @@ import { type PerformanceScore, type Section, climaxSection } from "./schema";
 import { type Text, literal, t } from "./text";
 import { clamp, round3, warmShift } from "./util";
 
-export const REQUEST_KINDS = ["climax-burst", "end-loud", "add-strobe", "warmer", "more-chaos", "unknown"] as const;
+export const REQUEST_KINDS = ["climax-burst", "end-loud", "add-strobe", "warmer", "warm-ending", "more-chaos", "faster", "slower", "unknown"] as const;
 export type RequestKind = (typeof REQUEST_KINDS)[number];
 
 /** Topics are what session memory is keyed on. */
@@ -29,7 +29,10 @@ export const TOPIC_OF: Record<RequestKind, string> = {
   "end-loud": "ending",
   "add-strobe": "light-safety",
   warmer: "palette",
+  "warm-ending": "ending-light",
   "more-chaos": "fracture",
+  faster: "tempo",
+  slower: "tempo",
   unknown: "unknown"
 };
 
@@ -100,9 +103,12 @@ export interface DirectorAdvice {
 const REQUEST_RULES: [RequestKind, RegExp][] = [
   ["add-strobe", /\b(strobe\w*|flash\w*|blink\w*)\b|閃光|頻閃|閃爍/i],
   ["end-loud", /\b(loud|bang|big|noise|crash)\b.*\b(end|ending|finale|finish)\b|\b(end|ending|finale|finish)\b.*\b(loud|bang|big|crash)\b|結尾.*(大聲|爆|巨響)|(大聲|巨響).*結尾/i],
+  ["warm-ending", /\b(warm\w*|amber|golden)\b.*\b(end|ending|finale|finish)\b|\b(end|ending|finale|finish)\b.*\b(warm\w*|amber|golden)\b|結尾.*(溫暖|暖)|(溫暖|暖色).*結尾/i],
   ["climax-burst", /\b(explo\w*|burst|blow (up|out)|everything at once|all at once)\b|爆炸|爆發|炸開|全部.*一起/i],
   ["warmer", /\b(warm\w*|amber|golden|orange)\b|溫暖|暖色|金色/i],
-  ["more-chaos", /\b(more chaos|chaotic|messier|wilder|more broken|harder)\b|更混亂|更亂|更破碎/i]
+  ["more-chaos", /\b(more chaos|chaotic|messier|wilder|more broken|harder)\b|更混亂|再混亂|更亂|更破碎/i],
+  ["faster", /\b(faster|quicker|speed (it )?up|up the tempo|more tempo)\b|加快|快一點|更快/i],
+  ["slower", /\b(slower|slow (it )?down|less rushed)\b|放慢|慢一點|更慢/i]
 ];
 
 export function parseRequestRules(text: string): RequestKind {
@@ -113,10 +119,56 @@ export function parseRequestRules(text: string): RequestKind {
 // --------------------------------------------------------------------------
 // 2. The human's plan, made concrete.
 
+/** A silent ending stops being silent above this light level (same threshold as the ending-silence constraint). */
+export const SILENCE_MAX_LIGHT = 0.1;
+/** Light level at which a warm ending is plainly visible. */
+const WARM_ENDING_LIGHT = 0.35;
+/** A warm afterglow: visible on a dark stage, still within the silence threshold. */
+const AFTERGLOW_LIGHT = 0.08;
+/** The fracture must stay at least this much more ordered than the climax, or the collapse peaks early. */
+export const CHAOS_ORDER_MARGIN = 0.15;
+/** A resting ending shorter than this no longer registers as an ending. */
+export const MIN_REST_SECONDS = 12;
+export const FASTER_FACTOR = 1.25;
+export const SLOWER_FACTOR = 0.8;
+
+const RESTING: ReadonlySet<Section["archetype"]> = new Set(["silence", "release", "drift"]);
+
+function lastSection(score: PerformanceScore): Section {
+  return score.sections[score.sections.length - 1]!;
+}
+
+function fractureSection(score: PerformanceScore): Section | undefined {
+  return score.sections.find((s) => s.archetype === "fracture") ?? score.sections.find((s) => s.archetype === "build");
+}
+
+const restSeconds = (s: Section, bpm: number): number => (s.lengthBeats * 60) / bpm;
+
+function warmEndingPatch(score: PerformanceScore, intensity: number): ScorePatch {
+  const last = lastSection(score);
+  return {
+    ops: [{ op: "setLighting", sectionId: last.id, wash: "warm", key: warmShift(last.lighting.key, 0.6), intensity: round3(Math.max(last.lighting.intensity, intensity)) }]
+  };
+}
+
+function chaosPatch(fracture: Section, order: number, withEnergy = true): ScorePatch {
+  return {
+    ops: [
+      { op: "setGeometry", sectionId: fracture.id, order: round3(order), density: round3(clamp(fracture.geometry.density + 0.15)) },
+      { op: "setCamera", sectionId: fracture.id, move: "tremor", speed: round3(clamp(fracture.camera.speed + 0.2)) },
+      ...(withEnergy ? [{ op: "setEnergy" as const, sectionId: fracture.id, to: round3(clamp(fracture.energy.to + 0.1)) }] : [])
+    ]
+  };
+}
+
+const tempoPatch = (bpm: number): ScorePatch => ({ ops: [{ op: "setTempo", tempoBpm: bpm }] });
+const faster = (bpm: number) => Math.min(160, Math.round(bpm * FASTER_FACTOR));
+const slower = (bpm: number) => Math.max(60, Math.round(bpm * SLOWER_FACTOR));
+
 export function humanPlan(kind: RequestKind, score: PerformanceScore): ScorePatch | null {
   const climax = climaxSection(score);
-  const last = score.sections[score.sections.length - 1]!;
-  const fracture = score.sections.find((s) => s.archetype === "fracture") ?? score.sections.find((s) => s.archetype === "build");
+  const last = lastSection(score);
+  const fracture = fractureSection(score);
   switch (kind) {
     case "climax-burst":
       if (!climax) return null;
@@ -147,14 +199,15 @@ export function humanPlan(kind: RequestKind, score: PerformanceScore): ScorePatc
             .map((s): PatchOp => ({ op: "setLighting", sectionId: s.id, key: warmShift(score.palette.base, 0.6) }))
         ]
       };
+    case "warm-ending":
+      return warmEndingPatch(score, WARM_ENDING_LIGHT);
     case "more-chaos":
       if (!fracture) return null;
-      return {
-        ops: [
-          { op: "setGeometry", sectionId: fracture.id, order: round3(Math.max(0, fracture.geometry.order - 0.25)), density: round3(clamp(fracture.geometry.density + 0.15)) },
-          { op: "setCamera", sectionId: fracture.id, move: "tremor", speed: round3(clamp(fracture.camera.speed + 0.2)) }
-        ]
-      };
+      return chaosPatch(fracture, Math.max(0, fracture.geometry.order - 0.25));
+    case "faster":
+      return faster(score.tempoBpm) === score.tempoBpm ? null : tempoPatch(faster(score.tempoBpm));
+    case "slower":
+      return slower(score.tempoBpm) === score.tempoBpm ? null : tempoPatch(slower(score.tempoBpm));
     case "add-strobe":
     case "unknown":
       return null;
@@ -186,6 +239,116 @@ export function ruleBasedClimaxAdvice(score: PerformanceScore): DirectorAdvice {
     source: { kind: "rules" }
   };
 }
+
+/** A creative difference found by a rule, for the scenarios other than the climax. */
+export interface RuleProposal {
+  message: Text;
+  human: Text;
+  ai: Text;
+  aiPatch: ScorePatch | null;
+  /** The middle ground offered on request, or null when the scenario has none. */
+  combined: { description: Text; patch: ScorePatch } | null;
+}
+
+const pct = (v: number): number => Math.round(v * 100);
+const secs = (v: number): string => v.toFixed(1);
+
+/**
+ * Deterministic creative-difference rules. Each returns null when there is no
+ * genuine difference, so the director agrees instead of arguing.
+ *
+ * - warm-ending: lighting a silent ending enough to show warmth makes it stop
+ *   being silent. Counter: a warm afterglow within the silence threshold.
+ * - more-chaos: if the fracture would be as disordered as the climax, the
+ *   collapse peaks early. Counter: the same chaos, with order held just above
+ *   the climax.
+ * - faster: if speeding up pushes a resting ending under MIN_REST_SECONDS, it
+ *   no longer reads as an ending. Counter: the fastest tempo that keeps it.
+ */
+export function ruleProposal(kind: RequestKind, score: PerformanceScore): RuleProposal | null {
+  switch (kind) {
+    case "warm-ending": {
+      const last = lastSection(score);
+      if (last.archetype !== "silence" || last.lighting.intensity > SILENCE_MAX_LIGHT) return null;
+      const glow = round3(Math.min(SILENCE_MAX_LIGHT, Math.max(last.lighting.intensity, AFTERGLOW_LIGHT)));
+      const mid = round3((glow + WARM_ENDING_LIGHT) / 2);
+      return {
+        message: t("negotiate.warmEnding.proposal", { light: pct(last.lighting.intensity), target: pct(WARM_ENDING_LIGHT), glow: pct(glow) }),
+        human: t("option.human.warmEnding", { light: pct(WARM_ENDING_LIGHT) }),
+        ai: t("option.ai.warmEnding", { light: pct(glow) }),
+        aiPatch: warmEndingPatch(score, glow),
+        combined: { description: t("option.combined.warmEnding", { light: pct(mid) }), patch: warmEndingPatch(score, mid) }
+      };
+    }
+    case "more-chaos": {
+      const fracture = fractureSection(score);
+      const climax = climaxSection(score);
+      if (!fracture || !climax || score.sections.indexOf(climax) < score.sections.indexOf(fracture)) return null;
+      const planned = round3(Math.max(0, fracture.geometry.order - 0.25));
+      const floor = round3(climax.geometry.order + CHAOS_ORDER_MARGIN);
+      if (planned >= floor) return null;
+      const counter = round3(Math.min(fracture.geometry.order, floor));
+      const mid = round3((planned + counter) / 2);
+      return {
+        message: t("negotiate.chaos.proposal", { order: planned, climax: climax.geometry.order, counter }),
+        human: t("option.human.chaos", { order: planned }),
+        ai: t("option.ai.chaos", { order: counter }),
+        aiPatch: chaosPatch(fracture, counter),
+        combined: { description: t("option.combined.chaos", { order: mid }), patch: chaosPatch(fracture, mid) }
+      };
+    }
+    case "faster": {
+      const last = lastSection(score);
+      const target = faster(score.tempoBpm);
+      if (!RESTING.has(last.archetype) || target === score.tempoBpm) return null;
+      if (restSeconds(last, score.tempoBpm) < MIN_REST_SECONDS || restSeconds(last, target) >= MIN_REST_SECONDS) return null;
+      const counter = Math.max(score.tempoBpm, Math.floor((last.lengthBeats * 60) / MIN_REST_SECONDS));
+      return {
+        message: t("negotiate.faster.proposal", {
+          bpm: target,
+          seconds: secs(restSeconds(last, target)),
+          min: MIN_REST_SECONDS,
+          counter,
+          counterSeconds: secs(restSeconds(last, counter))
+        }),
+        human: t("option.human.tempo", { bpm: target }),
+        ai: t("option.ai.faster", { bpm: counter, seconds: secs(restSeconds(last, counter)) }),
+        aiPatch: counter === score.tempoBpm ? null : tempoPatch(counter),
+        combined: null
+      };
+    }
+    default:
+      return null;
+  }
+}
+
+/** Under an approved constraint: a director alternative that respects it, where the scenario has one. */
+function constraintAlternative(kind: RequestKind, score: PerformanceScore): NegotiationOption | null {
+  switch (kind) {
+    case "end-loud": {
+      // Respect the constraint: the loud hit moves to the penultimate section; the ending stays silent.
+      const penultimate = score.sections[score.sections.length - 2];
+      if (!penultimate) return null;
+      return option(score, "ai", t("option.aiEndLoud"), t("option.aiEndLoud.desc"), {
+        ops: [{ op: "setSound", sectionId: penultimate.id, texture: "swell", level: 1 }, { op: "setEnergy", sectionId: penultimate.id, to: 0.9 }]
+      });
+    }
+    case "warm-ending": {
+      const last = lastSection(score);
+      const glow = round3(Math.min(SILENCE_MAX_LIGHT, Math.max(last.lighting.intensity, AFTERGLOW_LIGHT)));
+      return option(score, "ai", t("option.aiWarmEnding"), t("option.ai.warmEnding", { light: pct(glow) }), warmEndingPatch(score, glow));
+    }
+    case "more-chaos": {
+      const fracture = fractureSection(score);
+      if (!fracture) return null;
+      return option(score, "ai", t("option.aiChaos"), t("option.aiChaos.desc"), chaosPatch(fracture, Math.max(0, fracture.geometry.order - 0.25), false));
+    }
+    default:
+      return null;
+  }
+}
+
+const ENDING_KINDS: ReadonlySet<RequestKind> = new Set(["end-loud", "warm-ending"]);
 
 function preview(score: PerformanceScore, patch: ScorePatch | null, approved: boolean): Pick<NegotiationOption, "changes" | "allowed" | "blockedBy"> {
   if (!patch) return { changes: [], allowed: true, blockedBy: null };
@@ -256,25 +419,17 @@ export function openRound({ id, score, request, memory, advice = null }: OpenRou
     const broken = violations(applyPatchUnchecked(score, plan));
     const constraintId = broken[0]?.constraintId;
     const c = score.constraints.find((x) => x.id === constraintId);
-    const options: NegotiationOption[] = [option(score, "keep", t("option.keepConstraint"), t("option.keepConstraint.desc", { text: c?.text ?? "" }), null)];
-    if (request.kind === "end-loud") {
-      // Respect the constraint: the loud hit moves to the penultimate section; the ending stays silent.
-      const penultimate = score.sections[score.sections.length - 2];
-      if (penultimate) {
-        options.push(
-          option(
-            score,
-            "ai",
-            t("option.aiEndLoud"),
-            t("option.aiEndLoud.desc"),
-            { ops: [{ op: "setSound", sectionId: penultimate.id, texture: "swell", level: 1 }, { op: "setEnergy", sectionId: penultimate.id, to: 0.9 }] }
-          )
-        );
-      }
-    }
+    const text = c?.text ?? "";
+    const ending = ENDING_KINDS.has(request.kind);
+    const options: NegotiationOption[] = [
+      option(score, "keep", t("option.keepConstraint"), t(ending ? "option.keepConstraint.desc" : "option.keepConstraint.generic", { text }), null)
+    ];
+    const alternative = constraintAlternative(request.kind, score);
+    if (alternative) options.push(alternative);
     if (constraintId) {
       const unlockPatch: ScorePatch = { ops: [{ op: "removeConstraint", constraintId }, ...plan.ops] };
-      options.push(option(score, "human", t("option.humanUnlock"), t("option.humanUnlock.desc", { text: c?.text ?? "" }), unlockPatch, { unlocksConstraint: constraintId }));
+      const [label, desc] = request.kind === "end-loud" ? ["option.humanUnlock", "option.humanUnlock.desc"] : ["option.humanUnlock.generic", "option.humanUnlock.generic.desc"];
+      options.push(option(score, "human", t(label), t(desc, { text }), unlockPatch, { unlocksConstraint: constraintId }));
     }
     return { ...base, kind: "constraint-conflict", message: t("negotiate.conflict", { text: c?.text ?? "" }), options, source: { kind: "rules" } };
   }
@@ -317,6 +472,21 @@ export function openRound({ id, score, request, memory, advice = null }: OpenRou
     }
   }
 
+  const rule = request.kind === "climax-burst" ? null : ruleProposal(request.kind, score);
+  if (rule) {
+    // The rule decides that a difference exists and what the counter is.
+    // A model may only phrase it; its numbers are not used here.
+    const phrased = advice && advice.source.kind === "llm" && advice.creativeDifference && advice.rationale.trim() ? advice : null;
+    return {
+      ...base,
+      kind: "proposal",
+      canCombine: rule.combined !== null,
+      message: phrased ? literal(phrased.rationale.trim()) : rule.message,
+      options: [option(score, "human", t("option.human"), rule.human, plan), option(score, "ai", t("option.ai"), rule.ai, rule.aiPatch)],
+      source: phrased ? phrased.source : { kind: "rules" }
+    };
+  }
+
   // No genuine creative difference: say so and offer the human's plan as is.
   return {
     ...base,
@@ -334,9 +504,17 @@ function applyPatchUnchecked(score: PerformanceScore, patch: ScorePatch): Perfor
   return r.ok ? { ...r.score, constraints: score.constraints } : score;
 }
 
-/** "Ask for a combined version": half the hold, everything else as the human asked. */
+/**
+ * "Ask for a combined version". Climax: half the hold, everything else as the
+ * human asked. Other scenarios: the rule's middle ground (rules only).
+ */
 export function addCombinedOption(round: NegotiationRound, score: PerformanceScore, advice?: DirectorAdvice | null): NegotiationRound {
   if (!round.canCombine || round.options.some((o) => o.id === "combined")) return round;
+  if (round.request.kind !== "climax-burst") {
+    const combined = ruleProposal(round.request.kind, score)?.combined;
+    if (!combined) return round;
+    return { ...round, canCombine: false, options: [...round.options, option(score, "combined", t("option.combined"), combined.description, combined.patch)] };
+  }
   const human = round.options.find((o) => o.id === "human");
   const ai = round.options.find((o) => o.id === "ai");
   if (!human?.patch || !ai?.patch) return round;

@@ -106,14 +106,19 @@ Classify the request into `kind`:
 - climax-burst: wants the climax to explode / release all at once
 - end-loud: wants a loud ending
 - add-strobe: wants strobe / rapid flashing
-- warmer: wants warmer colours
+- warmer: wants warmer colours overall
+- warm-ending: wants the ending (only) to be warmer
 - more-chaos: wants the breakdown to be more chaotic
+- faster: wants a faster tempo
+- slower: wants a slower tempo
 - unknown: anything else
 
 Set `creative_difference` to true ONLY if you hold a genuine, specific artistic reason to suggest
 something different. Do not disagree to appear independent. If the topic is already decided, set it false.
 If true and kind is climax-burst, give a `counter`: hold the release back ("held") or ramp it ("staggered")
 for a number of beats, and explain in `rationale` (one or two sentences, addressed to the person).
+For every other kind `counter` is null: the engine computes any counter-proposal itself, and uses your
+`rationale` only to phrase an objection its own rules have found.
 If false, `counter` is null and `rationale` briefly acknowledges the request.
 """
 

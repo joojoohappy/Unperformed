@@ -18,7 +18,9 @@ GeometryForm = Literal["grid", "lattice", "shards", "ring", "dust", "void", "mon
 SoundTexture = Literal["drone", "pulse", "noise", "swell", "silence"]
 ReleaseMode = Literal["immediate", "held", "staggered"]
 ConstraintKind = Literal["ending-silence", "opening-order", "no-strobe", "max-energy", "keep-climax"]
-RequestKind = Literal["climax-burst", "end-loud", "add-strobe", "warmer", "more-chaos", "unknown"]
+RequestKind = Literal[
+    "climax-burst", "end-loud", "add-strobe", "warmer", "warm-ending", "more-chaos", "faster", "slower", "unknown"
+]
 Locale = Literal["en", "zh-TW"]
 
 Unit = Annotated[float, Field(ge=0, le=1)]

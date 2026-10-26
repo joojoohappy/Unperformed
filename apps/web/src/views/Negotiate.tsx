@@ -70,7 +70,7 @@ export function Negotiate() {
             </div>
             <div className="suggestions">
               <span className="label">{t("negotiate.try")}</span>
-              {([1, 2, 3, 4] as const).map((n) => (
+              {([1, 2, 3, 4, 5, 6, 7] as const).map((n) => (
                 <button type="button" key={n} className="chip" disabled={!!open || busy} onClick={() => setText(t(`negotiate.suggest.${n}`))} data-testid={`suggest-${n}`}>
                   {t(`negotiate.suggest.${n}`)}
                 </button>

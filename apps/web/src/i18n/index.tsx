@@ -43,6 +43,9 @@ export function describeChange(locale: Locale, change: FieldChange, score: Perfo
   if (head === "palette") {
     where = "";
     what = format(locale, `field.palette.${field}`);
+  } else if (head === "tempoBpm") {
+    where = "";
+    what = format(locale, "field.tempo");
   } else if (head === "constraints") {
     where = "";
     what = format(locale, "field.constraint");

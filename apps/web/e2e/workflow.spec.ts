@@ -129,6 +129,61 @@ test("constraint conflicts and safety limits are surfaced, not overridden", asyn
   await expect(page.getByTestId("round").first()).toContainText("2 Hz");
 });
 
+test("the warm-ending, chaos and tempo scenarios object only where a rule finds a difference", async ({ page }) => {
+  const errors = watchConsole(page);
+  await fresh(page);
+  await composeExample(page);
+  await approveAll(page);
+  await page.getByTestId("to-negotiate").click();
+  const latest = page.getByTestId("round").first();
+
+  // More chaos: the fracture would be as broken as the climax.
+  await page.getByTestId("suggest-6").click();
+  await page.getByTestId("send-request").click();
+  await expect(latest).toHaveAttribute("data-kind", "proposal");
+  await expect(latest).toContainText("with order held at 0.2");
+  await latest.getByTestId("combine").click();
+  await expect(latest.getByTestId("option-combined")).toContainText("Order 0.125");
+  await latest.getByTestId("choose-combined").click();
+
+  // Faster: the closing silence would drop under 12 s.
+  await page.getByTestId("suggest-7").click();
+  await page.getByTestId("send-request").click();
+  await expect(latest).toHaveAttribute("data-kind", "proposal");
+  await expect(latest).toContainText("I suggest 140 BPM");
+  await expect(latest.getByTestId("combine")).toHaveCount(0); // no honest middle ground here
+  await latest.getByTestId("choose-ai").click();
+  await expect(latest.getByTestId("option-ai")).toContainText("Chosen");
+
+  // Asking again defers to the decision.
+  await page.locator("#request").fill("Speed it up");
+  await page.getByTestId("send-request").click();
+  await expect(latest).toHaveAttribute("data-kind", "deferral");
+  await latest.getByTestId("choose-human").click();
+
+  // Warm ending: the approved silence constraint is surfaced, with an afterglow that respects it.
+  await page.getByTestId("suggest-5").click();
+  await page.getByTestId("send-request").click();
+  await expect(latest).toHaveAttribute("data-kind", "constraint-conflict");
+  await expect(latest).toContainText("End in complete silence");
+  await expect(latest.getByTestId("option-ai")).toContainText("Warm afterglow");
+  await latest.getByTestId("choose-ai").click();
+  await expect(latest.getByTestId("option-ai")).toContainText("Chosen");
+  expect(errors).toEqual([]);
+});
+
+test("a warm ending on an unconstrained silence gets a proposal, not a conflict", async ({ page }) => {
+  await fresh(page);
+  await composeExample(page); // constraints stay proposed, so they do not bind
+  await page.getByTestId("to-negotiate").click();
+  await page.getByTestId("suggest-5").click();
+  await page.getByTestId("send-request").click();
+  const round = page.getByTestId("round").first();
+  await expect(round).toHaveAttribute("data-kind", "proposal");
+  await expect(round).toContainText("warm afterglow");
+  await expect(round).toContainText("demo rules");
+});
+
 test("Traditional Chinese interface", async ({ page }) => {
   const errors = watchConsole(page);
   await fresh(page, "?lang=zh-TW");
@@ -200,6 +255,35 @@ test.describe("Live AI mode (service mocked at the network boundary)", () => {
     await page.getByTestId("send-request").click();
     await expect(page.getByTestId("round").first()).toContainText("Mocked rationale: hold six beats.");
     await expect(page.getByTestId("option-ai")).toContainText("6");
+  });
+
+  test("a model may phrase a rule-found objection but the rule sets the numbers", async ({ page }) => {
+    let combineCalls = 0;
+    await page.route("**/api/combine", (r) => {
+      combineCalls++;
+      return r.fulfill({ status: 500, json: {} });
+    });
+    await page.route("**/api/negotiate", (r) =>
+      r.fulfill({
+        json: {
+          analysis: { kind: "more-chaos", creativeDifference: true, rationale: "Mocked rationale: keep the worst for the climax.", counter: null },
+          meta: { provider: "anthropic", model: "test-model", latencyMs: 20, attempts: 1, inputTokens: 500, outputTokens: 80, estimatedCostUsd: 0.0036 }
+        }
+      })
+    );
+    await fresh(page);
+    await page.getByTestId("mode-live").click();
+    await composeExample(page);
+    await page.getByTestId("to-negotiate").click();
+    await page.getByTestId("suggest-6").click();
+    await page.getByTestId("send-request").click();
+    const round = page.getByTestId("round").first();
+    await expect(round).toHaveAttribute("data-kind", "proposal");
+    await expect(round).toContainText("Mocked rationale: keep the worst for the climax.");
+    await expect(page.getByTestId("option-ai")).toContainText("order held at 0.2");
+    await page.getByTestId("combine").click();
+    await expect(page.getByTestId("option-combined")).toContainText("Order 0.125");
+    expect(combineCalls).toBe(0); // the middle ground comes from the rules, not a model call
   });
 
   test("a failing model call falls back to rules and says so", async ({ page }) => {
