@@ -8,7 +8,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { demoInterpret, EXAMPLE_INTENTS, Interpretation, PerformanceScore, validateWith } from "../src";
+import { demoInterpret, EXAMPLE_INTENTS, Interpretation, PerformanceScore, REQUEST_KINDS, validateWith } from "../src";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const FIX = join(here, "..", "fixtures");
@@ -43,6 +43,10 @@ describe("shared fixtures", () => {
 
   it.each(Object.entries(invalid))("%s is rejected", (name, value) => {
     expect(validateWith(Interpretation, fixture(name, value)).ok).toBe(false);
+  });
+
+  it("request kinds match the shared list the Pydantic RequestAnalysis is checked against", () => {
+    expect(fixture("request-kinds.json", [...REQUEST_KINDS])).toEqual([...REQUEST_KINDS]);
   });
 
   it("published JSON Schema for the Performance Score is up to date", () => {

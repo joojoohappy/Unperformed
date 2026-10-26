@@ -8,17 +8,17 @@
 
 | 測試組 | 指令 | 數量 | 結果（2026-10-26） |
 | --- | --- | --- | --- |
-| 核心單元測試（vitest） | `pnpm --filter @unperformed/performance-core test` | 77 | 全部通過 |
+| 核心單元測試（vitest） | `pnpm --filter @unperformed/performance-core test` | 101 | 全部通過 |
 | Web 單元測試（vitest） | `pnpm --filter @unperformed/web test` | 5 | 全部通過 |
-| 端對端測試（Playwright，桌面 1440×900 與 Pixel 7） | `pnpm test:e2e` | 8 × 2 個 project = 16 | 全部通過 |
-| Live AI 服務（pytest） | `pnpm test:ai` | 22 | 全部通過；ruff 與 mypy（strict）無問題 |
+| 端對端測試（Playwright，桌面 1440×900 與 Pixel 7） | `pnpm test:e2e` | 11 × 2 個 project = 22 | 全部通過 |
+| Live AI 服務（pytest） | `pnpm test:ai` | 28 | 全部通過；ruff 與 mypy（strict）無問題 |
 | Lint 與型別檢查 | `pnpm lint && pnpm typecheck` | | 無問題 |
 
 涵蓋範圍：
 
 - **Schema：** 有效與無效的 score、跨欄位規則、JSON Schema 匯出。
 - **權限：** 各層級、鎖定欄位、核准、對所有行為者保留限制條件、全有或全無的套用。
-- **協商：** 高潮提案、沒有真正分歧時不反對、合併選項、重複請求時的 deferral、限制條件衝突（保留／替代方案／解除）、安全提示、超出範圍的模型建議。
+- **協商：** 高潮、更溫暖的結尾、更混亂與速度的提案、沒有真正分歧時不反對、合併選項、重複請求時的 deferral、限制條件衝突（保留／替代方案／解除）、安全提示、超出範圍或未經規則支持的模型建議。
 - **無效的模型輸出：** 共用 fixtures（錯誤的高潮索引、未知的列舉值、多餘欄位、階段太少）同時被 zod 與 Pydantic 拒絕；服務會帶著驗證錯誤重試，最後一次仍失敗時回報 `invalid_model_output`。（瀏覽器在使用任何服務回應前也會以 zod 驗證；這條路徑尚未有專屬測試。）
 - **時間軸與重播：** 確定性（`timelineFingerprint`）、釋放前的壓抑、全黑、減少動態效果、閃爍上限、閃光檢查。
 - **渲染備援：** 形態替代鏈與渲染器選擇；在瀏覽器中，`?renderer=canvas` 會以 2D 渲染器跑完演出。

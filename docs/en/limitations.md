@@ -23,11 +23,16 @@ do.
   Traditional Chinese (order, collapse, chaos, silence, dawn, flow, and
   similar). Ideas it does not recognise get a generic four-part arc, and the
   Compose stage says so.
-- Negotiation understands five kinds of request: climax explosion, a loud
-  ending, strobe or flashing, warmer colours, and more chaos. Anything else is
-  answered with "not understood" and nothing changes.
-- Only the climax scenario has a full creative-difference rule. Other requests
-  are either constraint conflicts, safety notices or agreements.
+- Negotiation understands eight kinds of request: climax explosion, a loud
+  ending, strobe or flashing, warmer colours, a warmer ending, more chaos,
+  faster and slower. Anything else is answered with "not understood" and
+  nothing changes.
+- Four scenarios have a creative-difference rule: the climax, a warmer ending,
+  more chaos in the fracture, and a faster tempo (see
+  [negotiation protocol](negotiation-protocol.md#scenarios-with-rules)). The
+  rest are constraint conflicts, safety notices or agreements.
+- Live AI classification into the new kinds is tested only against a mocked
+  service; no real model has been run on them yet.
 
 ## Rendering and audio
 

@@ -117,3 +117,13 @@ def test_missing_key_is_not_configured() -> None:
     with pytest.raises(DirectorError) as e:
         AnthropicDirector(Settings(api_key=None))
     assert e.value.code == "not_configured"
+
+
+def test_analyze_prompt_describes_every_request_kind() -> None:
+    from typing import get_args
+
+    from unperformed_ai.director import ANALYZE_TASK
+    from unperformed_ai.models import RequestKind
+
+    for kind in get_args(RequestKind):
+        assert f"- {kind}:" in ANALYZE_TASK

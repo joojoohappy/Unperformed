@@ -90,7 +90,8 @@ export async function negotiate(state: SessionState, text: string, ids: { round:
 
 export async function combineAdvice(state: SessionState, round: NegotiationRound): Promise<{ advice: DirectorAdvice | null; ms: number; usage?: Usage; fallbackReason?: string }> {
   const t0 = now();
-  if (state.mode === "demo" || !state.score) return { advice: null, ms: now() - t0 };
+  // Only the climax has a model-tuned middle ground; other combined versions come from the rules.
+  if (state.mode === "demo" || !state.score || round.request.kind !== "climax-burst") return { advice: null, ms: now() - t0 };
   const climax = climaxSection(state.score);
   try {
     const human = round.options.find((o) => o.id === "human");

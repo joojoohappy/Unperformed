@@ -42,8 +42,9 @@ support.
 person's time. A testable reason (there is nothing to contrast the explosion
 against) keeps objections honest.
 
-**Cost.** Objections are limited to the scenarios that have rules. The protocol
-is general; only the climax scenario has a full rule today.
+**Cost.** Objections are limited to the scenarios that have rules: the climax,
+a warmer ending, more chaos in the fracture and a faster tempo. Outside the
+climax a model may only phrase an objection; the rule sets every number.
 
 ## ADR-004: The audio clock is the master clock
 

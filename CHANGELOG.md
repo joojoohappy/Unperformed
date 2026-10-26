@@ -4,6 +4,19 @@ All notable changes are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Three more negotiation scenarios with deterministic creative-difference
+  rules: a warmer ending (warm afterglow instead of lighting a silent ending),
+  more chaos in the fracture (keep the climax the most broken moment) and a
+  faster tempo (keep a resting ending at 12 s or more). Slowing down is
+  understood and never objected to. See `docs/en/negotiation-protocol.md`.
+- The `setTempo` patch operation, classified `shared` by the authority policy.
+- A shared `request-kinds.json` fixture that keeps the zod and Pydantic request
+  kinds in step.
+
 ## [0.1.0] - 2026-10-26
 
 First public MVP.

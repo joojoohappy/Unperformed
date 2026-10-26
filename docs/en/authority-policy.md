@@ -15,7 +15,7 @@ Every patch operation is classified against the current score by
 | Level | Meaning | Examples |
 | --- | --- | --- |
 | `ai` | Routine staging the director may decide on its own and report. | Camera moves; small energy nudges (≤ 0.15); small lighting changes outside the climax; geometry density or order outside the climax; transitions outside the climax. |
-| `shared` | A meaningful creative change. Needs an explicit human choice. | Anything in the climax section; release mode and hold; palette; geometry form; sound texture; energy changes over 0.15 or a new curve; key or accent light; raising flicker by more than 0.1. |
+| `shared` | A meaningful creative change. Needs an explicit human choice. | Anything in the climax section; release mode and hold; palette; tempo; geometry form; sound texture; energy changes over 0.15 or a new curve; key or accent light; raising flicker by more than 0.1. |
 | `human` | Intent-level decisions only a person can make. | Adding, removing, approving or rejecting a constraint. |
 
 ## How `applyPatch` enforces it

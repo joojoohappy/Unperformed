@@ -42,6 +42,7 @@ export const PatchOp = z.discriminatedUnion("op", [
   z.object({ op: z.literal("setSound"), sectionId, texture: SoundTexture.optional(), level: unit.optional() }),
   z.object({ op: z.literal("setTransition"), sectionId, type: TransitionType.optional(), beats: z.number().int().min(0).max(8).optional() }),
   z.object({ op: z.literal("setPalette"), base: hexColor.optional(), accent: hexColor.optional(), climax: hexColor.optional() }),
+  z.object({ op: z.literal("setTempo"), tempoBpm: z.number().int().min(60).max(160) }),
   z.object({ op: z.literal("addConstraint"), constraint: Constraint }),
   z.object({ op: z.literal("setConstraintStatus"), constraintId: z.string(), status: z.enum(["proposed", "approved"]) }),
   z.object({ op: z.literal("removeConstraint"), constraintId: z.string() })
@@ -105,6 +106,8 @@ export function touchedPaths(op: PatchOp): string[] {
       return keys(op, ["op", "sectionId"]).map((k) => `${op.sectionId}.transition.${k}`);
     case "setPalette":
       return keys(op, ["op"]).map((k) => `palette.${k}`);
+    case "setTempo":
+      return ["tempoBpm"];
     case "addConstraint":
       return [`constraints.${op.constraint.id}`];
     case "setConstraintStatus":
@@ -124,6 +127,8 @@ export function authorityOf(op: PatchOp, score: PerformanceScore): AuthorityLeve
       return "human";
     case "setRelease":
     case "setPalette":
+    case "setTempo":
+      // Tempo retimes every section at once, so it is never routine staging.
       return "shared";
     case "setEnergy": {
       if (!section) return "shared";
@@ -195,6 +200,9 @@ function mutate(score: PerformanceScore, op: PatchOp): RejectReason | null {
       if (op.accent) score.palette.accent = op.accent;
       if (op.climax) score.palette.climax = op.climax;
       return null;
+    case "setTempo":
+      score.tempoBpm = op.tempoBpm;
+      return null;
     case "addConstraint":
       score.constraints = score.constraints.filter((c) => c.id !== op.constraint.id).concat(op.constraint);
       return null;
@@ -226,6 +234,7 @@ export function flatten(score: PerformanceScore): Map<string, unknown> {
     walk(id, rest);
   }
   walk("palette", score.palette);
+  out.set("tempoBpm", score.tempoBpm);
   for (const c of score.constraints) out.set(`constraints.${c.id}`, c.status);
   return out;
 }

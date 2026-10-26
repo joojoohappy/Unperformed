@@ -20,9 +20,9 @@ order. Each is sized to be one focused piece of work.
 
 ## Then
 
-- **More negotiation scenarios with real rules:** "make the ending warmer",
-  "more chaos in the fracture", tempo changes. Each needs a testable creative
-  difference, like the climax rule.
+- **More negotiation scenarios with real rules:** a rule for whole-palette
+  warmth and for slowing down, and section-level tempo or length changes.
+  (Warmer ending, more chaos and faster tempo have rules now.)
 - **Art direction per archetype:** distinct geometry behaviour, light rigs and
   camera language for each section type; better 2D fallback.
 - **Richer procedural sound:** per-mood instruments, a proper reverb, and

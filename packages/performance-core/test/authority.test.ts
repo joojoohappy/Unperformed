@@ -21,6 +21,20 @@ describe("authority policy (deterministic, not prompt-based)", () => {
     expect(applyPatch(s, patch, { actor: "ai", humanApproved: true }).ok).toBe(true);
   });
 
+  it("treats a tempo change as shared: the AI needs approval, a human change is locked", () => {
+    const s = baseScore();
+    const patch: ScorePatch = { ops: [{ op: "setTempo", tempoBpm: 140 }] };
+    expect(authorityOf(patch.ops[0]!, s)).toBe("shared");
+    const ai = applyPatch(s, patch, { actor: "ai", humanApproved: false });
+    expect(ai.ok).toBe(false);
+    if (!ai.ok) expect(ai.rejected[0]!.code).toBe("needs-approval");
+    const human = applyPatch(s, patch, { actor: "human", humanApproved: true });
+    expect(human.ok && human.changes).toEqual([{ path: "tempoBpm", before: s.tempoBpm, after: 140 }]);
+    expect(human.ok && human.score.humanLocked).toContain("tempoBpm");
+    expect(applyPatch(human.ok ? human.score : s, { ops: [{ op: "setTempo", tempoBpm: 100 }] }, { actor: "ai", humanApproved: false }).ok).toBe(false);
+    expect(applyPatch(s, { ops: [{ op: "setTempo", tempoBpm: 200 }] }, { actor: "human", humanApproved: true }).ok).toBe(false);
+  });
+
   it("never lets the AI touch human-level decisions, even with approval flags", () => {
     const s = approvedScore();
     for (const patch of [
