@@ -17,8 +17,6 @@ order. Each is sized to be one focused piece of work.
    Add adaptive quality (fewer elements, no haze) when frames run long.
 3. **Native review of Traditional Chinese.** Review the interface strings,
    README and docs with a native editor.
-4. **Deploy a public demo.** A static build (`VITE_LIVE_AI=off`) on GitHub
-   Pages, demo mode only.
 
 ## Then
 
