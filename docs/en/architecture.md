@@ -60,7 +60,9 @@ dispatches actions to the core's reducer, renders `StageFrame`s and plays sound.
   `stage/look.ts` holds the art direction per section type (light, fog, haze,
   floor, motion); the frame's `look` field says which section type to use and
   how far a transition has blended it. `stage/words.ts` rasterises each
-  section's name once (a 2D canvas, in the device's fonts) into dot targets;
+  section's name (a 2D canvas, in the device's fonts) into dot targets sized
+  to the stage's shape, with half the dots at reduced quality so every drawn
+  element is a whole dot;
   the layout holds the elements on that word as firmly as the section type and
   its order allow, so an ordered section spells its name and a fracture tears
   it apart. A name too long to spell legibly in 240 dots is left to the

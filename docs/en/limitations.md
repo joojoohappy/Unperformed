@@ -51,8 +51,9 @@ do.
   and coarser, and a name longer than about sixteen Latin letters or seven CJK
   characters is not spelled at all (the caption still names it). Glyphs come
   from the device's own fonts, so the dot pattern can differ a little between
-  devices. Words have only been checked in headless Chromium screenshots, not
-  on a phone.
+  devices. Words were checked in headless Chromium screenshots and once by eye
+  on an iPhone, where the first version was readable but too small; the larger,
+  crisper version has only been checked in screenshots.
 - The 2D fallback has no lighting model and draws a flat projection.
 - Sound is synthesised from oscillators and filtered noise; timbres are simple.
 - three.js is loaded on demand, but it is still a 471 KB chunk (119 KB gzip)

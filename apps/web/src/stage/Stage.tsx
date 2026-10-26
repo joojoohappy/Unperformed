@@ -4,7 +4,8 @@ import { Canvas2DStage } from "./canvas2d";
 import { webglAvailable } from "./detect";
 import { AdaptiveQuality, QUALITY, qualityModeFromSearch, type Quality } from "./quality";
 import type { StageRenderer } from "./types";
-import { wordKey, wordsFor } from "./words";
+import { ELEMENT_COUNT } from "./layout";
+import { wordKey, wordsFor, wordWidth } from "./words";
 
 // three.js is most of the bundle's weight, and the first screens do not need it:
 // load the WebGL stage on first use, once, and share it between stages.
@@ -86,8 +87,10 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
         wrap.dataset["quality"] = quality.level;
       };
       applyQuality();
+      let aspect = 16 / 9;
       const resize = () => {
         const rect = wrap.getBoundingClientRect();
+        aspect = Math.max(1, rect.width) / Math.max(1, rect.height);
         renderer.resize(Math.max(1, rect.width), Math.max(1, rect.height), window.devicePixelRatio || 1);
       };
       resize();
@@ -106,11 +109,12 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
           applyQuality();
           resize();
         }
-        // Respell only when a section name changes (negotiation can rename).
-        const key = wordKey(L.score);
+        // Respell only when a name, the quality level or the stage shape changes.
+        const spell = { dots: Math.ceil(ELEMENT_COUNT / QUALITY[quality.level].elementStride), width: wordWidth(aspect) };
+        const key = wordKey(L.score, spell);
         if (key !== spelled) {
           spelled = key;
-          renderer.setWords(wordsFor(L.score));
+          renderer.setWords(wordsFor(L.score, spell));
         }
         const frame = sample(L.score, L.beat(), L.options);
         renderer.render(frame, L.score.seed, L.reducedMotion);

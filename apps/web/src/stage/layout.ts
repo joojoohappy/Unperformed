@@ -7,8 +7,6 @@ import { type Look, lookFor } from "./look";
 import type { Words } from "./words";
 
 export const ELEMENT_COUNT = 240;
-/** Size of one dot of a spelled word. */
-const WORD_DOT = 0.1;
 
 export interface Layout {
   /** x, y, z per element */
@@ -141,19 +139,20 @@ export function computeLayout(frame: StageFrame, seed: number, out: Layout, redu
       const src = wordFrom ?? wordTo!;
       const dst = wordTo ?? wordFrom!;
       w = hold * (wordFrom && wordTo ? 1 : wordTo ? wordMix : 1 - wordMix);
-      const wx = lerp(src[i * 2]!, dst[i * 2]!, wordMix);
-      const wy = lerp(src[i * 2 + 1]!, dst[i * 2 + 1]!, wordMix);
-      x = lerp(x, wx + dx * 0.12, w);
-      y = lerp(y, wy + dy * 0.12, w);
+      const wx = lerp(src.xy[i * 2]!, dst.xy[i * 2]!, wordMix);
+      const wy = lerp(src.xy[i * 2 + 1]!, dst.xy[i * 2 + 1]!, wordMix);
+      const dot = lerp(src.dot, dst.dot, wordMix);
+      x = lerp(x, wx + dx * 0.05, w);
+      y = lerp(y, wy + dy * 0.05, w);
       z = lerp(z, dz * 0.15, w);
-      sx = lerp(sx, WORD_DOT, w);
-      sy = lerp(sy, WORD_DOT, w);
-      sz = lerp(sz, WORD_DOT, w);
+      sx = lerp(sx, dot, w);
+      sy = lerp(sy, dot, w);
+      sz = lerp(sz, dot, w);
       rz = lerp(rz, 0, w);
     }
 
     // Art direction by section type (see look.ts). Weights blend during transitions.
-    if (L.breathe > 0) sy *= 1 + 0.2 * L.breathe * motion * Math.sin(x * 0.8 + t * 2);
+    if (L.breathe > 0) sy *= 1 + 0.2 * L.breathe * (1 - w) * motion * Math.sin(x * 0.8 + t * 2);
     if (L.lift > 0) {
       // A spelled word rises as one piece, so it stays legible.
       const stagger = u * (1 - w);
@@ -193,12 +192,13 @@ export function computeLayout(frame: StageFrame, seed: number, out: Layout, redu
     out.position[k] = x;
     out.position[k + 1] = Math.max(0.02, y);
     out.position[k + 2] = z;
-    const spin = chaos * Math.PI * 0.9;
-    out.rotation[k] = lerp(a.r[0], b.r[0], mix) + noise1(seed + i * 17, 2.2) * spin;
-    out.rotation[k + 1] = lerp(a.r[1], b.r[1], mix) + noise1(seed + i * 19, 4.4 + t * 0.3 * motion) * spin;
+    // Spelled dots sit square to the audience.
+    const spin = chaos * Math.PI * 0.9 * (1 - w);
+    out.rotation[k] = lerp(a.r[0], b.r[0], mix) * (1 - w) + noise1(seed + i * 17, 2.2) * spin;
+    out.rotation[k + 1] = lerp(a.r[1], b.r[1], mix) * (1 - w) + noise1(seed + i * 19, 4.4 + t * 0.3 * motion) * spin;
     out.rotation[k + 2] = rz + noise1(seed + i * 23, 6.6) * spin;
     // While a word holds, all of it shows; density thins only the geometric form.
-    const fade = Math.max(clamp(visible - i), w) * L.scale;
+    const fade = Math.max(clamp(visible - i), w) * lerp(L.scale, 1, w);
     out.scale[k] = sx * fade;
     out.scale[k + 1] = sy * fade;
     out.scale[k + 2] = sz * fade;

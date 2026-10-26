@@ -1,20 +1,20 @@
 import { compile, demoInterpret, EXAMPLE_INTENTS, sample } from "@unperformed/performance-core";
 import { describe, expect, it } from "vitest";
 import { computeLayout, createLayout, ELEMENT_COUNT } from "./layout";
-import type { Words } from "./words";
+import type { Words, WordTargets } from "./words";
 
 const { score } = compile(demoInterpret({ intent: EXAMPLE_INTENTS.en[0]!, locale: "en" }), { durationSec: 75, seed: 3 });
 const order = score.sections.findIndex((s) => s.archetype === "order");
 const silence = score.sections.findIndex((s) => s.archetype === "silence");
 
 /** A fake word: every element aimed at a distinct point on a flat row. */
-function row(y: number): Float32Array {
-  const t = new Float32Array(ELEMENT_COUNT * 2);
+function row(y: number): WordTargets {
+  const xy = new Float32Array(ELEMENT_COUNT * 2);
   for (let i = 0; i < ELEMENT_COUNT; i++) {
-    t[i * 2] = (i / ELEMENT_COUNT - 0.5) * 4;
-    t[i * 2 + 1] = y;
+    xy[i * 2] = (i / ELEMENT_COUNT - 0.5) * 4;
+    xy[i * 2 + 1] = y;
   }
-  return t;
+  return { xy, dot: 0.012 };
 }
 
 function frameIn(index: number, at = 0.6) {
@@ -29,7 +29,7 @@ describe("stage layout with spelled words", () => {
     for (let i = 0; i < ELEMENT_COUNT; i++) {
       expect(Math.abs(out.position[i * 3]! - (i / ELEMENT_COUNT - 0.5) * 4)).toBeLessThan(0.35);
       expect(Math.abs(out.position[i * 3 + 1]! - 1.5)).toBeLessThan(0.35);
-      expect(out.scale[i * 3 + 1]!).toBeGreaterThan(0);
+      expect(out.scale[i * 3 + 1]!).toBeCloseTo(0.012, 3);
     }
   });
 
