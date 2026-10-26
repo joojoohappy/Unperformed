@@ -159,6 +159,326 @@ function hit(ctx: BaseAudioContext, bus: Bus, noise: AudioBuffer, t: number, lev
   n.stop(t + 3);
 }
 
+// ---------------------------------------------------------------- section-type voices
+// Each section type adds its own voice on top of the texture above, so order,
+// build, fracture, climax, release, silence and drift sound different even
+// with the same texture. Everything is seeded: the same score always sounds the same.
+
+interface Span {
+  start: number;
+  end: number;
+  /** Context time of a beat in the score. */
+  at: (beat: number) => number;
+  /** First beat at or after both `fromBeat` and the section start. */
+  first: number;
+  last: number;
+  /** Section-level gain node following the energy shape. */
+  gain: (level: number) => GainNode;
+}
+
+function span(ctx: BaseAudioContext, s: Section, t0: number, spb: number, from: number): Span {
+  return {
+    start: t0 + Math.max(0, s.startBeat - from) * spb,
+    end: t0 + (s.startBeat + s.lengthBeats - from) * spb,
+    at: (b) => t0 + (b - from) * spb,
+    first: Math.max(s.startBeat, from),
+    last: s.startBeat + s.lengthBeats,
+    gain: (level) => sectionGain(ctx, s, t0, spb, level, from)
+  };
+}
+
+function pan(ctx: BaseAudioContext, value: number): StereoPannerNode {
+  const p = ctx.createStereoPanner();
+  p.pan.value = Math.max(-1, Math.min(1, value));
+  return p;
+}
+
+/** A short percussive envelope into the bus. */
+function blip(ctx: BaseAudioContext, bus: Bus, src: AudioScheduledSourceNode & AudioNode, t: number, peak: number, decay: number, panTo: number, filter?: BiquadFilterNode) {
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), t + 0.004);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+  const p = pan(ctx, panTo);
+  if (filter) {
+    src.connect(filter);
+    filter.connect(g);
+  } else src.connect(g);
+  g.connect(p);
+  p.connect(bus.dry);
+  p.connect(bus.wet);
+  src.start(t);
+  src.stop(t + decay + 0.05);
+}
+
+/** Two-operator FM bell: bright attack, long inharmonic decay. */
+function bell(ctx: BaseAudioContext, bus: Bus, freq: number, t: number, peak: number, decay: number, panTo: number) {
+  const car = ctx.createOscillator();
+  car.frequency.value = freq;
+  const mod = ctx.createOscillator();
+  mod.frequency.value = freq * 3.5;
+  const idx = ctx.createGain();
+  idx.gain.setValueAtTime(freq * 2.2, t);
+  idx.gain.exponentialRampToValueAtTime(Math.max(1, freq * 0.05), t + decay * 0.6);
+  mod.connect(idx);
+  idx.connect(car.frequency);
+  mod.start(t);
+  mod.stop(t + decay + 0.05);
+  blip(ctx, bus, car, t, peak, decay, panTo);
+}
+
+/** Order: a clock. Soft ticks on every beat, alternating sides, over an open fifth. */
+function orderVoice(ctx: BaseAudioContext, bus: Bus, s: Section, root: number, noise: AudioBuffer, sp: Span) {
+  const lvl = s.sound.level;
+  for (let b = Math.ceil(sp.first); b < sp.last; b++) {
+    const n = ctx.createBufferSource();
+    n.buffer = noise;
+    const hp = ctx.createBiquadFilter();
+    hp.type = "bandpass";
+    hp.frequency.value = (b - s.startBeat) % 4 === 0 ? 3200 : 5200;
+    hp.Q.value = 6;
+    blip(ctx, bus, n, sp.at(b), lvl * ((b - s.startBeat) % 4 === 0 ? 0.6 : 0.35), 0.05, b % 2 ? 0.45 : -0.45, hp);
+  }
+  const g = sp.gain(lvl * 0.12);
+  for (const [mult, side] of [[1.5, -0.3], [2, 0.3]] as const) {
+    const o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.value = root * mult;
+    const p = pan(ctx, side);
+    o.connect(p);
+    p.connect(g);
+    o.start(sp.start);
+    o.stop(sp.end + 0.5);
+  }
+  g.connect(bus.dry);
+  g.connect(bus.wet);
+}
+
+/** Build: an arpeggio that climbs and quickens, a filter that opens, and a riser into the next section. */
+function buildVoice(ctx: BaseAudioContext, bus: Bus, s: Section, root: number, noise: AudioBuffer, sp: Span, r: () => number) {
+  const steps = [0, 3, 7, 10, 12, 15, 19, 24];
+  const lvl = s.sound.level;
+  let i = 0;
+  for (let b = s.startBeat; b < sp.last; i++) {
+    const p = (b - s.startBeat) / s.lengthBeats;
+    const step = p < 0.5 ? 1 : p < 0.8 ? 0.5 : 0.25;
+    const side = (r() - 0.5) * 0.8;
+    if (b >= sp.first) {
+      const o = ctx.createOscillator();
+      o.type = "triangle";
+      o.frequency.value = root * 2 * 2 ** ((steps[i % steps.length]! + 12 * Math.floor(p * 2)) / 12);
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 600 + 5000 * p * p;
+      blip(ctx, bus, o, sp.at(b), lvl * (0.28 + 0.36 * p), 0.18 + 0.2 * (1 - p), side, lp);
+    }
+    b += step;
+  }
+  // Riser over the last quarter.
+  const riseStart = Math.max(sp.first, s.startBeat + s.lengthBeats * 0.75);
+  if (riseStart < sp.last) {
+    const n = ctx.createBufferSource();
+    n.buffer = noise;
+    n.loop = true;
+    const bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.Q.value = 3;
+    const t = sp.at(riseStart);
+    bp.frequency.setValueAtTime(300, t);
+    bp.frequency.exponentialRampToValueAtTime(7000, sp.end);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(lvl * 0.5, sp.end - 0.02);
+    g.gain.linearRampToValueAtTime(0.0001, sp.end + 0.03);
+    n.connect(bp);
+    bp.connect(g);
+    g.connect(bus.dry);
+    g.connect(bus.wet);
+    n.start(t);
+    n.stop(sp.end + 0.1);
+  }
+}
+
+/** Fracture: seeded glitches on and off the beat, thrown across the stereo field, over a tritone. */
+function fractureVoice(ctx: BaseAudioContext, bus: Bus, s: Section, root: number, sp: Span, r: () => number) {
+  const lvl = s.sound.level;
+  for (let b = s.startBeat; b < sp.last; b += 0.5) {
+    const roll = r();
+    const where = (r() - 0.5) * 1.8;
+    const ratio = 1 + Math.floor(r() * 6);
+    if (b < sp.first || roll > 0.45) continue;
+    const t = sp.at(b + (roll < 0.1 ? 0.25 : 0));
+    const o = ctx.createOscillator();
+    o.type = "square";
+    o.frequency.value = root * ratio;
+    const m = ctx.createOscillator();
+    m.frequency.value = root * ratio * 1.414;
+    const mg = ctx.createGain();
+    mg.gain.value = root * ratio * 3;
+    m.connect(mg);
+    mg.connect(o.frequency);
+    m.start(t);
+    m.stop(t + 0.12);
+    const bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.frequency.value = 800 + 3000 * roll * 2;
+    bp.Q.value = 2;
+    blip(ctx, bus, o, t, lvl * 0.45, 0.06 + roll * 0.15, where, bp);
+  }
+  const g = sp.gain(lvl * 0.16);
+  for (const [mult, detune, side] of [[1, 0, -0.6], [1.414, 9, 0.6]] as const) {
+    const o = ctx.createOscillator();
+    o.type = "sawtooth";
+    o.frequency.value = root * mult;
+    o.detune.value = detune;
+    const p = pan(ctx, side);
+    o.connect(p);
+    p.connect(g);
+    o.start(sp.start);
+    o.stop(sp.end + 0.5);
+  }
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 1400;
+  g.connect(lp);
+  lp.connect(bus.dry);
+  lp.connect(bus.wet);
+}
+
+/** Climax: a wide detuned stack, a riser through any held breath, and a shimmer after the release. */
+function climaxVoice(ctx: BaseAudioContext, bus: Bus, s: Section, root: number, noise: AudioBuffer, sp: Span) {
+  const lvl = s.sound.level;
+  const g = sp.gain(lvl * 0.17);
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 3200;
+  for (let v = 0; v < 5; v++) {
+    const o = ctx.createOscillator();
+    o.type = "sawtooth";
+    o.frequency.value = root * (v === 2 ? 0.5 : 1);
+    o.detune.value = (v - 2) * 11;
+    const p = pan(ctx, (v - 2) * 0.4);
+    o.connect(p);
+    p.connect(lp);
+    o.start(sp.start);
+    o.stop(sp.end + 0.5);
+  }
+  lp.connect(g);
+  g.connect(bus.dry);
+  g.connect(bus.wet);
+  const hold = s.release && s.release.mode !== "immediate" ? s.release.holdBeats : 0;
+  const releaseBeat = s.startBeat + hold;
+  if (hold > 0 && releaseBeat > sp.first) {
+    // Rising noise through the hold, cut dead at the release.
+    const n = ctx.createBufferSource();
+    n.buffer = noise;
+    n.loop = true;
+    const bp = ctx.createBiquadFilter();
+    bp.type = "bandpass";
+    bp.Q.value = 4;
+    const t = sp.at(Math.max(sp.first, s.startBeat));
+    const tr = sp.at(releaseBeat);
+    bp.frequency.setValueAtTime(200, t);
+    bp.frequency.exponentialRampToValueAtTime(5000, tr);
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.0001, t);
+    ng.gain.exponentialRampToValueAtTime(lvl * 0.25, tr - 0.01);
+    ng.gain.linearRampToValueAtTime(0.0001, tr + 0.01);
+    n.connect(bp);
+    bp.connect(ng);
+    ng.connect(bus.dry);
+    n.start(t);
+    n.stop(tr + 0.05);
+  }
+  if (releaseBeat >= sp.first && releaseBeat < sp.last) {
+    // Shimmer: two octaves up, slowly fading through the reverb.
+    const t = sp.at(releaseBeat);
+    for (const [mult, side] of [[4, -0.5], [6, 0.5], [8, 0]] as const) {
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.value = root * mult;
+      o.detune.value = side * 6;
+      blip(ctx, { dry: bus.wet, wet: bus.wet }, o, t, lvl * 0.1, Math.min(8, sp.end - t + 1), side);
+    }
+  }
+}
+
+/** Release: slow descending bells into a long tail. */
+function releaseVoice(ctx: BaseAudioContext, bus: Bus, s: Section, root: number, sp: Span, r: () => number) {
+  const scale = [24, 22, 19, 17, 15, 12, 10, 7];
+  let i = 0;
+  for (let b = s.startBeat; b < sp.last; b += 4, i++) {
+    const side = (r() - 0.5) * 1.2;
+    if (b < sp.first) continue;
+    const p = (b - s.startBeat) / s.lengthBeats;
+    bell(ctx, bus, root * 2 ** (scale[i % scale.length]! / 12), sp.at(b), s.sound.level * 0.32 * (1 - 0.6 * p), 3.5, side);
+  }
+}
+
+/** Silence: not quite nothing. Two faint high tones, far apart, as if from another room. */
+function silenceVoice(ctx: BaseAudioContext, bus: Bus, s: Section, root: number, sp: Span, r: () => number) {
+  for (const at of [0.2, 0.6]) {
+    const b = s.startBeat + s.lengthBeats * (at + r() * 0.2);
+    const mult = r() > 0.5 ? 12 : 8;
+    const side = (r() - 0.5) * 1.6;
+    if (b < sp.first) continue;
+    const o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.value = root * mult;
+    blip(ctx, { dry: bus.wet, wet: bus.wet }, o, sp.at(b), s.sound.level * 0.04, 4, side);
+  }
+}
+
+/** Drift: a slow chorus of sines that wanders between the speakers. */
+function driftVoice(ctx: BaseAudioContext, bus: Bus, s: Section, root: number, sp: Span, r: () => number) {
+  const g = sp.gain(s.sound.level * 0.14);
+  for (const [mult, detune] of [[1, -4], [1.5, 3], [2, 6], [3, -7]] as const) {
+    const o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.value = root * mult;
+    o.detune.value = detune;
+    const p = ctx.createStereoPanner();
+    p.pan.value = 0;
+    const lfo = ctx.createOscillator();
+    lfo.frequency.value = 0.04 + r() * 0.06;
+    const depth = ctx.createGain();
+    depth.gain.value = 0.7;
+    lfo.connect(depth);
+    depth.connect(p.pan);
+    o.connect(p);
+    p.connect(g);
+    for (const n of [o, lfo]) {
+      n.start(sp.start);
+      n.stop(sp.end + 0.5);
+    }
+  }
+  g.connect(bus.dry);
+  g.connect(bus.wet);
+}
+
+function sectionVoice(ctx: BaseAudioContext, bus: Bus, s: Section, index: number, root: number, noise: AudioBuffer, seed: number, t0: number, spb: number, from: number) {
+  // Explicit silence stays silent, whatever the section type.
+  if (s.sound.texture === "silence" || s.sound.level <= 0) return;
+  const sp = span(ctx, s, t0, spb, from);
+  const r = rng(seed * 31 + index * 977);
+  switch (s.archetype) {
+    case "order":
+      return orderVoice(ctx, bus, s, root, noise, sp);
+    case "build":
+      return buildVoice(ctx, bus, s, root, noise, sp, r);
+    case "fracture":
+      return fractureVoice(ctx, bus, s, root, sp, r);
+    case "climax":
+      return climaxVoice(ctx, bus, s, root, noise, sp);
+    case "release":
+      return releaseVoice(ctx, bus, s, root, sp, r);
+    case "silence":
+      return silenceVoice(ctx, bus, s, root, sp, r);
+    case "drift":
+      return driftVoice(ctx, bus, s, root, sp, r);
+  }
+}
+
 /**
  * Schedule a score onto `dest`, beginning at `fromBeat` and mapped so that
  * beat `fromBeat` sounds at context time `t0`.
@@ -174,9 +494,10 @@ export function scheduleScore(ctx: BaseAudioContext, dest: AudioNode, score: Per
   const bus: Bus = { dry: dest, wet: reverb };
   const noise = noiseBuffer(ctx, 2, score.seed + 1);
 
-  for (const s of score.sections) {
+  for (const [index, s] of score.sections.entries()) {
     if (s.startBeat + s.lengthBeats <= fromBeat) continue;
     const root = midiToHz(score.rootNote + s.sound.pitch);
+    sectionVoice(ctx, bus, s, index, root, noise, score.seed, t0, spb, fromBeat);
     switch (s.sound.texture) {
       case "drone":
         drone(ctx, bus, s, root, t0, spb, fromBeat, 0.5);

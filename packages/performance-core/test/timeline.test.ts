@@ -23,6 +23,22 @@ describe("timeline sampler", () => {
     expect(timelineFingerprint(t)).not.toBe(timelineFingerprint(s));
   });
 
+  it("carries the section type for art direction, blended over the transition", () => {
+    const s = baseScore();
+    for (const [i, sec] of s.sections.entries()) {
+      const settled = sample(s, sec.startBeat + sec.lengthBeats - 0.5);
+      expect(settled.look).toEqual({ from: sec.archetype, to: sec.archetype, mix: 1 });
+      const prev = s.sections[i - 1];
+      if (!prev) continue;
+      const entering = sample(s, sec.startBeat + 0.25);
+      expect(entering.look.to).toBe(sec.archetype);
+      if (sec.transition.type === "cut") expect(entering.look.mix).toBe(1);
+      else expect(entering.look).toMatchObject({ from: prev.archetype, mix: expect.any(Number) as number });
+      expect(entering.look.mix).toBeGreaterThanOrEqual(0);
+      expect(entering.look.mix).toBeLessThanOrEqual(1);
+    }
+  });
+
   it("holds the light back during a held release, then bursts", () => {
     const s = structuredClone(baseScore());
     const c = climaxSection(s)!;

@@ -4,6 +4,7 @@
 //   pnpm media                 -> everything (about 15 minutes on a 4-core CPU)
 //   pnpm media -- screenshots  -> screenshots only
 //   pnpm media -- video        -> video only
+//   pnpm media -- stages       -> one stage frame per section type + contact sheet
 //
 // Nothing here is drawn or mocked: every image is a screenshot of the studio
 // served by Vite, driven through its real UI in demo mode (no AI model).
@@ -181,6 +182,66 @@ async function screenshots(browser) {
     execFileSync("convert", [p, "-strip", "-define", "png:compression-level=9", p]);
   }
   console.log(`screenshots → ${shotsDir}`);
+}
+
+// ---------------------------------------------------------------- stages
+
+const ARCHETYPES = ["order", "build", "fracture", "climax", "release", "silence", "drift"];
+
+/**
+ * One rehearsal-stage frame per section type, taken at the same point (60% of
+ * the section) from the scores the demo planner writes for the built-in
+ * examples, then tiled into a contact sheet. Used to compare art direction
+ * before and after a renderer change: `STAGES_OUT=dir pnpm media -- stages`.
+ */
+async function stages(browser) {
+  const dir = process.env.STAGES_OUT ? join(root, process.env.STAGES_OUT) : join(out, "stages");
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
+  const found = new Map();
+  const { page, context, errors } = await freshPage(browser, { viewport: { width: 1280, height: 800 }, sound: false });
+  const examples = await page.locator(".example").count();
+  for (const ending of [false, true]) {
+    for (let i = 0; i < examples && found.size < ARCHETYPES.length; i++) {
+      await page.locator('.stepper button[data-stage="imagine"]').click();
+      await page.locator(".example").nth(i).click();
+      if (ending) await page.locator("#intent").fill((await page.locator("#intent").inputValue()) + " End in silence.");
+      await page.getByTestId("compose").click();
+      await page.locator(".section-row").first().waitFor();
+      await approveAll(page);
+      const score = await readScore(page);
+      const missing = score.sections.filter((s) => !found.has(s.archetype));
+      if (!missing.length) continue;
+      await page.locator('.stepper button[data-stage="rehearse"]').click();
+      await page.locator(".stage-rehearse canvas").waitFor();
+      for (const s of missing) {
+        if (found.has(s.archetype)) continue;
+        const beat = s.startBeat + s.lengthBeats * 0.6;
+        // Seek on the timeline background (the section rects only select).
+        await page.locator(".rehearse svg.timeline").evaluate((svg, f) => {
+          const r = svg.getBoundingClientRect();
+          svg.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: r.left + r.width * f, clientY: r.top + 2, pointerId: 1 }));
+        }, beat / score.totalBeats);
+        await page.waitForTimeout(900);
+        const file = join(dir, `${s.archetype}.png`);
+        await page.locator(".stage-rehearse").screenshot({ path: file });
+        found.set(s.archetype, { file, section: s.name, beat: +beat.toFixed(2), example: i, endsSilent: ending });
+      }
+    }
+  }
+  await context.close();
+  if (errors.length) throw new Error(`console errors during capture:\n${errors.join("\n")}`);
+  const tiles = ARCHETYPES.filter((a) => found.has(a));
+  execFileSync("montage", [
+    ...tiles.flatMap((a) => ["-label", a, found.get(a).file]),
+    "-tile", "4x", "-geometry", "480x+6+6", "-background", "#0b0b0c", "-fill", "#d8d3cb", "-pointsize", "18",
+    join(dir, "contact-sheet.png")
+  ]);
+  writeFileSync(
+    join(dir, "stages.json"),
+    JSON.stringify({ capturedAt: new Date().toISOString(), browser: `Chromium ${browser.version()} headless, WebGL via SwiftShader`, missing: ARCHETYPES.filter((a) => !found.has(a)), frames: Object.fromEntries([...found].map(([a, v]) => [a, { ...v, file: `${a}.png` }])) }, null, 2) + "\n"
+  );
+  console.log(`stages → ${dir} (${tiles.join(", ")})`);
 }
 
 // ---------------------------------------------------------------- video
@@ -471,6 +532,7 @@ const browser = await chromium.launch(LAUNCH);
 try {
   if (!only || only === "screenshots") await screenshots(browser);
   if (!only || only === "video") await video(browser);
+  if (!only || only === "stages") await stages(browser);
 } finally {
   await browser.close();
   server.kill();

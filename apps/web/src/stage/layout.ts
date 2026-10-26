@@ -2,7 +2,8 @@
  * Stage layout: StageFrame -> per-element transforms. Pure and renderer-agnostic,
  * so the WebGL stage and the 2D fallback draw the same choreography.
  */
-import { type GeometryForm, type StageFrame, clamp, lerp, noise1, rng } from "@unperformed/performance-core";
+import { type GeometryForm, type StageFrame, clamp, lerp, noise1, rng, smoothstep } from "@unperformed/performance-core";
+import { type Look, lookFor } from "./look";
 
 export const ELEMENT_COUNT = 240;
 
@@ -91,7 +92,7 @@ export function createLayout(): Layout {
 }
 
 /** Fill `out` for this frame. Deterministic for (frame, seed). */
-export function computeLayout(frame: StageFrame, seed: number, out: Layout, reducedMotion = false): Layout {
+export function computeLayout(frame: StageFrame, seed: number, out: Layout, reducedMotion = false, look: Look = lookFor(frame)): Layout {
   const from = baseForm(frame.geometry.from, seed);
   const to = baseForm(frame.geometry.to, seed);
   const mix = frame.geometry.mix;
@@ -99,25 +100,71 @@ export function computeLayout(frame: StageFrame, seed: number, out: Layout, redu
   const visible = frame.geometry.density * ELEMENT_COUNT;
   const motion = reducedMotion ? 0.15 : 1;
   const t = frame.beat * 0.12;
+  const ease = smoothstep(frame.progress);
+  const L = look;
   for (let i = 0; i < ELEMENT_COUNT; i++) {
     const a = from[i]!;
     const b = to[i]!;
     const k = i * 3;
     const jitter = chaos * chaos;
+    // A fixed per-element phase, so staggered motions do not move in lockstep.
+    const u = (i * 0.6180339) % 1;
     // Disorder: a fixed displacement per element plus slow wandering, both scaled by chaos.
     const dx = noise1(seed + i, 3.1) * 2.6 * jitter + noise1(seed + i * 3, t) * 0.5 * chaos * frame.energy * motion;
     const dy = noise1(seed + i * 5, 1.7) * 1.2 * jitter + noise1(seed + i * 7, t + 11) * 0.3 * chaos * frame.energy * motion;
     const dz = noise1(seed + i * 11, 5.3) * 2.0 * jitter + noise1(seed + i * 13, t + 23) * 0.5 * chaos * frame.energy * motion;
-    out.position[k] = lerp(a.p[0], b.p[0], mix) + dx;
-    out.position[k + 1] = Math.max(0.02, lerp(a.p[1], b.p[1], mix) + dy);
-    out.position[k + 2] = lerp(a.p[2], b.p[2], mix) + dz;
+    let x = lerp(a.p[0], b.p[0], mix) + dx;
+    let y = lerp(a.p[1], b.p[1], mix) + dy;
+    let z = lerp(a.p[2], b.p[2], mix) + dz;
+    let sy = lerp(a.s[1], b.s[1], mix);
+    let rz = lerp(a.r[2], b.r[2], mix);
+
+    // Art direction by section type (see look.ts). Weights blend during transitions.
+    if (L.breathe > 0) sy *= 1 + 0.2 * L.breathe * motion * Math.sin(x * 0.8 + t * 2);
+    if (L.lift > 0) {
+      const rise = smoothstep(clamp(frame.progress * 1.6 - u * 0.6));
+      y = lerp(y, 0.04 + (y - 0.04) * rise + 0.5 * u * rise, L.lift);
+      sy *= lerp(1, 0.25 + 0.75 * rise, L.lift);
+    }
+    if (L.split > 0) {
+      const side = x > 0.05 ? 1 : x < -0.05 ? -1 : u > 0.5 ? 1 : -1;
+      x += side * L.split * (0.25 + 1.5 * ease);
+      rz += side * L.split * 0.35 * ease;
+    }
+    if (L.burst > 0) {
+      const ox = x, oy = y - 1.2, oz = z;
+      const d = Math.hypot(ox, oy, oz) || 1;
+      const push = L.burst * (0.3 + 2.6 * frame.energy * frame.energy) * (0.6 + 0.8 * u);
+      x += (ox / d) * push;
+      y += (oy / d) * push * 0.6 + L.burst * frame.energy * 0.4;
+      z += (oz / d) * push;
+    }
+    if (L.sink > 0) {
+      const settle = L.sink * smoothstep(clamp(frame.progress * 1.3 - u * 0.3));
+      y = lerp(y, 0.05 + y * 0.12, settle);
+      rz *= 1 - 0.7 * settle;
+    }
+    if (L.gather > 0) {
+      const g = L.gather * 0.9;
+      x = lerp(x, noise1(seed + i * 29, 0.5) * 0.6, g);
+      y = lerp(y, 0.6 + u * 1.8, g);
+      z = lerp(z, noise1(seed + i * 31, 0.5) * 0.4, g);
+    }
+    if (L.current > 0) {
+      x += L.current * motion * 1.5 * Math.sin(t * 0.45 + u * Math.PI * 2);
+      y += L.current * motion * 0.35 * Math.sin(t * 0.6 + u * 9);
+    }
+
+    out.position[k] = x;
+    out.position[k + 1] = Math.max(0.02, y);
+    out.position[k + 2] = z;
     const spin = chaos * Math.PI * 0.9;
     out.rotation[k] = lerp(a.r[0], b.r[0], mix) + noise1(seed + i * 17, 2.2) * spin;
     out.rotation[k + 1] = lerp(a.r[1], b.r[1], mix) + noise1(seed + i * 19, 4.4 + t * 0.3 * motion) * spin;
-    out.rotation[k + 2] = lerp(a.r[2], b.r[2], mix) + noise1(seed + i * 23, 6.6) * spin;
-    const fade = clamp(visible - i);
+    out.rotation[k + 2] = rz + noise1(seed + i * 23, 6.6) * spin;
+    const fade = clamp(visible - i) * L.scale;
     out.scale[k] = lerp(a.s[0], b.s[0], mix) * fade;
-    out.scale[k + 1] = lerp(a.s[1], b.s[1], mix) * fade;
+    out.scale[k + 1] = sy * fade;
     out.scale[k + 2] = lerp(a.s[2], b.s[2], mix) * fade;
   }
   return out;

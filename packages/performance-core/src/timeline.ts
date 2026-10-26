@@ -6,7 +6,7 @@
  * Because it holds no state, playback, scrubbing and replay always agree, and
  * the same score always renders the same performance.
  */
-import { MAX_FLICKER_HZ, type GeometryForm, type PerformanceScore, type Section } from "./schema";
+import { MAX_FLICKER_HZ, type Archetype, type GeometryForm, type PerformanceScore, type Section } from "./schema";
 import { type RGB, clamp, hexToRgb, lerp, mixRgb, noise1, smoothstep } from "./util";
 
 export interface CameraPose {
@@ -32,6 +32,8 @@ export interface StageFrame {
   blackout: number;
   camera: CameraPose;
   geometry: { from: GeometryForm; to: GeometryForm; mix: number; order: number; density: number };
+  /** Section type for art direction, blended from the previous section's over the transition. */
+  look: { from: Archetype; to: Archetype; mix: number };
   /** Climax release state, for HUD and audio. */
   release: "none" | "holding" | "released";
   ended: boolean;
@@ -182,6 +184,10 @@ export function sample(score: PerformanceScore, beat: number, opts: SampleOption
     camera = lerpPose(poseFor(prev, prev.lengthBeats, score.seed + idx - 1, reducedMotion), camera, smoothstep(tp));
   }
 
+  // Art direction follows the transition; a cut changes it at once.
+  const lookT = prev && s.transition.type !== "cut" ? smoothstep(clamp(local / Math.max(2, tBeats))) : 1;
+  const lookMix = { from: prev && lookT < 1 ? prev.archetype : s.archetype, to: s.archetype, mix: lookT };
+
   // The end of the piece fades to black over the final 2 beats.
   const tail = score.totalBeats - b;
   if (tail < 2) blackout = Math.max(blackout, 1 - tail / 2);
@@ -201,6 +207,7 @@ export function sample(score: PerformanceScore, beat: number, opts: SampleOption
     blackout: clamp(blackout),
     camera,
     geometry: { from: prev && formMix < 1 ? prev.geometry.form : s.geometry.form, to: s.geometry.form, mix: formMix, order: clamp(order), density: clamp(density) },
+    look: lookMix,
     release,
     ended
   };
