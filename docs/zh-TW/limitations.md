@@ -19,7 +19,7 @@
 
 ## 渲染與音訊
 
-- 只在使用 SwiftShader（軟體 WebGL）的 headless Chromium 中量測過。尚未在有 GPU 的瀏覽器、Firefox 或 Safari 上量測。Safari 與 Firefox 尚未測試。
+- 已在使用 SwiftShader（軟體 WebGL）的 headless Chromium，以及一台有 GPU 的筆電（Snapdragon X Surface Laptop 上的 Edge）上量測。尚未在手機上量測。Safari 與 Firefox 尚未測試。
 - 自適應畫質只有一個低畫質等級，而且只會往下切換。20 ms 的門檻尚未在真實裝置上調整過。
 - 3D 舞台是由 240 個元素組成的單一 instanced mesh，搭配簡單的光源。風格刻意克制，尚未針對各段落做美術指導。
 - 2D 備援沒有光照模型，只繪製平面投影。

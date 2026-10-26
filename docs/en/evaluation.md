@@ -146,13 +146,21 @@ Override with `?quality=full` or `?quality=reduced` (for example to measure).
 
 ## Real hardware
 
-**Not measured yet.** No GPU-backed browser or phone has been measured. This
-table will be filled with measured values only.
+Measured by the project owner on 2026-10-26 on the public demo (demo mode),
+one full performance per row, values read from the in-app review. Each value
+comes from one run; no phone has been measured yet.
 
-| Device | Browser | GL renderer | WebGL full | WebGL auto | Canvas2D |
-| --- | --- | --- | --- | --- | --- |
-| GPU desktop | — | — | not measured | not measured | not measured |
-| Mid-range phone | — | — | not measured | not measured | not measured |
+| Device | Browser | WebGL full | WebGL auto | Canvas2D |
+| --- | --- | --- | --- | --- |
+| Microsoft Surface Laptop 7th Edition, Snapdragon X X1P64100 (10 cores, 3.4 GHz), Windows 11 (ARM64) | Microsoft Edge | **68 fps**, p95 18.6 ms | **68 fps**, p95 18.9 ms, stayed at full quality | not measured |
+| Mid-range phone | — | not measured | not measured | not measured |
+
+**What this means.** On this laptop the full stage runs within the 20 ms p95
+budget, so auto keeps full quality, as intended. The p95 is close to the
+budget (about 1 ms under), so a slower integrated GPU, a larger window or a
+busy machine would likely switch to reduced quality. The display's refresh
+rate and the window size were not recorded, and an average of 68 fps shows the
+display is faster than 60 Hz; the GL renderer string was not recorded either.
 
 How to measure:
 
