@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-10-26T09:00:51.343Z",
+  "capturedAt": "2026-10-26T15:28:09.782Z",
   "browser": "Chromium 153.0.8010.12 headless, WebGL via SwiftShader",
   "missing": [],
   "frames": {
@@ -40,16 +40,16 @@
     },
     "drift": {
       "file": "drift.png",
-      "section": "Drift",
-      "beat": 14.4,
-      "example": 2,
+      "section": "Night",
+      "beat": 19.2,
+      "example": 1,
       "endsSilent": false
     },
     "release": {
       "file": "release.png",
-      "section": "Ebb",
-      "beat": 94.4,
-      "example": 2,
+      "section": "Afterglow",
+      "beat": 123.2,
+      "example": 1,
       "endsSilent": false
     }
   }
