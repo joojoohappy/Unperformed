@@ -9,6 +9,7 @@
  */
 import type { Interpretation, InterpretedPhase } from "./interpretation";
 import type { Mood } from "./schema";
+import { demoSet, type PropKind } from "./stageSet";
 
 export type Locale = "en" | "zh-TW";
 
@@ -16,7 +17,7 @@ type Cue = "order" | "chaos" | "silence" | "climax" | "light" | "dark" | "tender
 
 const LEXICON: Record<Cue, RegExp> = {
   order: /\b(order|ordered|perfect|symmetr\w*|grid|calm|still(ness)?|precise|discipline\w*)\b|秩序|完美|整齊|對稱|平靜|規律|精準/i,
-  chaos: /\b(chaos|chaotic|collapse\w*|break\w*|broke|shatter\w*|storm|fall\w*|disorder|crumbl\w*|unravel\w*)\b|混亂|崩|瓦解|破碎|碎裂|失序|失控|坍塌|風暴/i,
+  chaos: /\b(chaos|chaotic|collapse\w*|break(?!s?\s+through)\w*|broke|shatter\w*|storm|fall\w*|disorder|crumbl\w*|unravel\w*)\b|混亂|崩|瓦解|破碎|碎裂|失序|失控|坍塌|風暴/i,
   silence: /\b(silen\w*|quiet|nothing(ness)?|void|empty|stillness at the end|hush)\b|寂靜|安靜|沉默|靜默|無聲|虛無|靜止|空無/i,
   climax: /\b(explo\w*|burst|peak|climax|erupt\w*|release)\b|爆|炸|高潮|噴發|釋放|頂點/i,
   light: /\b(light|dawn|sunrise|hope|bloom\w*|rise|rising|glow)\b|光|黎明|日出|破曉|希望|綻放|升起/i,
@@ -83,6 +84,7 @@ const L = {
       cues: (c: string) => `Matched cues (demo rules): ${c}.`,
       none: "No known cues matched; using the default arc (demo rules).",
       mood: (m: string) => `Mood read as: ${m}.`,
+      set: (s: string, n: number) => `Stage set: ${s} (${n} named in the idea; describe more for a fuller stage).`,
       constraint: (c: string) => `Proposed constraint: ${c}`
     },
     constraints: { "ending-silence": "End in complete silence.", "opening-order": "Open in perfect order." },
@@ -130,6 +132,7 @@ const L = {
       cues: (c: string) => `比對到的線索（示範規則）：${c}。`,
       none: "沒有比對到已知線索，使用預設弧線（示範規則）。",
       mood: (m: string) => `判讀出的情緒：${m}。`,
+      set: (s: string, n: number) => `舞台道具：${s}（構想中直接提到 ${n} 項；描述越多，舞台越豐富）。`,
       constraint: (c: string) => `建議的限制條件：${c}`
     },
     constraints: { "ending-silence": "以完全的寂靜結束。", "opening-order": "以完美的秩序開場。" },
@@ -137,6 +140,11 @@ const L = {
     arrow: " → "
   }
 } as const;
+
+const PROP_LABEL: Record<Locale, Record<PropKind, string>> = {
+  en: { pillars: "pillars", monolith: "monolith", ring: "ring of light", beam: "light beams", strings: "light strings", lasers: "lasers", screens: "LED screens", words: "projected words", shards: "shards", haze: "haze" },
+  "zh-TW": { pillars: "柱子", monolith: "石碑", ring: "光環", beam: "光束", strings: "光絲", lasers: "雷射", screens: "LED 螢幕", words: "投影文字", shards: "碎片", haze: "霧" }
+};
 
 const MOOD_LABEL: Record<Locale, Record<Mood, string>> = {
   en: { serene: "serene", tense: "tense", melancholic: "melancholic", euphoric: "euphoric", ominous: "ominous", tender: "tender", defiant: "defiant" },
@@ -236,10 +244,20 @@ export function demoInterpret({ intent, mood: moodHint, locale }: DemoPlanInput)
   if (endsSilent) constraints.push({ kind: "ending-silence", text: S.constraints["ending-silence"] });
   if (has("order") && arc === "collapse") constraints.push({ kind: "opening-order", text: S.constraints["opening-order"] });
 
+  // The set: pieces the idea names, plus what its arc implies.
+  const implied: Record<ArcKind, PropKind[]> = {
+    collapse: ["pillars", "monolith", "strings", "shards"],
+    dawn: ["ring", "beam"],
+    flow: ["strings"],
+    generic: ["ring"]
+  };
+  const { set, named } = demoSet(intent, implied[arc]);
+
   const climaxIndex = phases.findIndex((p) => p.archetype === "climax");
   const understood = [
     S.understood.arc(phases.map((p) => p.name).join(S.arrow)),
     cues.length ? S.understood.cues(cues.map((c) => CUE_LABEL[locale][c]).join(locale === "en" ? ", " : "、")) : S.understood.none,
+    S.understood.set(set.pieces.map((p) => PROP_LABEL[locale][p.kind]).join(locale === "en" ? ", " : "、"), named.length),
     S.understood.mood(MOOD_LABEL[locale][mood]),
     ...constraints.map((c) => S.understood.constraint(c.text))
   ].slice(0, 5);
@@ -250,6 +268,7 @@ export function demoInterpret({ intent, mood: moodHint, locale }: DemoPlanInput)
     understood,
     mood,
     palette: PALETTES[mood],
+    set,
     tempoBpm: arc === "collapse" ? 120 : arc === "flow" ? 96 : 108,
     phases,
     climax: climaxIndex >= 0 ? { phaseIndex: climaxIndex, release: "staggered", holdBeats: 4 } : null,

@@ -4,15 +4,44 @@
   "understood": [
     "Arc: Order → Tremor → Fracture → Collapse → Silence.",
     "Matched cues (demo rules): order, collapse, silence.",
+    "Stage set: pillars, monolith, light beams, light strings, shards, haze (1 named in the idea; describe more for a fuller stage).",
     "Mood read as: tense.",
-    "Proposed constraint: End in complete silence.",
-    "Proposed constraint: Open in perfect order."
+    "Proposed constraint: End in complete silence."
   ],
   "mood": "tense",
   "palette": {
     "base": "#c9d3e0",
     "accent": "#e0573a",
     "climax": "#ff3b1f"
+  },
+  "set": {
+    "pieces": [
+      {
+        "kind": "pillars",
+        "amount": 0.5
+      },
+      {
+        "kind": "monolith",
+        "amount": 0.5
+      },
+      {
+        "kind": "beam",
+        "amount": 0.5
+      },
+      {
+        "kind": "strings",
+        "amount": 0.5
+      },
+      {
+        "kind": "shards",
+        "amount": 0.82
+      },
+      {
+        "kind": "haze",
+        "amount": 0.5
+      }
+    ],
+    "floor": "mirror"
   },
   "tempoBpm": 120,
   "phases": [

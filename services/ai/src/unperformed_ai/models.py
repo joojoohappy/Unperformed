@@ -22,6 +22,8 @@ RequestKind = Literal[
     "climax-burst", "end-loud", "add-strobe", "warmer", "warm-ending", "more-chaos", "faster", "slower", "unknown"
 ]
 Locale = Literal["en", "zh-TW"]
+PropKind = Literal["pillars", "monolith", "ring", "beam", "strings", "lasers", "screens", "words", "shards", "haze"]
+Floor = Literal["mirror", "matte", "water"]
 
 Unit = Annotated[float, Field(ge=0, le=1)]
 Hex = Annotated[str, Field(pattern=r"^#[0-9a-fA-F]{6}$")]
@@ -60,6 +62,23 @@ class ConstraintSpec(Camel):
     value: Unit | None = None
 
 
+class SetPiece(Camel):
+    kind: PropKind
+    amount: Unit
+
+
+class StageSet(Camel):
+    pieces: Annotated[list[SetPiece], Field(min_length=1, max_length=10)]
+    floor: Floor
+
+    @model_validator(mode="after")
+    def _unique(self) -> StageSet:
+        kinds = [p.kind for p in self.pieces]
+        if len(kinds) != len(set(kinds)):
+            raise ValueError("each set piece kind may appear once")
+        return self
+
+
 class Interpretation(Camel):
     """The structured creative reading of an idea. The model's only planning output."""
 
@@ -68,6 +87,7 @@ class Interpretation(Camel):
     understood: Annotated[list[Annotated[str, Field(min_length=1, max_length=160)]], Field(min_length=1, max_length=5)]
     mood: Mood
     palette: Palette
+    set: StageSet
     tempo_bpm: Annotated[int, Field(ge=60, le=160)]
     phases: Annotated[list[InterpretedPhase], Field(min_length=3, max_length=6)]
     climax: ClimaxSpec | None

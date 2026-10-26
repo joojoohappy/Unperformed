@@ -1,4 +1,5 @@
 export * from "./schema";
+export * from "./stageSet";
 export * from "./interpretation";
 export * from "./util";
 export * from "./text";

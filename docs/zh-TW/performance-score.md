@@ -32,6 +32,7 @@ Score 中沒有任何可執行的內容。每個欄位都是列舉值或有界�
 | `sections` | 2–8 個 `Section` | 連續且依序排列。 |
 | `constraints` | ≤ 12 個 `Constraint` | 見下文。 |
 | `humanLocked` | string[] | 由人設定的欄位路徑，例如 `s3.camera.move`。AI 不得修改。 |
+| `set` | `StageSet`，選填 | 這個構想的舞台道具。舞台設計出現之前做的 score 會使用預設道具組。見下方。 |
 
 ## Section（段落）
 
@@ -68,6 +69,19 @@ Score 中沒有任何可執行的內容。每個欄位都是列舉值或有界�
 - `release` 只出現在高潮段落，且壓抑拍數短於段落長度；
 - 限制條件 id 不重複。
 
+## Stage set（舞台設計）
+
+`stageSet.ts`。舞台上放哪些道具、每種放多少。舞台用一套固定的程序化道具組把它們做出來；段落類型決定道具怎麼動、怎麼碎裂、怎麼消失。
+
+| 欄位 | 型別 | 說明 |
+| --- | --- | --- |
+| `pieces` | 1–10 個 `{ kind, amount }` | kind 不可重複。`amount` 0–1：數值越大，柱子、碎片、光絲、雷射發射器或螢幕面板越多，石碑或光環越大，光束越多（1、3 或 5 道）。 |
+| `floor` | enum | `mirror`（鏡面）、`water`（水面，倒影較暗較柔）、`matte`（霧面，沒有倒影）。 |
+
+道具種類：`pillars`（成排的水晶柱）、`monolith`（台階上的黑色石碑）、`ring`（懸在上方的光環）、`beam`（從上方打下的光束）、`strings`（細光絲組成的簾幕）、`lasers`（扇形雷射）、`screens`（後牆的 LED 面板）、`words`（用光點拼出的段落名稱）、`shards`（會升起、飛散、落下的水晶碎片）、`haze`（低霧）。
+
+Live AI 在解讀構想時一併挑選道具。示範規則則採用構想中以英文或繁體中文直接提到的道具（例如 "lasers" 或「雷射」、"temple" 或「神殿」、"rain" 或「雨」），一定加上光束與霧，只有在構想提到的道具少於三種時，才補上構想走向所暗示的道具。構想寫得越長、越具體，份量就越多。
+
 ## Interpretation
 
-規劃者的輸出（`interpretation.ts`）：`title`、`summary`、`mood`、`understood`（1–5 行，說明理解到什麼）、`tempoBpm`、3–6 個 `phases`（名稱、原型、權重 1–5、`energyFrom` 與 `energyTo`、幾何形態、聲音質地、備註）、可為 null 的 `climax`（`phaseIndex`、`release`、`holdBeats`）、提議的 `constraints`，以及一行 `strategy`。TypeScript 與 Python 測試共用的有效與無效 fixtures 位於 `packages/performance-core/fixtures/`。
+規劃者的輸出（`interpretation.ts`）：`title`、`summary`、`mood`、`understood`（1–5 行，說明理解到什麼）、`tempoBpm`、3–6 個 `phases`（名稱、原型、權重 1–5、`energyFrom` 與 `energyTo`、幾何形態、聲音質地、備註）、舞台 `set`、可為 null 的 `climax`（`phaseIndex`、`release`、`holdBeats`）、提議的 `constraints`，以及一行 `strategy`。TypeScript 與 Python 測試共用的有效與無效 fixtures 位於 `packages/performance-core/fixtures/`。

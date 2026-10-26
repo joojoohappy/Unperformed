@@ -1,6 +1,7 @@
-import { chooseRenderer, sample, type PerformanceScore, type SampleOptions, type StageFrame } from "@unperformed/performance-core";
+import { chooseRenderer, DEFAULT_SET, sample, type PerformanceScore, type SampleOptions, type StageFrame } from "@unperformed/performance-core";
 import { useEffect, useRef, useState } from "react";
 import { Canvas2DStage } from "./canvas2d";
+import { SetCanvas2DStage } from "./setCanvas";
 import { webglAvailable } from "./detect";
 import { AdaptiveQuality, QUALITY, qualityModeFromSearch, type Quality } from "./quality";
 import type { StageRenderer } from "./types";
@@ -10,7 +11,11 @@ import { wordKey, wordsFor, wordWidth } from "./words";
 // three.js is most of the bundle's weight, and the first screens do not need it:
 // load the WebGL stage on first use, once, and share it between stages.
 let webglModule: Promise<typeof import("./webgl")> | null = null;
-const loadWebGL = () => (webglModule ??= import("./webgl"));
+let setModule: Promise<typeof import("./setWebgl")> | null = null;
+const loadWebGL = (): Promise<new (canvas: HTMLCanvasElement) => StageRenderer> =>
+  sceneMode() === "elements"
+    ? (webglModule ??= import("./webgl")).then((m) => m.WebGLStage)
+    : (setModule ??= import("./setWebgl")).then((m) => m.SetWebGLStage);
 
 export interface FrameStats {
   frames: number;
@@ -47,6 +52,15 @@ function qualityMode() {
 
 /** Once a stage on this page has had to reduce quality, later stages start reduced. */
 let reducedThisPage = false;
+
+/** "set" draws the idea's stage set (the default); "elements" the 0.1 stage of abstract elements. */
+function sceneMode(): "set" | "elements" {
+  try {
+    return new URLSearchParams(location.search).get("scene") === "elements" ? "elements" : "set";
+  } catch {
+    return "set";
+  }
+}
 
 function forceCanvas(): boolean {
   try {
@@ -100,6 +114,7 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
       let last = performance.now();
       let statTick = 0;
       let spelled = "";
+      let staged: unknown = null;
       let captioned = "";
       const loop = () => {
         const t = performance.now();
@@ -115,6 +130,10 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
         if (key !== spelled) {
           spelled = key;
           renderer.setWords(wordsFor(L.score, spell));
+        }
+        if (L.score.set !== staged) {
+          staged = L.score.set;
+          renderer.setStageSet?.(L.score.set ?? DEFAULT_SET);
         }
         const frame = sample(L.score, L.beat(), L.options);
         renderer.render(frame, L.score.seed, L.reducedMotion);
@@ -133,19 +152,19 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
 
     if (caps.name === "webgl") {
       loadWebGL()
-        .then(({ WebGLStage }) => {
+        .then((WebGLStage) => {
           if (disposed) return;
           try {
             start(new WebGLStage(canvas));
           } catch {
-            start(new Canvas2DStage(canvas));
+            start(canvas2D(canvas));
           }
         })
         .catch(() => {
-          if (!disposed) start(new Canvas2DStage(canvas));
+          if (!disposed) start(canvas2D(canvas));
         });
     } else {
-      start(new Canvas2DStage(canvas));
+      start(canvas2D(canvas));
     }
 
     return () => {
@@ -171,6 +190,10 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
       )}
     </div>
   );
+}
+
+function canvas2D(canvas: HTMLCanvasElement): StageRenderer {
+  return sceneMode() === "elements" ? new Canvas2DStage(canvas) : new SetCanvas2DStage(canvas);
 }
 
 /** Write the section's caption when it changes; returns what is now shown. */

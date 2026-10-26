@@ -45,9 +45,18 @@ do.
 - Adaptive quality has one reduced level and only steps down. Its rule was
   tuned once, from iPhone measurements, and measured with one run since; on
   that iPhone it still reduces quality.
-- The 3D stage is a single instanced mesh of 240 elements with simple lights,
-  art-directed per section type.
-- Section names are spelled with only 240 dots. Long names are spelled smaller
+- The stage set is built from a fixed kit of ten procedural pieces. Every idea
+  gets a different selection and amount, but the pieces themselves (their
+  shapes and where they stand) are the same for every idea. Pillars and shards
+  are plain boxes and octahedra with simple lights.
+- Demo rules choose the set from keywords, so an idea that names none of the
+  pieces gets what its arc implies; only Live AI reads the idea as a whole.
+- The stage set has been checked in headless Chromium screenshots at phone and
+  desktop sizes. It has not yet been measured or seen on a real phone; the
+  mirror floor draws the scene twice, at reduced quality too.
+- The 0.1 stage (`?scene=elements`) is a single instanced mesh of 240 elements
+  with simple lights, art-directed per section type.
+- Section names (the `words` piece, and the 0.1 stage) are spelled with only 240 dots. Long names are spelled smaller
   and coarser, and a name longer than about sixteen Latin letters or seven CJK
   characters is not spelled at all (the caption still names it). Glyphs come
   from the device's own fonts, so the dot pattern can differ a little between

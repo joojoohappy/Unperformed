@@ -8,6 +8,16 @@ All notable changes are recorded here. The format follows
 
 ### Added
 
+- Each idea gets its own stage set. The interpretation now chooses set pieces
+  from a kit of ten (crystal pillars, a monolith, a ring of light, beams, light
+  strings, lasers, LED screens, the section's name in dots, shards, haze) and a
+  floor (mirror, water, matte), stored as `set` in the score. A fuller
+  description gives more and larger pieces. The section types act on the set:
+  pillars crack in a fracture and burst at the climax, lasers open and sweep,
+  screens show bars, glitches and flares, everything falls in a release and
+  disappears in silence, leaving one beam. Live AI picks the set; demo rules
+  read it from keywords in English and Traditional Chinese. The new stage is
+  the default; `?scene=elements` shows the 0.1 stage.
 - The stage now says what it is performing. The elements spell each section's
   name in dots (for example "Order", or 「秩序」), and the section type acts on
   the word: it rises in a build, tears down the middle in a fracture, is thrown

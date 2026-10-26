@@ -257,6 +257,7 @@ export function compile(interp: Interpretation, opts: CompileOptions): CompileRe
     seed: opts.seed,
     totalBeats: cursor,
     palette: interp.palette,
+    set: interp.set,
     sections,
     constraints,
     humanLocked: []

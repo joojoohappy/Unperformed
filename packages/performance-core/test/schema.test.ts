@@ -65,6 +65,7 @@ describe("Interpretation contract (LLM output)", () => {
       understood: ["z"],
       mood: "serene",
       palette: { base: "#000000", accent: "#111111", climax: "#ffffff" },
+      set: { pieces: [{ kind: "beam", amount: 0.5 }], floor: "mirror" },
       tempoBpm: 100,
       phases: [
         { name: "a", archetype: "order", weight: 1, energyFrom: 0, energyTo: 0.2, geometry: "grid", sound: "drone", note: "" },

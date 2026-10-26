@@ -4,15 +4,44 @@
   "understood": [
     "結構：秩序 → 顫動 → 斷裂 → 崩落 → 寂靜。",
     "比對到的線索（示範規則）：秩序、崩解、寂靜。",
+    "舞台道具：柱子、石門、光束、光絲、碎片、霧（構想中直接提到 1 項；描述越多，舞台越豐富）。",
     "判讀出的情緒：緊繃。",
-    "建議的限制條件：以完全的寂靜結束。",
-    "建議的限制條件：以完美的秩序開場。"
+    "建議的限制條件：以完全的寂靜結束。"
   ],
   "mood": "tense",
   "palette": {
     "base": "#c9d3e0",
     "accent": "#e0573a",
     "climax": "#ff3b1f"
+  },
+  "set": {
+    "pieces": [
+      {
+        "kind": "pillars",
+        "amount": 0.47
+      },
+      {
+        "kind": "monolith",
+        "amount": 0.47
+      },
+      {
+        "kind": "beam",
+        "amount": 0.47
+      },
+      {
+        "kind": "strings",
+        "amount": 0.47
+      },
+      {
+        "kind": "shards",
+        "amount": 0.78
+      },
+      {
+        "kind": "haze",
+        "amount": 0.47
+      }
+    ],
+    "floor": "mirror"
   },
   "tempoBpm": 120,
   "phases": [

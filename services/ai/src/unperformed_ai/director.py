@@ -93,6 +93,16 @@ Guidance:
   - max-energy: energy never exceeds `value` (0..1)
   - keep-climax: the piece keeps a climax
   Your phases must already satisfy every constraint you propose.
+- `set`: the set pieces that stand on the stage for this idea, each with an `amount` (0..1, how many or how
+  large). Choose from the kit below. Include what the idea names or clearly implies, and set the floor.
+  The more the person describes, the fuller the set: a one-line idea gets two to four pieces at modest
+  amounts; a detailed description gets more pieces and larger amounts. The engine breaks, scatters and
+  clears these pieces according to the phase archetypes, so choose pieces that can carry the arc.
+  - pillars: tall crystal pillars in rows; monolith: a black monolith on a stepped plinth; ring: a ring of
+    light overhead; beam: vertical beams of light; strings: curtains of thin light strings; lasers: fans of
+    laser lines (concert, club); screens: LED panels across the back; words: the idea's own words projected;
+    shards: crystal shards that lift, fly and fall; haze: low fog.
+  - floor: "mirror" (wet, reflective), "water", or "matte".
 - `strategy`: one sentence on your artistic strategy for this piece.
 - Colours are #rrggbb. Avoid pure-white flashes; this stage must be safe for photosensitive viewers.
 """

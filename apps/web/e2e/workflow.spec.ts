@@ -224,6 +224,22 @@ test("2D canvas fallback renders the performance when WebGL is not used", async 
   await expect(page.locator(".hud")).toContainText("canvas2d");
 });
 
+test("the idea chooses its stage set, drawn by both renderers", async ({ page }) => {
+  for (const query of ["", "?renderer=canvas"]) {
+    const errors = watchConsole(page);
+    await fresh(page, query);
+    await page.locator("#intent").fill("An idol concert: lasers and a wall of LED screens burst with the beat, then every light goes out.");
+    await page.getByTestId("compose").click();
+    await expect(page.locator(".app")).toHaveAttribute("data-stage", "compose");
+    await expect(page.locator("main")).toContainText(/Stage set: .*lasers.*LED screens/);
+    await approveAll(page);
+    await page.locator('.stepper button[data-stage="rehearse"]').click();
+    await expect(page.locator(".stage-rehearse")).toHaveAttribute("data-renderer", query ? "canvas2d" : "webgl");
+    await page.waitForTimeout(500);
+    expect(errors).toEqual([]);
+  }
+});
+
 test("rehearsal play starts the whole piece from the beginning", async ({ page }) => {
   await fresh(page);
   await composeExample(page);

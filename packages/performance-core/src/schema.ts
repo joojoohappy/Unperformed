@@ -7,6 +7,7 @@
  * score change but can never inject behaviour into the renderer.
  */
 import { z } from "zod";
+import { StageSet } from "./stageSet";
 
 export const SCHEMA_VERSION = 1 as const;
 
@@ -111,6 +112,8 @@ export const PerformanceScore = z
     seed: z.number().int().min(0).max(2 ** 31 - 1),
     totalBeats: z.number().int().min(16).max(512),
     palette: Palette,
+    /** Set pieces on the stage. Scores made before sets existed have none and get DEFAULT_SET. */
+    set: StageSet.optional(),
     sections: z.array(Section).min(2).max(8),
     constraints: z.array(Constraint).max(12),
     /**

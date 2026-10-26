@@ -53,8 +53,16 @@ dispatches actions to the core's reducer, renders `StageFrame`s and plays sound.
 - **Transport.** The Web Audio clock is the master clock while sound is on;
   the stage asks the transport for the current beat on every animation frame.
   When sound is off or unavailable, a `performance.now()` clock takes over.
-- **Stage.** `stage/layout.ts` turns a frame into per-element transforms for
-  240 instanced elements. `webgl.ts` (three.js, instanced mesh, spot and rim
+- **Stage.** By default the stage draws the idea's stage set (`score.set`).
+  `stage/setLayout.ts` turns a frame and the set into transforms and light
+  levels for each piece: pillars that crack and burst, a monolith that topples,
+  a ring, shards, light strings, laser fans, LED panels with a pattern per
+  section type, the section's name in dots, beams and haze. `setWebgl.ts`
+  (three.js, with a second, upside-down pass under a translucent floor for the
+  mirror and water floors) and `setCanvas.ts` (flat projection) draw it. On a
+  portrait screen the view widens (up to 75°) so the set stays in frame.
+  `?scene=elements` shows the 0.1 stage instead: `stage/layout.ts` turns a
+  frame into per-element transforms for 240 instanced elements. `webgl.ts` (three.js, instanced mesh, spot and rim
   lights, haze) and `canvas2d.ts` (flat projection) draw the same layout. The
   2D renderer is used when WebGL is missing or `?renderer=canvas` is set.
   `stage/look.ts` holds the art direction per section type (light, fog, haze,
@@ -67,7 +75,7 @@ dispatches actions to the core's reducer, renders `StageFrame`s and plays sound.
   its order allow, so an ordered section spells its name and a fracture tears
   it apart. A name too long to spell legibly in 240 dots is left to the
   geometric form. The stage also captions the current section with its name
-  and the note from the interpretation. `webgl.ts` and three.js are loaded on
+  and the note from the interpretation. The three.js stages are loaded on
   demand, so the first screens do not download them.
 - **Audio.** `audio/engine.ts` schedules oscillators, filtered noise and
   envelopes per section: a bed chosen by the sound texture, plus a voice chosen

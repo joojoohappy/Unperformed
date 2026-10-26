@@ -72,6 +72,59 @@
           ],
           "additionalProperties": false
         },
+        "set": {
+          "type": "object",
+          "properties": {
+            "pieces": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "pillars",
+                      "monolith",
+                      "ring",
+                      "beam",
+                      "strings",
+                      "lasers",
+                      "screens",
+                      "words",
+                      "shards",
+                      "haze"
+                    ]
+                  },
+                  "amount": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "kind",
+                  "amount"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 1,
+              "maxItems": 10
+            },
+            "floor": {
+              "type": "string",
+              "enum": [
+                "mirror",
+                "matte",
+                "water"
+              ]
+            }
+          },
+          "required": [
+            "pieces",
+            "floor"
+          ],
+          "additionalProperties": false
+        },
         "sections": {
           "type": "array",
           "items": {

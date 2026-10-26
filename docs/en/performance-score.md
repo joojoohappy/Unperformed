@@ -42,6 +42,7 @@ same guarantees.
 | `sections` | 2–8 `Section` | Contiguous, in order. |
 | `constraints` | ≤ 12 `Constraint` | See below. |
 | `humanLocked` | string[] | Field paths a person set, e.g. `s3.camera.move`. The AI may not change them. |
+| `set` | `StageSet`, optional | The set pieces for this idea. Scores made before stage sets existed get a default set. See below. |
 
 ## Section
 
@@ -79,11 +80,34 @@ Checked in `superRefine` and covered by `test/schema.test.ts`:
   section;
 - constraint ids are unique.
 
+## Stage set
+
+`stageSet.ts`. Which set pieces stand on the stage, and how much of each. The
+stage builds them from a fixed kit of procedural pieces; the section types
+decide how they move, break and disappear.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `pieces` | 1–10 `{ kind, amount }` | Kinds are unique. `amount` 0–1: more pillars, shards, light strings, laser emitters or screen panels, a bigger monolith or ring, more beams (1, 3 or 5). |
+| `floor` | enum | `mirror`, `water` (a darker, softer reflection), `matte` (no reflection). |
+
+Kinds: `pillars` (crystal pillars in rows), `monolith` (a black monolith on
+steps), `ring` (a ring of light overhead), `beam` (beams from above), `strings`
+(curtains of thin light strings), `lasers` (fans of laser lines), `screens` (LED
+panels on the back wall), `words` (the section's name spelled in dots), `shards`
+(crystal shards that lift, fly and fall), `haze` (low fog).
+
+Live AI chooses the set as part of the interpretation. Demo rules take the
+pieces the idea names in English or Traditional Chinese (for example
+"lasers" or 「雷射」, "temple" or 「神殿」, "rain" or 「雨」), always add a beam and
+haze, and add what the idea's arc implies only while the idea names fewer than
+three pieces. The longer and more specific the idea, the larger the amounts.
+
 ## Interpretation
 
 The planner's output (`interpretation.ts`): `title`, `summary`, `mood`,
 `understood` (1–5 lines saying what was understood), `tempoBpm`, 3–6 `phases`
-(name, archetype, weight 1–5, `energyFrom` and `energyTo`, geometry form, sound texture, note), a nullable
+(name, archetype, weight 1–5, `energyFrom` and `energyTo`, geometry form, sound texture, note), the stage `set`, a nullable
 `climax` (`phaseIndex`, `release`, `holdBeats`), proposed `constraints`, and a
 one-line `strategy`. Valid and invalid fixtures shared by the TypeScript and
 Python tests live in `packages/performance-core/fixtures/`.

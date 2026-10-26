@@ -9,6 +9,7 @@
 import { z } from "zod";
 import { REQUEST_KINDS } from "./negotiation";
 import { Archetype, ConstraintKind, GeometryForm, Mood, Palette, ReleaseMode, SoundTexture } from "./schema";
+import { StageSet } from "./stageSet";
 
 const unit = z.number().min(0).max(1);
 
@@ -32,6 +33,8 @@ export const Interpretation = z
     understood: z.array(z.string().min(1).max(160)).min(1).max(5),
     mood: Mood,
     palette: Palette,
+    /** Set pieces for this idea; more described, more pieces. */
+    set: StageSet,
     tempoBpm: z.number().int().min(60).max(160),
     phases: z.array(InterpretedPhase).min(3).max(6),
     climax: z

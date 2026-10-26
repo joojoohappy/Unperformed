@@ -1,4 +1,4 @@
-import type { StageFrame } from "@unperformed/performance-core";
+import type { StageFrame, StageSet } from "@unperformed/performance-core";
 import type { QualitySettings } from "./quality";
 import type { Words } from "./words";
 
@@ -10,5 +10,7 @@ export interface StageRenderer {
   setQuality(q: QualitySettings): void;
   /** Section names as dot targets, by section index (see words.ts). */
   setWords(words: Words): void;
+  /** The set pieces for this idea (score.set); stages that draw no set ignore it. */
+  setStageSet?(set: StageSet): void;
   dispose(): void;
 }
