@@ -20,6 +20,7 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "bench:browser": "node scripts/bench-browser.mjs",
     "media": "node scripts/capture-media.mjs",
+    "eval:live": "node scripts/live-ai-eval.mjs",
     "dev:ai": "cd services/ai && uv run uvicorn unperformed_ai.app:app --port 8787",
     "test:ai": "cd services/ai && uv run pytest && uv run ruff check . && uv run mypy src"
   },
