@@ -7,6 +7,8 @@
 
 一個開源工作室：人與 AI 共同導演，把一個構想變成即時的視聽演出，而主導權始終在人手上。
 
+**[立即試用線上示範](https://joojoohappy.github.io/Unperformed/?lang=zh-TW)**（示範模式，直接在瀏覽器執行，不需帳號或 key）
+
 [English](README.md) · 繁體中文
 
 [![CI](https://github.com/joojoohappy/Unperformed/actions/workflows/ci.yml/badge.svg)](https://github.com/joojoohappy/Unperformed/actions/workflows/ci.yml)
@@ -67,6 +69,10 @@ UNPERFORMED 會把它變成一份 **Performance Score**：一份有型別、經�
 無論你選什麼，都由程式碼套用、鎖定為你的決定並被記住：再次提出時，導演不會重複反對。如果某個請求會打破你核准過的限制條件（「以完全的寂靜結束」），衝突會被攤開，而不是在你背後被處理掉。頻閃請求得到的是安全提示，而不是辯論。
 
 ## 快速開始（示範模式，不需任何憑證）
+
+最快的方式是[線上示範](https://joojoohappy.github.io/Unperformed/?lang=zh-TW)：部署在 GitHub Pages 上的靜態版本，只提供示範模式（Live AI 需要執行中的服務，所以在那裡是關閉的）。網址參數與下方相同，例如 [`?renderer=canvas`](https://joojoohappy.github.io/Unperformed/?renderer=canvas)。
+
+自行在本機執行：
 
 需求：Node.js 20 以上（建議 22）與 pnpm 10。
 
