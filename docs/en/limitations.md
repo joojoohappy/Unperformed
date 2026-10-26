@@ -60,8 +60,9 @@ do.
 
 - One person, one browser. Sessions live in `localStorage`: no accounts, no
   sharing, no server persistence. Export is a JSON download.
-- The Traditional Chinese interface and documents were written alongside the
-  English and have not yet been reviewed by a native editor.
+- The Traditional Chinese terminology, tagline and key interface strings were
+  reviewed with a native speaker (the project owner) in October 2026. The
+  long-form docs have not had a line-by-line edit by a professional editor.
 
 ## Media
 

@@ -157,9 +157,9 @@ the [architecture](docs/en/architecture.md).
 
 ```bash
 pnpm lint && pnpm typecheck
-pnpm test             # core (81) and web unit tests (5)
-pnpm test:e2e         # Playwright, desktop and mobile (16)
-pnpm test:ai          # service: pytest (22), ruff, mypy
+pnpm test             # core (106) and web unit tests (16)
+pnpm test:e2e         # Playwright, desktop and mobile (26)
+pnpm test:ai          # service: pytest (28), ruff, mypy
 pnpm bench            # core timings
 pnpm bench:browser    # bundle size, load, frame rate in headless Chromium
 ```

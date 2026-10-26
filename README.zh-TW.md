@@ -127,9 +127,9 @@ scripts                     benchmark 與媒體擷取
 
 ```bash
 pnpm lint && pnpm typecheck
-pnpm test             # 核心（81）與 web 單元測試（5）
-pnpm test:e2e         # Playwright，桌面與手機（16）
-pnpm test:ai          # 服務：pytest（22）、ruff、mypy
+pnpm test             # 核心（106）與 web 單元測試（16）
+pnpm test:e2e         # Playwright，桌面與手機（26）
+pnpm test:ai          # 服務：pytest（28）、ruff、mypy
 pnpm bench            # 核心耗時
 pnpm bench:browser    # bundle 大小、載入時間、headless Chromium 中的影格率
 ```

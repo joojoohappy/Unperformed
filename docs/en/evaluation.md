@@ -12,7 +12,7 @@ estimated or borrowed. Raw results are in
 
 | Suite | Command | Tests | Result (2026-10-26) |
 | --- | --- | --- | --- |
-| Core unit tests (vitest) | `pnpm --filter @unperformed/performance-core test` | 101 | all pass |
+| Core unit tests (vitest) | `pnpm --filter @unperformed/performance-core test` | 106 | all pass |
 | Web unit tests (vitest) | `pnpm --filter @unperformed/web test` | 16 | all pass |
 | End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 13 × 2 projects = 26 | all pass |
 | Live AI service (pytest) | `pnpm test:ai` | 28 | all pass; ruff and mypy (strict) clean |

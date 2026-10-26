@@ -16,8 +16,6 @@ order. Each is sized to be one focused piece of work.
    GPU-backed desktop and the in-app review on a mid-range phone, and publish
    the numbers (see [evaluation](evaluation.md#real-hardware)). Adaptive
    quality is in place; its thresholds may need tuning once real numbers exist.
-3. **Native review of Traditional Chinese.** Review the interface strings,
-   README and docs with a native editor.
 
 ## Then
 
