@@ -48,8 +48,8 @@ UNPERFORMED 分成三個部分，每個部分只負責一件事。
 Vite、React 18 與 three.js。工作室本身不含創作邏輯：它把動作送進核心的 reducer、渲染 `StageFrame`，並播放聲音。
 
 - **Transport。** 有聲音時，Web Audio 時鐘就是主時鐘；舞台在每個動畫影格向 transport 詢問目前的 beat。聲音關閉或無法使用時，改用 `performance.now()` 時鐘。
-- **舞台。** `stage/layout.ts` 把一個影格轉成 240 個 instanced 元素的變換。`webgl.ts`（three.js、instanced mesh、聚光與輪廓光、霧氣）與 `canvas2d.ts`（平面投影）繪製同一份 layout。沒有 WebGL 或設定 `?renderer=canvas` 時使用 2D 渲染器。
-- **音訊。** `audio/engine.ts` 依段落排程振盪器、濾波噪音與包絡。沒有任何取樣或下載的音檔。`renderOffline` 透過 `OfflineAudioContext` 渲染同一份 score。
+- **舞台。** `stage/layout.ts` 把一個影格轉成 240 個 instanced 元素的變換。`webgl.ts`（three.js、instanced mesh、聚光與輪廓光、霧氣）與 `canvas2d.ts`（平面投影）繪製同一份 layout。沒有 WebGL 或設定 `?renderer=canvas` 時使用 2D 渲染器。`stage/look.ts` 定義每種段落類型的美術指導（燈光、霧、霧氣粒子、地面、動態）；影格中的 `look` 欄位說明使用哪種段落類型，以及轉場已混合到什麼程度。`webgl.ts` 與 three.js 按需載入，因此最初幾個畫面不會下載它們。
+- **音訊。** `audio/engine.ts` 依段落排程振盪器、濾波噪音與包絡：依聲音質地選擇的底層，加上依段落類型選擇的聲部。一切都以 score 的 seed 決定。沒有任何取樣或下載的音檔。`renderOffline` 透過 `OfflineAudioContext` 渲染同一份 score。
 - **AI client。** `ai/director.ts` 選擇示範規則或 Live AI 服務。`ai/live.ts` 在使用任何回應前都以 zod 驗證。
 - **狀態。** Session 與偏好設定保存在 `localStorage`，重新整理後會延續同一個 session。
 - **i18n。** 英文與繁體中文的 typed key 表。核心輸出的是 `Text` 值（`{ key, params }`）而非字串，因此所有訊息（包括歷史紀錄）都會隨介面切換語言。

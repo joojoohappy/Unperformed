@@ -16,6 +16,27 @@ All notable changes are recorded here. The format follows
 - The `setTempo` patch operation, classified `shared` by the authority policy.
 - A shared `request-kinds.json` fixture that keeps the zod and Pydantic request
   kinds in step.
+- Art direction per section type. Order, build, fracture, climax, release,
+  silence and drift each have their own light (a visible key beam, its width
+  and angle), air (fog, haze that rises or settles), floor (gloss, ruled lines)
+  and motion (rows that breathe, elements that climb, a fault line that opens,
+  a radial burst, settling, gathering, a slow current). The timeline frame
+  carries the section type, blended over each transition; both renderers use it.
+- A sound voice per section type, procedural and seeded: a clock for order, a
+  quickening arpeggio and riser for build, stereo glitches over a tritone for
+  fracture, a wide detuned stack with a riser through the held breath and a
+  shimmer after the release for climax, descending FM bells for release, two
+  faint distant tones for silence (explicitly silent sections stay silent), and
+  a drifting chorus for drift.
+- `pnpm media -- stages`: one stage frame per section type and a contact sheet;
+  `assets/demo/stages-0.1.0/` keeps the same capture from 0.1.0.
+
+### Changed
+
+- three.js loads when a stage first appears. Initial JavaScript 784 KB → 339 KB
+  (216 → 105 KB gzip). On SwiftShader the WebGL rate went from 12 to 10 fps at
+  full quality and from 26 to 20 fps at reduced quality with the new art
+  direction.
 
 ## [0.1.0] - 2026-10-26
 

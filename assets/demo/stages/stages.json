@@ -1,0 +1,56 @@
+{
+  "capturedAt": "2026-10-26T06:12:20.726Z",
+  "browser": "Chromium 153.0.8010.12 headless, WebGL via SwiftShader",
+  "missing": [],
+  "frames": {
+    "order": {
+      "file": "order.png",
+      "section": "Order",
+      "beat": 24,
+      "example": 0,
+      "endsSilent": false
+    },
+    "build": {
+      "file": "build.png",
+      "section": "Tremor",
+      "beat": 56.8,
+      "example": 0,
+      "endsSilent": false
+    },
+    "fracture": {
+      "file": "fracture.png",
+      "section": "Fracture",
+      "beat": 84.8,
+      "example": 0,
+      "endsSilent": false
+    },
+    "climax": {
+      "file": "climax.png",
+      "section": "Collapse",
+      "beat": 112.8,
+      "example": 0,
+      "endsSilent": false
+    },
+    "silence": {
+      "file": "silence.png",
+      "section": "Silence",
+      "beat": 140.8,
+      "example": 0,
+      "endsSilent": false
+    },
+    "drift": {
+      "file": "drift.png",
+      "section": "Drift",
+      "beat": 14.4,
+      "example": 2,
+      "endsSilent": false
+    },
+    "release": {
+      "file": "release.png",
+      "section": "Ebb",
+      "beat": 94.4,
+      "example": 2,
+      "endsSilent": false
+    }
+  }
+}

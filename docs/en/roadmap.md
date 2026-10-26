@@ -24,11 +24,12 @@ order. Each is sized to be one focused piece of work.
 - **More negotiation scenarios with real rules:** a rule for whole-palette
   warmth and for slowing down, and section-level tempo or length changes.
   (Warmer ending, more chaos and faster tempo have rules now.)
-- **Art direction per archetype:** distinct geometry behaviour, light rigs and
-  camera language for each section type; better 2D fallback.
-- **Richer procedural sound:** per-mood instruments, a proper reverb, and
-  sound design for the release moment.
-- **Code splitting:** load three.js only for the stage views.
+- **Art direction, further:** camera language per section type, per-mood
+  palettes, and letting reduced quality drop the light beam too on slow
+  devices. (A first pass of light, air and motion per section type shipped
+  after 0.1.0.)
+- **Sound, further:** per-mood instruments and a mix measured on real
+  speakers. (A voice per section type shipped after 0.1.0.)
 - **Sharing:** export and import a score; a read-only link to a performance.
 - **Accessibility audit** with screen reader users; captions or audio
   description for the performance.

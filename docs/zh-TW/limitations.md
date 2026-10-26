@@ -24,7 +24,7 @@
 - 3D 舞台是由 240 個元素組成的單一 instanced mesh，搭配簡單的光源。風格刻意克制，尚未針對各段落做美術指導。
 - 2D 備援沒有光照模型，只繪製平面投影。
 - 聲音由振盪器與濾波噪音合成，音色簡單。
-- JavaScript bundle 是單一 782 KB 的 chunk（gzip 後 216 KB），大部分是 three.js，尚未做 code splitting。
+- three.js 改為按需載入，但仍是每個舞台畫面都需要的 471 KB chunk（gzip 後 119 KB）；它載入完成之前舞台無法渲染。
 
 ## 安全與無障礙
 

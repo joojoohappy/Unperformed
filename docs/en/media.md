@@ -25,6 +25,8 @@ regenerate all of it with `pnpm media`.
 | `unperformed-demo-preview.webp` | Short animated preview for the README | Cut from the MP4 |
 | `unperformed-demo-poster.jpg` | Poster frame | Cut from the MP4 |
 | `capture-manifest.json` | Browser version, sizes, method | Written by the capture script |
+| `stages/<type>.png`, `stages/contact-sheet.png` | One rehearsal-stage frame per section type (order, build, fracture, climax, release, silence, drift), at 60% of the section, from the demo planner's example scores | Real time; `pnpm media -- stages`; `stages/stages.json` says which example and beat |
+| `stages-0.1.0/` | The same capture made from the 0.1.0 code, before per-section art direction, kept for comparison | Real time, same script, same machine |
 
 All captures use **demo mode**: no AI model is called, and the interface says so.
 
@@ -36,7 +38,7 @@ server.
 
 ## How the video was made
 
-Software WebGL cannot render this stage in real time (about 12 fps measured, see
+Software WebGL cannot render this stage in real time (about 10 fps measured, see
 [evaluation](evaluation.md)). Recording the screen in real time would have
 produced a choppy video that misrepresents the app in either direction. So:
 

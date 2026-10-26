@@ -45,8 +45,8 @@ do.
   is deliberately restrained and not yet art-directed per section.
 - The 2D fallback has no lighting model and draws a flat projection.
 - Sound is synthesised from oscillators and filtered noise; timbres are simple.
-- The JavaScript bundle is one 782 KB chunk (216 KB gzip), most of it three.js.
-  There is no code splitting yet.
+- three.js is loaded on demand, but it is still a 471 KB chunk (119 KB gzip)
+  that every stage view needs; the stage cannot render before it arrives.
 
 ## Safety and accessibility
 

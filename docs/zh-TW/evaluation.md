@@ -58,16 +58,18 @@
 
 | | WebGL full | WebGL reduced | WebGL auto | Canvas2D |
 | --- | --- | --- | --- | --- |
-| 首次載入到標題出現 | 108 ms | 83 ms | 108 ms | 85 ms |
-| DOMContentLoaded | 67 ms | 38 ms | 45 ms | 36 ms |
-| 在瀏覽器中編譯 score | 3.0 ms | 2.2 ms | 2.4 ms | 2.7 ms |
-| 演出時的平均影格率 | **12 fps** | **26 fps** | 23 fps | 60 fps |
-| 第 95 百分位影格時間 | 94.5 ms | 45.2 ms | 75.8 ms | 16.9 ms |
+| 首次載入到標題出現 | 100 ms | 69 ms | 82 ms | 74 ms |
+| DOMContentLoaded | 59 ms | 30 ms | 33 ms | 27 ms |
+| 在瀏覽器中編譯 score | 2.1 ms | 2.0 ms | 2.1 ms | 2.2 ms |
+| 演出時的平均影格率 | **10 fps** | **20 fps** | 18 fps | 60 fps |
+| 第 95 百分位影格時間 | 118.7 ms | 59.0 ms | 103.9 ms | 17.0 ms |
 | 結束時的畫質 | full | reduced | reduced | full |
 
-Bundle：一個 784 KB 的 JavaScript 檔（gzip 後 216 KB）與 33 KB 的 CSS（gzip 後 13 KB）。
+Bundle：初始 JavaScript 為 339 KB（gzip 後 105 KB），另有 33 KB 的 CSS（gzip 後 13 KB）。three.js 與 WebGL 舞台是另一個 471 KB 的 chunk（gzip 後 119 KB），在第一次出現舞台時（編排、排練、演出）才載入。拆分之前全部是一個 784 KB 的檔案（gzip 後 216 KB）。
 
-**這代表什麼。** 12 fps 是 CPU 模擬 GPU 的結果，是下限，而不是在一般電腦上的體驗。在這裡低畫質讓影格率加倍，但軟體 WebGL 仍達不到 20 ms 的預算。`auto` 欄混合了切換前後的影格。同一環境中，2D 渲染器能跑到螢幕更新率。載入時間來自本機伺服器，不包含網路傳輸。
+這些數字包含依段落類型的美術指導（可見的光束、地面格線與移動的霧氣，見 `apps/web/src/stage/look.ts`）。加入之前，同一個基準測試量到完整畫質 12 fps、低畫質 26 fps。在 SwiftShader 上，每多一個透明表面都要花 CPU 時間；在 GPU 上的成本尚未量測。
+
+**這代表什麼。** 10 fps 是 CPU 模擬 GPU 的結果，是下限，而不是在一般電腦上的體驗。在這裡低畫質讓影格率加倍，但軟體 WebGL 仍達不到 20 ms 的預算。`auto` 欄混合了切換前後的影格。同一環境中，2D 渲染器能跑到螢幕更新率。載入時間來自本機伺服器，不包含網路傳輸。
 
 在同一環境中，把視窗縮成一半（720×450，像素為四分之一）讓完整畫質從 12 fps 提升到 41 fps；而只把元素減半並移除霧氣，大約只多 2 fps。舞台的瓶頸在填充率（fill-bound），所以低畫質也會降低解析度。
 

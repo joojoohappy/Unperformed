@@ -22,6 +22,8 @@
 | `unperformed-demo-preview.webp` | README 用的短動畫預覽 | 從 MP4 剪出 |
 | `unperformed-demo-poster.jpg` | 封面影格 | 從 MP4 剪出 |
 | `capture-manifest.json` | 瀏覽器版本、尺寸、方法 | 由擷取腳本寫入 |
+| `stages/<type>.png`、`stages/contact-sheet.png` | 每種段落類型（order、build、fracture、climax、release、silence、drift）各一張排練舞台影格，取在段落 60% 處，來自示範規劃器的範例 score | 即時；`pnpm media -- stages`；`stages/stages.json` 記錄用了哪個範例與哪一拍 |
+| `stages-0.1.0/` | 用 0.1.0 程式碼做的同一套擷取（加入依段落美術指導之前），保留作為對照 | 即時，同一腳本、同一台機器 |
 
 所有擷取都使用**示範模式**：沒有呼叫任何 AI 模型，介面上也如此標示。
 
@@ -31,7 +33,7 @@
 
 ## 影片的製作方式
 
-軟體 WebGL 無法即時渲染這個舞台（實測約 12 fps，見[評估](evaluation.md)）。即時錄製螢幕會得到斷斷續續的影片，無論如何都無法正確呈現這個應用程式。因此：
+軟體 WebGL 無法即時渲染這個舞台（實測約 10 fps，見[評估](evaluation.md)）。即時錄製螢幕會得到斷斷續續的影片，無論如何都無法正確呈現這個應用程式。因此：
 
 1. **介面步驟**（輸入、點擊、選擇）是實際介面的截圖，每張停留固定時間。
 2. **演出**逐格擷取。Playwright 的虛擬時鐘先暫停，每次前進恰好 1/30 秒，再對舞台截圖。每個影格都是應用程式在時間軸該位置實際渲染的畫面。全黑是在擷取過程中以鍵盤按下的，和使用者操作方式相同。

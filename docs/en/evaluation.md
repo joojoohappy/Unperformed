@@ -90,16 +90,25 @@ on 2026-10-26. Each run played the 76 s demo score for 20 s. `full` and
 
 | | WebGL full | WebGL reduced | WebGL auto | Canvas2D |
 | --- | --- | --- | --- | --- |
-| First load to heading visible | 108 ms | 83 ms | 108 ms | 85 ms |
-| DOMContentLoaded | 67 ms | 38 ms | 45 ms | 36 ms |
-| Score compile in the browser | 3.0 ms | 2.2 ms | 2.4 ms | 2.7 ms |
-| Average frame rate during performance | **12 fps** | **26 fps** | 23 fps | 60 fps |
-| 95th percentile frame time | 94.5 ms | 45.2 ms | 75.8 ms | 16.9 ms |
+| First load to heading visible | 100 ms | 69 ms | 82 ms | 74 ms |
+| DOMContentLoaded | 59 ms | 30 ms | 33 ms | 27 ms |
+| Score compile in the browser | 2.1 ms | 2.0 ms | 2.1 ms | 2.2 ms |
+| Average frame rate during performance | **10 fps** | **20 fps** | 18 fps | 60 fps |
+| 95th percentile frame time | 118.7 ms | 59.0 ms | 103.9 ms | 17.0 ms |
 | Quality at the end | full | reduced | reduced | full |
 
-Bundle: one JavaScript file of 784 KB (216 KB gzip) and 33 KB of CSS (13 KB gzip).
+Bundle: the initial JavaScript is 339 KB (105 KB gzip), plus 33 KB of CSS
+(13 KB gzip). three.js and the WebGL stage are a separate 471 KB chunk (119 KB
+gzip), loaded the first time a stage appears (Compose, Rehearse, Perform).
+Before this split everything was one 784 KB file (216 KB gzip).
 
-**What this means.** 12 fps is what a CPU emulating a GPU achieves; it is a
+These numbers include the art direction per section type (a visible light
+beam, floor lines and moving haze, see `apps/web/src/stage/look.ts`). Before
+it, the same benchmark measured 12 fps full and 26 fps reduced. On SwiftShader
+every extra transparent surface costs CPU time; the cost on a GPU is not
+measured.
+
+**What this means.** 10 fps is what a CPU emulating a GPU achieves; it is a
 floor, not the experience on a normal computer. Reduced quality doubles it
 here, but software WebGL still misses the 20 ms budget. The `auto` column mixes
 the frames before and after the switch. The 2D renderer runs at the display

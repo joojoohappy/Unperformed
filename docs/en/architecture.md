@@ -57,8 +57,14 @@ dispatches actions to the core's reducer, renders `StageFrame`s and plays sound.
   240 instanced elements. `webgl.ts` (three.js, instanced mesh, spot and rim
   lights, haze) and `canvas2d.ts` (flat projection) draw the same layout. The
   2D renderer is used when WebGL is missing or `?renderer=canvas` is set.
+  `stage/look.ts` holds the art direction per section type (light, fog, haze,
+  floor, motion); the frame's `look` field says which section type to use and
+  how far a transition has blended it. `webgl.ts` and three.js are loaded on
+  demand, so the first screens do not download them.
 - **Audio.** `audio/engine.ts` schedules oscillators, filtered noise and
-  envelopes per section. Nothing is sampled or downloaded. `renderOffline`
+  envelopes per section: a bed chosen by the sound texture, plus a voice chosen
+  by the section type. Everything is seeded from the score. Nothing is sampled
+  or downloaded. `renderOffline`
   renders the same score through an `OfflineAudioContext`.
 - **AI client.** `ai/director.ts` chooses demo rules or the Live AI service.
   `ai/live.ts` validates every response with zod before it is used.
