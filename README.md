@@ -7,6 +7,8 @@
 An open-source studio where a person and an AI co-director turn an idea into a
 real-time audiovisual performance, and the person stays in charge.
 
+**[Try the live demo](https://joojoohappy.github.io/Unperformed/)** (demo mode, runs in your browser, no account or key)
+
 English · [繁體中文](README.zh-TW.md)
 
 [![CI](https://github.com/joojoohappy/Unperformed/actions/workflows/ci.yml/badge.svg)](https://github.com/joojoohappy/Unperformed/actions/workflows/ci.yml)
@@ -84,6 +86,13 @@ shown, not resolved behind your back. A strobe request gets a safety notice, not
 a debate.
 
 ## Quick start (demo mode, no credentials)
+
+The quickest way is the [online demo](https://joojoohappy.github.io/Unperformed/): a static build of the studio on
+GitHub Pages, demo mode only (Live AI needs a running service, so it is turned
+off there). Add [`?lang=zh-TW`](https://joojoohappy.github.io/Unperformed/?lang=zh-TW) or
+[`?renderer=canvas`](https://joojoohappy.github.io/Unperformed/?renderer=canvas) to the URL as below.
+
+To run it yourself:
 
 Requirements: Node.js 20 or later (22 recommended) and pnpm 10.
 
