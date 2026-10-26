@@ -1,0 +1,59 @@
+1
+00:00:00,000 --> 00:00:01,600
+UNPERFORMED: imagine something, then direct its existence.
+
+2
+00:00:01,600 --> 00:00:04,700
+IMAGINE: write the idea in plain language. Demo mode uses deterministic rules; no AI model is called.
+
+3
+00:00:04,700 --> 00:00:07,700
+COMPOSE: the idea becomes a typed, validated Performance Score.
+
+4
+00:00:07,700 --> 00:00:10,700
+Constraints stay proposals until a human approves them.
+
+5
+00:00:10,700 --> 00:00:11,650
+NEGOTIATE: ask for a change in your own words.
+
+6
+00:00:11,650 --> 00:00:15,250
+The director objects once, with a reason: hold the light back for 8 beats first.
+
+7
+00:00:15,250 --> 00:00:17,850
+Or combine both ideas. Every option shows exactly what it changes.
+
+8
+00:00:17,850 --> 00:00:20,250
+The human decides. Authority rules are enforced by deterministic code, not by the model.
+
+9
+00:00:20,250 --> 00:00:23,650
+REHEARSE: scrub the timeline and adjust any section by hand.
+
+10
+00:00:23,650 --> 00:00:42,250
+PERFORM: a real-time 3D stage with procedural audio.
+
+11
+00:00:42,250 --> 00:00:47,250
+A human can step in at any moment: blackout, pause, master intensity.
+
+12
+00:01:02,750 --> 00:01:10,250
+The climax holds the light back, then releases: the choice made in negotiation.
+
+13
+00:01:15,250 --> 00:01:24,317
+The ending the human locked: complete silence.
+
+14
+00:01:24,817 --> 00:01:27,217
+REVIEW: a factual record of who decided what, and what changed.
+
+15
+00:01:27,217 --> 00:01:29,017
+Captured from the running app in demo mode. github.com/joojoohappy/Unperformed

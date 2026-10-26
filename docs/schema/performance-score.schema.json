@@ -1,0 +1,423 @@
+{
+  "$ref": "#/definitions/PerformanceScore",
+  "definitions": {
+    "PerformanceScore": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "number",
+          "const": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 400
+        },
+        "mood": {
+          "type": "string",
+          "enum": [
+            "serene",
+            "tense",
+            "melancholic",
+            "euphoric",
+            "ominous",
+            "tender",
+            "defiant"
+          ]
+        },
+        "tempoBpm": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 160
+        },
+        "rootNote": {
+          "type": "integer",
+          "minimum": 36,
+          "maximum": 60
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "totalBeats": {
+          "type": "integer",
+          "minimum": 16,
+          "maximum": 512
+        },
+        "palette": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "accent": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "climax": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          },
+          "required": [
+            "base",
+            "accent",
+            "climax"
+          ],
+          "additionalProperties": false
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^s[0-9]+$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 48
+              },
+              "archetype": {
+                "type": "string",
+                "enum": [
+                  "order",
+                  "build",
+                  "fracture",
+                  "climax",
+                  "release",
+                  "silence",
+                  "drift"
+                ]
+              },
+              "startBeat": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "lengthBeats": {
+                "type": "integer",
+                "minimum": 4,
+                "maximum": 256
+              },
+              "energy": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "to": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "curve": {
+                    "type": "string",
+                    "enum": [
+                      "linear",
+                      "ease-in",
+                      "ease-out",
+                      "step"
+                    ]
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "curve"
+                ],
+                "additionalProperties": false
+              },
+              "lighting": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$"
+                  },
+                  "accent": {
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$"
+                  },
+                  "intensity": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "wash": {
+                    "type": "string",
+                    "enum": [
+                      "cold",
+                      "neutral",
+                      "warm"
+                    ]
+                  },
+                  "flicker": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "key",
+                  "accent",
+                  "intensity",
+                  "wash",
+                  "flicker"
+                ],
+                "additionalProperties": false
+              },
+              "camera": {
+                "type": "object",
+                "properties": {
+                  "move": {
+                    "type": "string",
+                    "enum": [
+                      "static",
+                      "push-in",
+                      "pull-back",
+                      "orbit",
+                      "drift",
+                      "tremor"
+                    ]
+                  },
+                  "speed": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "move",
+                  "speed"
+                ],
+                "additionalProperties": false
+              },
+              "geometry": {
+                "type": "object",
+                "properties": {
+                  "form": {
+                    "type": "string",
+                    "enum": [
+                      "grid",
+                      "lattice",
+                      "shards",
+                      "ring",
+                      "dust",
+                      "void",
+                      "monolith"
+                    ]
+                  },
+                  "order": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "density": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "form",
+                  "order",
+                  "density"
+                ],
+                "additionalProperties": false
+              },
+              "sound": {
+                "type": "object",
+                "properties": {
+                  "texture": {
+                    "type": "string",
+                    "enum": [
+                      "drone",
+                      "pulse",
+                      "noise",
+                      "swell",
+                      "silence"
+                    ]
+                  },
+                  "level": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "pulseEvery": {
+                    "type": "number",
+                    "enum": [
+                      1,
+                      2,
+                      4
+                    ]
+                  },
+                  "pitch": {
+                    "type": "integer",
+                    "minimum": -12,
+                    "maximum": 12
+                  }
+                },
+                "required": [
+                  "texture",
+                  "level",
+                  "pulseEvery",
+                  "pitch"
+                ],
+                "additionalProperties": false
+              },
+              "transition": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "cut",
+                      "fade",
+                      "dissolve",
+                      "blackout"
+                    ]
+                  },
+                  "beats": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8
+                  }
+                },
+                "required": [
+                  "type",
+                  "beats"
+                ],
+                "additionalProperties": false
+              },
+              "release": {
+                "type": "object",
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "immediate",
+                      "held",
+                      "staggered"
+                    ]
+                  },
+                  "holdBeats": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 16
+                  }
+                },
+                "required": [
+                  "mode",
+                  "holdBeats"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "archetype",
+              "startBeat",
+              "lengthBeats",
+              "energy",
+              "lighting",
+              "camera",
+              "geometry",
+              "sound",
+              "transition"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 2,
+          "maxItems": 8
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "ending-silence",
+                  "opening-order",
+                  "no-strobe",
+                  "max-energy",
+                  "keep-climax"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "proposed",
+                  "approved"
+                ]
+              },
+              "owner": {
+                "type": "string",
+                "const": "human"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "text",
+              "status",
+              "owner"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 12
+        },
+        "humanLocked": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 200
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "title",
+        "summary",
+        "mood",
+        "tempoBpm",
+        "rootNote",
+        "seed",
+        "totalBeats",
+        "palette",
+        "sections",
+        "constraints",
+        "humanLocked"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

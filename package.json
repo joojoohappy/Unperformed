@@ -1,0 +1,41 @@
+{
+  "name": "unperformed",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "UNPERFORMED: an open-source studio for directing real-time audiovisual performances with an AI co-director.",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @unperformed/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm --filter @unperformed/web test:e2e",
+    "bench": "node scripts/bench-core.mjs",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "bench:browser": "node scripts/bench-browser.mjs",
+    "media": "node scripts/capture-media.mjs",
+    "dev:ai": "cd services/ai && uv run uvicorn unperformed_ai.app:app --port 8787",
+    "test:ai": "cd services/ai && uv run pytest && uv run ruff check . && uv run mypy src"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.16.0",
+    "@types/node": "22.10.2",
+    "esbuild": "0.21.5",
+    "eslint": "9.16.0",
+    "eslint-plugin-react-hooks": "5.1.0",
+    "globals": "15.13.0",
+    "typescript": "5.6.3",
+    "typescript-eslint": "8.18.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "capturedAt": "2026-10-26T02:21:07.807Z",
+  "app": "apps/web via vite dev server, demo mode (no AI model)",
+  "browser": "Chromium 153.0.8010.12 headless, WebGL via SwiftShader",
+  "video": {
+    "width": 1280,
+    "height": 800,
+    "appViewport": "1280x720",
+    "fps": 30,
+    "seconds": 89.02,
+    "performSeconds": 60,
+    "method": "frame-stepped with Playwright clock; FPS readouts hidden"
+  },
+  "audio": "rendered offline by apps/web/src/audio/engine.ts renderOffline() from the same score; blackout gain applied as in the app",
+  "captions": [
+    "unperformed-demo.en.srt",
+    "unperformed-demo.zh-TW.srt",
+    "burned in: English + Traditional Chinese"
+  ]
+}

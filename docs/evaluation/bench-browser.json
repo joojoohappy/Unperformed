@@ -1,0 +1,56 @@
+{
+  "env": {
+    "chromium": "153.0.8010.12",
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cores": 4,
+    "gl": "SwiftShader (software)",
+    "viewport": "1440x900",
+    "date": "2026-10-26T02:15:01.532Z"
+  },
+  "bundle": [
+    {
+      "file": "index-B3SI4ebh.js",
+      "bytes": 801225,
+      "gzipBytes": 220758
+    },
+    {
+      "file": "index-qhSa-D48.css",
+      "bytes": 33295,
+      "gzipBytes": 12785
+    }
+  ],
+  "results": [
+    {
+      "renderer": "webgl",
+      "firstLoadMs": 123,
+      "domContentLoadedMs": 80,
+      "firstContentfulPaintMs": null,
+      "compileMs": [
+        2.4
+      ],
+      "seconds": 20,
+      "frames": {
+        "frames": 239,
+        "avgFps": 12,
+        "p95FrameMs": 96.2,
+        "renderer": "webgl"
+      }
+    },
+    {
+      "renderer": "canvas",
+      "firstLoadMs": 64,
+      "domContentLoadedMs": 24,
+      "firstContentfulPaintMs": null,
+      "compileMs": [
+        2.1
+      ],
+      "seconds": 20,
+      "frames": {
+        "frames": 1199,
+        "avgFps": 60,
+        "p95FrameMs": 16.9,
+        "renderer": "canvas2d"
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@unperformed/performance-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Performance Score schema, compiler, timeline, authority policy and negotiation engine for UNPERFORMED.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "schema": "UPDATE_FIXTURES=1 vitest run test/contract.test.ts"
+  },
+  "dependencies": {
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "vitest": "2.1.8",
+    "zod-to-json-schema": "3.23.5"
+  }
+}

@@ -1,0 +1,21 @@
+name: Idea or feature / 想法或功能建議
+description: Suggest a change to the workflow, the stage, or the director. / 建議修改工作流程、舞台或導演行為。
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would this let you do? / 這能讓你做到什麼？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal / 提案
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Principles / 原則
+      description: See CONTRIBUTING.md.
+      options:
+        - label: This keeps authority decisions in code and keeps scores data-only. / 權限仍由程式碼決定，score 仍只是資料。
