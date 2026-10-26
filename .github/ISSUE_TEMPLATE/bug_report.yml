@@ -1,0 +1,34 @@
+name: Bug report / 錯誤回報
+description: Something does not work as documented. / 功能與文件描述不符。
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened? / 發生了什麼事？
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Stage / 階段
+      options: [Imagine, Compose, Negotiate, Rehearse, Perform, Review, Live AI service, Other]
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode / 模式
+      options: [Demo mode, Live AI]
+  - type: input
+    id: env
+    attributes:
+      label: Browser, OS, device / 瀏覽器、作業系統、裝置
+      placeholder: Chrome 130, macOS 15, M2
+  - type: textarea
+    id: session
+    attributes:
+      label: Session export (optional) / 匯出的 session（選填）
+      description: Review → Export session JSON. Remove anything private. Never paste an API key.
+      render: json

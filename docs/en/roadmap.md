@@ -1,0 +1,42 @@
+# Roadmap
+
+[繁體中文](../zh-TW/roadmap.md)
+
+The MVP proves the workflow end to end. These are the next steps, in priority
+order. Each is sized to be one focused piece of work.
+
+## Next
+
+1. **Verify Live AI with a real key.** Run the service with `ANTHROPIC_API_KEY`,
+   go through the full workflow, and record real latency, attempts, tokens and
+   cost in [evaluation](evaluation.md). Tune the system prompt on 10–20 varied
+   ideas in both languages. Add an opt-in integration test that runs only when a
+   key is present.
+2. **Measure on real hardware.** Run `pnpm bench:browser` (or the in-app HUD)
+   on a GPU-backed desktop and a mid-range phone, and publish the numbers.
+   Add adaptive quality (fewer elements, no haze) when frames run long.
+3. **Native review of Traditional Chinese.** Review the interface strings,
+   README and docs with a native editor.
+4. **Deploy a public demo.** A static build (`VITE_LIVE_AI=off`) on GitHub
+   Pages, demo mode only.
+
+## Then
+
+- **More negotiation scenarios with real rules:** "make the ending warmer",
+  "more chaos in the fracture", tempo changes. Each needs a testable creative
+  difference, like the climax rule.
+- **Art direction per archetype:** distinct geometry behaviour, light rigs and
+  camera language for each section type; better 2D fallback.
+- **Richer procedural sound:** per-mood instruments, a proper reverb, and
+  sound design for the release moment.
+- **Code splitting:** load three.js only for the stage views.
+- **Sharing:** export and import a score; a read-only link to a performance.
+- **Accessibility audit** with screen reader users; captions or audio
+  description for the performance.
+- **Browser coverage:** Firefox and Safari in CI.
+
+## Not planned
+
+- Executable content in scores (scripts, shaders from a model). The score stays
+  data only. See [design decisions](design-decisions.md).
+- Strobe effects. The 2 Hz cap is a safety rule, not a setting.

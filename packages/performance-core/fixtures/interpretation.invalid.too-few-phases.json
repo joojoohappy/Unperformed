@@ -1,0 +1,52 @@
+{
+  "title": "Order, Undone",
+  "summary": "A study in loss of control: a perfectly ordered stage slowly fails, breaks open at the climax, and ends in silence.",
+  "understood": [
+    "Arc: Order → Tremor → Fracture → Collapse → Silence.",
+    "Matched cues (demo rules): order, collapse, silence.",
+    "Mood read as: tense.",
+    "Proposed constraint: End in complete silence.",
+    "Proposed constraint: Open in perfect order."
+  ],
+  "mood": "tense",
+  "palette": {
+    "base": "#c9d3e0",
+    "accent": "#e0573a",
+    "climax": "#ff3b1f"
+  },
+  "tempoBpm": 120,
+  "phases": [
+    {
+      "name": "Order",
+      "archetype": "order",
+      "weight": 3,
+      "energyFrom": 0.15,
+      "energyTo": 0.25,
+      "geometry": "grid",
+      "sound": "pulse",
+      "note": "A perfect grid, held still. Cold light, a single slow pulse."
+    },
+    {
+      "name": "Tremor",
+      "archetype": "build",
+      "weight": 2,
+      "energyFrom": 0.3,
+      "energyTo": 0.6,
+      "geometry": "lattice",
+      "sound": "drone",
+      "note": "The grid begins to breathe out of time."
+    }
+  ],
+  "climax": null,
+  "constraints": [
+    {
+      "kind": "ending-silence",
+      "text": "End in complete silence."
+    },
+    {
+      "kind": "opening-order",
+      "text": "Open in perfect order."
+    }
+  ],
+  "strategy": "Earn the climax through contrast: keep restraint before the release so the peak lands as a change, not more of the same."
+}
