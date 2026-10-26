@@ -26,6 +26,10 @@ describe("request parsing (demo rules)", () => {
   it.each([
     [EXPLODE, "climax-burst"],
     ["高潮時我要全部爆炸", "climax-burst"],
+    ["高潮的時候，我要一切都炸開。", "climax-burst"],
+    ["讓顏色暖一點。", "warmer"],
+    ["用一聲巨響結尾。", "end-loud"],
+    ["加上頻閃燈。", "add-strobe"],
     ["Add strobe lights", "add-strobe"],
     ["make the ending a loud bang", "end-loud"],
     ["warmer colours please", "warmer"],

@@ -188,10 +188,10 @@ test("Traditional Chinese interface", async ({ page }) => {
   const errors = watchConsole(page);
   await fresh(page, "?lang=zh-TW");
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-TW");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("想像一件事");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("由你親自導演它");
   await composeExample(page);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("秩序，崩解");
-  await expect(page.getByText("導演理解到的內容")).toBeVisible();
+  await expect(page.getByText("導演的理解")).toBeVisible();
   await approveAll(page, "核准");
   await page.getByTestId("to-negotiate").click();
   await page.getByTestId("suggest-1").click();

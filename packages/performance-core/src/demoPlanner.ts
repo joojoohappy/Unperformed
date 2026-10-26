@@ -15,15 +15,15 @@ export type Locale = "en" | "zh-TW";
 type Cue = "order" | "chaos" | "silence" | "climax" | "light" | "dark" | "tender" | "rage" | "water";
 
 const LEXICON: Record<Cue, RegExp> = {
-  order: /\b(order|ordered|perfect|symmetr\w*|grid|calm|still(ness)?|precise|discipline\w*)\b|秩序|完美|整齊|對稱|平靜|規律/i,
-  chaos: /\b(chaos|chaotic|collapse\w*|break\w*|broke|shatter\w*|storm|fall\w*|disorder|crumbl\w*|unravel\w*)\b|混亂|崩|瓦解|破碎|碎裂|失序|風暴/i,
-  silence: /\b(silen\w*|quiet|nothing(ness)?|void|empty|stillness at the end|hush)\b|寂靜|安靜|沉默|無聲|虛無|靜止/i,
-  climax: /\b(explo\w*|burst|peak|climax|erupt\w*|release)\b|爆|高潮|噴發|釋放/i,
-  light: /\b(light|dawn|sunrise|hope|bloom\w*|rise|rising|glow)\b|光|黎明|日出|希望|綻放|升起/i,
-  dark: /\b(dark\w*|night|shadow\w*|black|abyss)\b|黑暗|夜|陰影|深淵/i,
+  order: /\b(order|ordered|perfect|symmetr\w*|grid|calm|still(ness)?|precise|discipline\w*)\b|秩序|完美|整齊|對稱|平靜|規律|精準/i,
+  chaos: /\b(chaos|chaotic|collapse\w*|break\w*|broke|shatter\w*|storm|fall\w*|disorder|crumbl\w*|unravel\w*)\b|混亂|崩|瓦解|破碎|碎裂|失序|失控|坍塌|風暴/i,
+  silence: /\b(silen\w*|quiet|nothing(ness)?|void|empty|stillness at the end|hush)\b|寂靜|安靜|沉默|靜默|無聲|虛無|靜止|空無/i,
+  climax: /\b(explo\w*|burst|peak|climax|erupt\w*|release)\b|爆|炸|高潮|噴發|釋放|頂點/i,
+  light: /\b(light|dawn|sunrise|hope|bloom\w*|rise|rising|glow)\b|光|黎明|日出|破曉|希望|綻放|升起/i,
+  dark: /\b(dark\w*|night|shadow\w*|black|abyss)\b|黑暗|暗|夜|陰影|深淵/i,
   tender: /\b(tender|love|gentle|soft|heart|warm)\b|溫柔|愛|柔軟|心|溫暖/i,
-  rage: /\b(anger|angry|rage|defian\w*|resist\w*|fight)\b|憤怒|反抗|抵抗|怒/i,
-  water: /\b(water|sea|ocean|rain|tide|flow\w*|wave\w*)\b|水|海|雨|潮|流動|波浪/i
+  rage: /\b(anger|angry|rage|defian\w*|resist\w*|fight)\b|憤怒|反抗|抵抗|怒|不屈/i,
+  water: /\b(water|sea|ocean|rain|tide|flow\w*|wave\w*)\b|水|海|雨|潮|河|流動|浪/i
 };
 
 const CUE_LABEL: Record<Locale, Record<Cue, string>> = {
@@ -106,15 +106,15 @@ const L = {
     },
     notes: {
       order: "完美的格線，靜止不動。冷光，一個緩慢的脈動。",
-      tremor: "格線開始不合拍地呼吸。",
+      tremor: "格線開始呼吸，卻不再合拍。",
       fracture: "對齊失效，碎片分離，脈動加倍。",
-      collapse: "一切同時放手。",
-      silence: "光慢慢流失，沒有聲音。",
-      dark: "近乎黑暗中的低鳴。",
+      collapse: "一切同時鬆手。",
+      silence: "光慢慢退去，沒有聲音。",
+      dark: "幾近全暗中的一道低鳴。",
       gather: "微小的光彼此靠近。",
       rise: "光穿透而出。",
-      afterglow: "殘留之物，緩緩冷卻。",
-      drift: "鬆散的粒子無方向地漂移。",
+      afterglow: "留下來的，慢慢冷卻。",
+      drift: "鬆散的粒子沒有方向地漂移。",
       surge: "持續累積的湧浪。",
       ebb: "浪潮退去。"
     },
@@ -122,18 +122,18 @@ const L = {
     summary: {
       collapse: "一則關於失控的習作：完美有序的舞台逐漸失靈，在高潮處崩開，最後歸於寂靜。",
       dawn: "從黑暗中，光逐漸聚集直到穿透，最後沉澱為餘光。",
-      flow: "一首潮汐之作：漂移、湧動、退去。",
-      generic: "一道從靜止升至高峰再回落的弧線。"
+      flow: "一件潮汐之作：漂移、湧動、退去。",
+      generic: "一道從靜止升到高峰、再回落的弧線。"
     },
     understood: {
-      arc: (a: string) => `情緒弧線：${a}。`,
+      arc: (a: string) => `結構：${a}。`,
       cues: (c: string) => `比對到的線索（示範規則）：${c}。`,
       none: "沒有比對到已知線索，使用預設弧線（示範規則）。",
-      mood: (m: string) => `判讀的情緒：${m}。`,
-      constraint: (c: string) => `建議的限制：${c}`
+      mood: (m: string) => `判讀出的情緒：${m}。`,
+      constraint: (c: string) => `建議的限制條件：${c}`
     },
     constraints: { "ending-silence": "以完全的寂靜結束。", "opening-order": "以完美的秩序開場。" },
-    strategy: "以對比贏得高潮：在釋放之前保持克制，讓高峰成為一種轉變，而不是更多的同一件事。",
+    strategy: "用對比贏得高潮：釋放之前保持克制，讓高峰成為一次轉變，而不只是同樣的東西再多一點。",
     arrow: " → "
   }
 } as const;

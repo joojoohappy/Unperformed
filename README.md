@@ -157,7 +157,7 @@ the [architecture](docs/en/architecture.md).
 
 ```bash
 pnpm lint && pnpm typecheck
-pnpm test             # core (77) and web unit tests (5)
+pnpm test             # core (81) and web unit tests (5)
 pnpm test:e2e         # Playwright, desktop and mobile (16)
 pnpm test:ai          # service: pytest (22), ruff, mypy
 pnpm bench            # core timings

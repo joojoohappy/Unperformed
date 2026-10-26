@@ -295,7 +295,7 @@ async function video(browser) {
   const rec = new Recorder(page, framesDir);
 
   // IMAGINE
-  rec.caption("UNPERFORMED: imagine something, then direct its existence.", "UNPERFORMED：想像一件事，然後導演它的存在。");
+  rec.caption("UNPERFORMED: imagine something, then direct its existence.", "UNPERFORMED：這一次，讓你的想像成為真實的舞台，由你親自導演它。");
   await rec.hold(1.6);
   rec.caption("IMAGINE: write the idea in plain language. Demo mode uses deterministic rules; no AI model is called.", "想像：用自然語言寫下構想。示範模式使用確定性規則，不呼叫 AI 模型。");
   const idea = (await page.locator(".example").first().innerText()).trim();
@@ -307,11 +307,11 @@ async function video(browser) {
   await page.getByTestId("compose").click();
   await page.locator(".section-row").first().waitFor();
   await page.waitForTimeout(250);
-  rec.caption("COMPOSE: the idea becomes a typed, validated Performance Score.", "編排：構想成為有型別、經過驗證的 Performance Score。");
+  rec.caption("COMPOSE: the idea becomes a typed, validated Performance Score.", "編排：構想變成一份有型別、經過驗證的 Performance Score。");
   await rec.hold(3.0);
   const constraints = page.locator(".constraint").first();
   await constraints.scrollIntoViewIfNeeded();
-  rec.caption("Constraints stay proposals until a human approves them.", "限制條件在人類核准之前，都只是提議。");
+  rec.caption("Constraints stay proposals until a human approves them.", "限制條件在人核准之前，都只是提議。");
   await rec.hold(1.4);
   await approveAll(page);
   await page.waitForTimeout(200);
@@ -328,17 +328,17 @@ async function video(browser) {
   await round.waitFor();
   await round.scrollIntoViewIfNeeded();
   await page.waitForTimeout(250);
-  rec.caption("The director objects once, with a reason: hold the light back for 8 beats first.", "導演提出一次有理由的反對：先把燈光壓住 8 拍。");
+  rec.caption("The director objects once, with a reason: hold the light back for 8 beats first.", "導演只反對一次，並說明理由：先把燈光壓住 8 拍。");
   await rec.hold(3.6);
   await page.getByTestId("combine").click();
   await page.getByTestId("option-combined").waitFor();
   await page.getByTestId("option-combined").scrollIntoViewIfNeeded();
   await page.waitForTimeout(250);
-  rec.caption("Or combine both ideas. Every option shows exactly what it changes.", "也可以合併兩個想法。每個選項都列出確切的改動。");
+  rec.caption("Or combine both ideas. Every option shows exactly what it changes.", "也可以請導演提出折衷版本。每個選項都列出確切的改動。");
   await rec.hold(2.6);
   await page.getByTestId("choose-ai").click();
   await page.waitForTimeout(250);
-  rec.caption("The human decides. Authority rules are enforced by deterministic code, not by the model.", "由人類決定。權限規則由確定性程式碼執行，而非模型。");
+  rec.caption("The human decides. Authority rules are enforced by deterministic code, not by the model.", "最後由人決定。權限規則由確定性程式碼執行，而不是模型。");
   await rec.hold(2.4);
 
   // REHEARSE
@@ -369,7 +369,7 @@ async function video(browser) {
   const frameCount = Math.ceil(seconds * FPS) + 2;
   for (let i = 0; i < frameCount; i++) {
     const s = i / FPS;
-    if (Math.abs(s - (blackoutAt - 1)) < 1e-6) rec.caption("A human can step in at any moment: blackout, pause, master intensity.", "人類可以隨時介入：全黑、暫停、主亮度。");
+    if (Math.abs(s - (blackoutAt - 1)) < 1e-6) rec.caption("A human can step in at any moment: blackout, pause, master intensity.", "人隨時可以介入：全暗、暫停、調整總亮度。");
     if (Math.abs(s - blackoutAt) < 1e-6) {
       await page.keyboard.press("b");
       blackout = { start: rec.t };
@@ -379,9 +379,9 @@ async function video(browser) {
       blackout.end = rec.t;
     }
     if (Math.abs(s - (blackoutAt + 4)) < 1e-6) rec.endCaption();
-    if (Math.abs(s - Math.round((release - 3.5) * FPS) / FPS) < 1e-6) rec.caption("The climax holds the light back, then releases: the choice made in negotiation.", "高潮先壓住燈光，再釋放：正是協商時做的選擇。");
+    if (Math.abs(s - Math.round((release - 3.5) * FPS) / FPS) < 1e-6) rec.caption("The climax holds the light back, then releases: the choice made in negotiation.", "高潮先壓住燈光再釋放，正是協商時做的選擇。");
     if (Math.abs(s - Math.round((release + 4) * FPS) / FPS) < 1e-6) rec.endCaption();
-    if (Math.abs(s - Math.round((seconds - 9) * FPS) / FPS) < 1e-6) rec.caption("The ending the human locked: complete silence.", "人類鎖定的結尾：完全的寂靜。");
+    if (Math.abs(s - Math.round((seconds - 9) * FPS) / FPS) < 1e-6) rec.caption("The ending the human locked: complete silence.", "人親自鎖定的結尾：完全的寂靜。");
     await page.clock.runFor(1000 / FPS);
     await rec.hold(1 / FPS);
     if (i % 150 === 0) process.stdout.write(`  perform frame ${i}/${frameCount}\n`);
@@ -403,7 +403,7 @@ async function video(browser) {
     }
   });
   await page.waitForTimeout(300);
-  rec.caption("REVIEW: a factual record of who decided what, and what changed.", "回顧：誰決定了什麼、改了什麼的事實紀錄。");
+  rec.caption("REVIEW: a factual record of who decided what, and what changed.", "回顧：誰決定了什麼、改了什麼，都有事實紀錄。");
   await rec.hold(2.4);
   rec.caption("Captured from the running app in demo mode. github.com/joojoohappy/Unperformed", "畫面擷取自實際執行中的應用程式（示範模式）。");
   await rec.hold(1.8);

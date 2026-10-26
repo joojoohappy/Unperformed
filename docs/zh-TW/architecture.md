@@ -32,11 +32,11 @@ UNPERFORMED 分成三個部分，每個部分只負責一件事。
 | --- | --- |
 | `schema.ts` | **Performance Score**：由段落（section）組成，每段包含能量、幾何、燈光、鏡頭、聲音、轉場與釋放（release），另有色盤、限制條件（constraints）與 `humanLocked`。跨欄位規則（段落連續、只有高潮段落可設定 release、id 不重複）在 `superRefine` 中檢查。 |
 | `interpretation.ts` | **Interpretation**：規劃者（規則或模型）唯一會產出的東西。內容小而偏創意（階段、情緒、高潮、提議的限制條件），不含時間計算。使用 `.strict()`，未知欄位會被拒絕。 |
-| `compiler.ts` | Interpretation → Score。以最大餘數法分配小節，依原型（archetype）與情緒推導各段參數，並做出附帶理由的例行「AI 本地決策」（鏡頭運動）。輸出前會先通過驗證。 |
+| `compiler.ts` | Interpretation → Score。以最大餘數法分配小節，依原型（archetype）與情緒推導各段參數，並做出附帶理由的「AI 例行決定」（鏡頭運動）。輸出前會先通過驗證。 |
 | `patch.ts` | 修改 score 的唯一途徑：typed patch 操作、**權限政策**（`authorityOf`），以及全有或全無的 `applyPatch`。 |
 | `constraints.ts` | 每種限制條件都是對 score 的精確判斷式。 |
-| `negotiation.ts` | 修改請求、導演的回應、附帶精確差異的選項、合併選項與 session 記憶。 |
-| `timeline.ts` | `sample(score, beat)` → `StageFrame`。時間的純函式：釋放前的壓抑、轉場、全黑、閃爍上限、鏡頭位置、減少動態效果。 |
+| `negotiation.ts` | 修改請求、導演的回應、附帶精確差異的選項、折衷選項與 session 記憶。 |
+| `timeline.ts` | `sample(score, beat)` → `StageFrame`。時間的純函式：釋放前的壓抑、轉場、全暗、閃爍上限、鏡頭位置、減少動態效果。 |
 | `safety.ts` | 對取樣後的時間軸進行 WCAG 2.3.1 一般閃光檢查。 |
 | `effects.ts` | 渲染器能力宣告與幾何形態的替代鏈。 |
 | `demoPlanner.ts` | 示範模式的確定性規則規劃者（支援英文與繁體中文線索）。 |
@@ -66,5 +66,5 @@ Vite、React 18 與 three.js。工作室本身不含創作邏輯：它把動作�
 2. **編排。** `compile()` → 經驗證的 `PerformanceScore`。限制條件以 `proposed` 狀態出現，由人核准或移除。
 3. **協商。** 請求 → `openRound()` → 附帶精確差異的選項。選定的選項以 `applyPatch` 套用。
 4. **排練。** 拖動時間軸；人的編輯是 `actor: "human"` 的 patch，並成為 `humanLocked`。
-5. **演出。** Transport + `sample()` + 渲染器 + 音訊。暫停、全黑與主亮度都會被記錄為介入。
+5. **演出。** Transport + `sample()` + 渲染器 + 音訊。暫停、全暗與總亮度都會被記錄為介入。
 6. **回顧。** `buildReview()` 讀取事件紀錄以及原始與最終的 score。沒有任何內容是事後生成的。

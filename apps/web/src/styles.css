@@ -164,6 +164,7 @@ textarea {
   background: none;
   border: 0;
   padding: 5px 9px;
+  white-space: nowrap;
   cursor: pointer;
   color: var(--muted);
   font-size: 12px;
@@ -252,6 +253,10 @@ main {
 :lang(zh-TW) .display {
   letter-spacing: 0.02em;
   line-height: 1.15;
+}
+/* The zh-TW tagline is a full sentence; size it so it sits on two lines. */
+:lang(zh-TW) .imagine .display {
+  font-size: clamp(30px, 3vw, 46px);
 }
 
 .lede {
@@ -820,6 +825,10 @@ input[type="range"] {
 .request-row {
   display: flex;
   gap: 10px;
+}
+.request-row .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .request {
   font-size: 16px;

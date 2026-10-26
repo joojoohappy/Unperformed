@@ -101,12 +101,12 @@ export interface DirectorAdvice {
 // 1. Request parsing (demo rules). Live AI mode classifies with an LLM into the same kinds.
 
 const REQUEST_RULES: [RequestKind, RegExp][] = [
-  ["add-strobe", /\b(strobe\w*|flash\w*|blink\w*)\b|閃光|頻閃|閃爍/i],
-  ["end-loud", /\b(loud|bang|big|noise|crash)\b.*\b(end|ending|finale|finish)\b|\b(end|ending|finale|finish)\b.*\b(loud|bang|big|crash)\b|結尾.*(大聲|爆|巨響)|(大聲|巨響).*結尾/i],
-  ["warm-ending", /\b(warm\w*|amber|golden)\b.*\b(end|ending|finale|finish)\b|\b(end|ending|finale|finish)\b.*\b(warm\w*|amber|golden)\b|結尾.*(溫暖|暖)|(溫暖|暖色).*結尾/i],
-  ["climax-burst", /\b(explo\w*|burst|blow (up|out)|everything at once|all at once)\b|爆炸|爆發|炸開|全部.*一起/i],
-  ["warmer", /\b(warm\w*|amber|golden|orange)\b|溫暖|暖色|金色/i],
-  ["more-chaos", /\b(more chaos|chaotic|messier|wilder|more broken|harder)\b|更混亂|再混亂|更亂|更破碎/i],
+  ["add-strobe", /\b(strobe\w*|flash\w*|blink\w*)\b|閃光|頻閃|閃爍|爆閃|閃燈/i],
+  ["end-loud", /\b(loud|bang|big|noise|crash)\b.*\b(end|ending|finale|finish)\b|\b(end|ending|finale|finish)\b.*\b(loud|bang|big|crash)\b|(結尾|收尾|結束).*(大聲|爆|巨響|轟)|(大聲|巨響|轟).*(結尾|收尾|結束)/i],
+  ["warm-ending", /\b(warm\w*|amber|golden)\b.*\b(end|ending|finale|finish)\b|\b(end|ending|finale|finish)\b.*\b(warm\w*|amber|golden)\b|(結尾|收尾).*(溫暖|暖)|(溫暖|暖色).*(結尾|收尾)/i],
+  ["climax-burst", /\b(explo\w*|burst|blow (up|out)|everything at once|all at once)\b|爆炸|爆發|炸開|炸裂|全部.*一起|一口氣.*(爆|釋放)/i],
+  ["warmer", /\b(warm\w*|amber|golden|orange)\b|溫暖|暖色|更暖|暖一點|暖一些|金色|琥珀|橘/i],
+  ["more-chaos", /\b(more chaos|chaotic|messier|wilder|more broken|harder)\b|更混亂|再混亂|更亂|亂一點|更破碎|更失控/i],
   ["faster", /\b(faster|quicker|speed (it )?up|up the tempo|more tempo)\b|加快|快一點|更快/i],
   ["slower", /\b(slower|slow (it )?down|less rushed)\b|放慢|慢一點|更慢/i]
 ];
