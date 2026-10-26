@@ -157,7 +157,7 @@ comes from one run.
 | Device | Browser | WebGL full | WebGL auto | Canvas2D |
 | --- | --- | --- | --- | --- |
 | Microsoft Surface Laptop 7th Edition, Snapdragon X X1P64100 (10 cores, 3.4 GHz), Windows 11 (ARM64) | Microsoft Edge | **68 fps**, p95 18.6 ms | **68 fps**, p95 18.9 ms, stayed at full quality | not measured |
-| Apple iPhone 17 Pro, iOS | Safari | **60 fps**, p95 18 ms | 60 fps, p95 17 ms; 60 fps, p95 17 ms; 59 fps, p95 18 ms; all three switched to reduced quality (first rule, see below) | not measured |
+| Apple iPhone 17 Pro, iOS | Safari | **60 fps**, p95 18 ms | 60 fps, p95 17 ms; 60 fps, p95 17 ms; 59 fps, p95 18 ms; all three switched to reduced quality (first rule); new rule: 60 fps, p95 17 ms, reduced | not measured |
 | Mid-range phone | — | not measured | not measured | not measured |
 
 **What this means.** On this laptop the full stage runs within the 20 ms p95
@@ -172,9 +172,11 @@ ceiling there, and full quality reached it with a p95 of 18 ms, inside the
 budget. The full-quality run was stopped before the end (the review logs a
 stop). The three auto runs used the first rule (one two-second window over
 budget), which reduced quality every time, most likely on short hitches; that
-is why the rule now needs three slow one-second windows in a row. The auto
-column has not been measured again with the new rule, and no mid-range phone
-has been measured.
+is why the rule now needs three slow one-second windows in a row. With the new rule, one auto run (the newest entry in the review)
+gave 60 fps, p95 17 ms, and still switched to reduced quality. So on this
+phone full quality misses the budget for at least three seconds in a row
+somewhere in the piece, even though its p95 over the whole run is 18 ms; which
+section causes it was not recorded. No mid-range phone has been measured.
 
 How to measure:
 
