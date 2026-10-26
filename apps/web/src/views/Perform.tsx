@@ -23,9 +23,16 @@ export function Perform() {
   const statsRef = useRef<FrameStats | null>(null);
   const lastHud = useRef(0);
 
+  const dispatchRef = useRef(dispatch);
+  dispatchRef.current = dispatch;
   useEffect(() => {
     const tr = transport.current;
-    return () => tr.stop();
+    return () => {
+      tr.stop();
+      // Leaving mid-performance (for example through the stepper) still records it.
+      if (phaseRef.current === "running" || phaseRef.current === "paused")
+        dispatchRef.current({ type: "performance", at: Date.now(), phase: "stopped", ...(statsRef.current ? { stats: statsRef.current } : {}) });
+    };
   }, []);
 
   const begin = useCallback(async () => {

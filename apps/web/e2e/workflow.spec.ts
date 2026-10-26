@@ -248,6 +248,16 @@ test("adaptive quality: slow frames reduce the stage and the review records it",
   expect(errors).toEqual([]);
 });
 
+test("leaving a running performance through the stepper still records its frame rate", async ({ page }) => {
+  await fresh(page);
+  await composeExample(page);
+  await page.locator('.stepper button[data-stage="perform"]').click();
+  await page.getByTestId("begin").click();
+  await expect(page.locator(".hud")).toContainText("fps");
+  await page.locator('.stepper button[data-stage="review"]').click();
+  await expect(page.getByTestId("telemetry")).toContainText("(webgl");
+});
+
 test("adaptive quality: ?quality=full keeps full quality", async ({ page }) => {
   await fresh(page, "?quality=full");
   await composeExample(page);
