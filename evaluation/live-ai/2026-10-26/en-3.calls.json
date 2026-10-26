@@ -1,0 +1,268 @@
+{
+  "calls": [
+    {
+      "kind": "interpret",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 7405,
+        "attempts": 1,
+        "inputTokens": 3104,
+        "outputTokens": 723,
+        "estimatedCostUsd": 0.026876
+      },
+      "error": null,
+      "body": {
+        "interpretation": {
+          "title": "Tide, Withdrawn",
+          "summary": "A slow tidal drift gathers into a single surge, then pulls back and drains the stage until nothing remains.",
+          "understood": [
+            "The piece follows a tide: drift, surge, withdrawal.",
+            "The surge is the single peak.",
+            "The tide pulls away rather than crashing to a stop.",
+            "It ends with nothing left: empty, dark, silent."
+          ],
+          "mood": "melancholic",
+          "palette": {
+            "base": "#0a1a24",
+            "accent": "#2f7f8f",
+            "climax": "#9fd8d0"
+          },
+          "tempoBpm": 72,
+          "phases": [
+            {
+              "name": "Drift",
+              "archetype": "drift",
+              "weight": 2,
+              "energyFrom": 0.1,
+              "energyTo": 0.25,
+              "geometry": "dust",
+              "sound": "drone",
+              "note": "Particles sway in slow lateral waves, low drone."
+            },
+            {
+              "name": "Gathering",
+              "archetype": "build",
+              "weight": 2,
+              "energyFrom": 0.25,
+              "energyTo": 0.6,
+              "geometry": "ring",
+              "sound": "swell",
+              "note": "Rings expand and contract like incoming swells, rising."
+            },
+            {
+              "name": "Surge",
+              "archetype": "climax",
+              "weight": 1,
+              "energyFrom": 0.6,
+              "energyTo": 0.9,
+              "geometry": "lattice",
+              "sound": "noise",
+              "note": "The tide breaks forward as a dense lattice wall of noise."
+            },
+            {
+              "name": "Pull Away",
+              "archetype": "release",
+              "weight": 2,
+              "energyFrom": 0.7,
+              "energyTo": 0.15,
+              "geometry": "dust",
+              "sound": "swell",
+              "note": "Structure dissolves and recedes from the camera."
+            },
+            {
+              "name": "Nothing Behind",
+              "archetype": "silence",
+              "weight": 1,
+              "energyFrom": 0.1,
+              "energyTo": 0,
+              "geometry": "void",
+              "sound": "silence",
+              "note": "Empty dark stage, no sound."
+            }
+          ],
+          "climax": {
+            "phaseIndex": 2,
+            "release": "staggered",
+            "holdBeats": 4
+          },
+          "constraints": [
+            {
+              "kind": "ending-silence",
+              "text": "End in darkness and silence, leaving nothing behind.",
+              "value": null
+            }
+          ],
+          "strategy": "Treat energy as water level: let it rise in waves, break once, then drain steadily until the stage is empty and silent."
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 7405,
+          "attempts": 1,
+          "inputTokens": 3104,
+          "outputTokens": 723,
+          "estimatedCostUsd": 0.026876
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2912,
+        "attempts": 1,
+        "inputTokens": 1612,
+        "outputTokens": 108,
+        "estimatedCostUsd": 0.008608
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "climax-burst",
+          "creativeDifference": true,
+          "rationale": "Your strategy has the water break once; a single held breath before the burst makes it land harder. I suggest holding the release for 4 beats at peak, then letting everything explode at once.",
+          "counter": {
+            "releaseMode": "held",
+            "holdBeats": 4
+          }
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2912,
+          "attempts": 1,
+          "inputTokens": 1612,
+          "outputTokens": 108,
+          "estimatedCostUsd": 0.008608
+        }
+      }
+    },
+    {
+      "kind": "combine",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2135,
+        "attempts": 1,
+        "inputTokens": 783,
+        "outputTokens": 83,
+        "estimatedCostUsd": 0.004792
+      },
+      "error": null,
+      "body": {
+        "advice": {
+          "holdBeats": 4,
+          "rationale": "Your full explosion stays intact: maximum density, light, sound and chaos. A 4-beat hold at the peak gives it a brief charged pause first, then the remaining 12 beats release at full force."
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2135,
+          "attempts": 1,
+          "inputTokens": 783,
+          "outputTokens": 83,
+          "estimatedCostUsd": 0.004792
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2504,
+        "attempts": 1,
+        "inputTokens": 1609,
+        "outputTokens": 79,
+        "estimatedCostUsd": 0.008016
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "more-chaos",
+          "creativeDifference": false,
+          "rationale": "Understood: the fracture will get more chaotic, with more disorder in the breakdown while still draining toward the approved silent, dark ending.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2504,
+          "attempts": 1,
+          "inputTokens": 1609,
+          "outputTokens": 79,
+          "estimatedCostUsd": 0.008016
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2457,
+        "attempts": 1,
+        "inputTokens": 1605,
+        "outputTokens": 76,
+        "estimatedCostUsd": 0.00794
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "faster",
+          "creativeDifference": false,
+          "rationale": "Understood: raising the tempo. The phase structure and the silent, dark ending stay as they are; everything simply moves through it more quickly.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2457,
+          "attempts": 1,
+          "inputTokens": 1605,
+          "outputTokens": 76,
+          "estimatedCostUsd": 0.00794
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 3640,
+        "attempts": 1,
+        "inputTokens": 1612,
+        "outputTokens": 234,
+        "estimatedCostUsd": 0.011128
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "warm-ending",
+          "creativeDifference": false,
+          "rationale": "Understood: the ending will shift to warmer colours. The warmth will carry through Pull Away and fade out, so the approved close in darkness and silence stays intact.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 3640,
+          "attempts": 1,
+          "inputTokens": 1612,
+          "outputTokens": 234,
+          "estimatedCostUsd": 0.011128
+        }
+      }
+    }
+  ],
+  "failure": null
+}

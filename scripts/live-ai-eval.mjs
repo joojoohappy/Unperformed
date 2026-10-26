@@ -6,8 +6,9 @@
 //
 // For each example idea (3 in English, 3 in Traditional Chinese) it starts a
 // fresh session, switches to Live AI, composes, approves the proposed
-// constraints, sends the climax request, asks for the combined version when
-// the co-director objects, and opens the review. It saves:
+// constraints, then sends four suggested requests in turn (explode at the
+// climax, more chaos, faster, warm ending), asks for the combined version when
+// the co-director offers one, and resolves each round. It saves:
 //
 //   evaluation/live-ai/<date>/<locale>-<n>.session.json   the session export
 //   evaluation/live-ai/<date>/<locale>-<n>.calls.json     every /api response (meta: latency, attempts, tokens, cost)
@@ -41,6 +42,12 @@ const { chromium } = createRequire(join(web, "package.json"))(
 const SESSION_KEY = "unperformed.session.v1";
 const PREFS_KEY = "unperformed.prefs.v1";
 const APPROVE = { en: "Approve", "zh-TW": "核准" };
+const DISCARD = { en: "Discard", "zh-TW": "捨棄" };
+// The suggested requests sent in order: explode at the climax, more chaos,
+// faster, warm ending (apps/web/src/i18n, negotiate.suggest.N).
+const REQUESTS = [1, 6, 7, 5];
+// Optional comma-separated subset of runs, e.g. UNPERFORMED_EVAL_ONLY=en-2,zh-TW-1.
+const only = process.env.UNPERFORMED_EVAL_ONLY?.split(",").map((t) => t.trim());
 
 async function waitFor(url, what) {
   for (let i = 0; i < 240; i++) {
@@ -60,15 +67,17 @@ const isFatal = (e) =>
   e.code === "not_configured" || /HTTP 40[13]|connection error/.test(e.message);
 
 /**
- * Waits for `locator` to appear, but gives up as soon as the matching /api
- * call has come back as an error: a failed interpret leaves the studio on
- * Imagine, so the next button never appears.
+ * Waits for `ready()` to hold, but gives up as soon as a matching /api call
+ * made after `since` has come back as an error: a failed interpret leaves the
+ * studio on Imagine, so the next button never appears.
  */
-async function until(page, locator, calls, kind, timeoutMs = 180000) {
+async function until(page, ready, calls, kind, since = 0, timeoutMs = 180000) {
   const t0 = Date.now();
   while (Date.now() - t0 < timeoutMs) {
-    if (await locator.count()) return;
-    const failed = calls.find((c) => c.kind === kind && c.status >= 400);
+    if (await ready()) return;
+    const failed = calls
+      .slice(since)
+      .find((c) => c.kind === kind && c.status >= 400);
     if (failed) throw new CallFailed(kind, failed.error);
     await page.waitForTimeout(250);
   }
@@ -84,6 +93,49 @@ class CallFailed extends Error {
     );
     this.code = code;
     this.name = "CallFailed";
+  }
+}
+
+/**
+ * Sends one suggested request, asks for the combined version when the
+ * co-director objects, then resolves the round: combined, the director's
+ * version, keep (for a constraint conflict), or the person's own, whichever
+ * comes first and is allowed.
+ */
+async function negotiateOnce(page, n, calls) {
+  const rounds = page.getByTestId("round");
+  const before = await rounds.count();
+  const since = calls.length;
+  await page.getByTestId(`suggest-${n}`).click();
+  await page.getByTestId("send-request").click();
+  await until(
+    page,
+    async () => (await rounds.count()) > before,
+    calls,
+    "negotiate",
+    since,
+  );
+  const latest = rounds.first();
+  const combine = latest.getByTestId("combine");
+  if (await combine.count()) {
+    const sinceCombine = calls.length;
+    await combine.click();
+    // Only the climax asks the model for the combined version; the rest come
+    // from the rules. Wait for the combined option either way.
+    await until(
+      page,
+      async () => (await latest.getByTestId("choose-combined").count()) > 0,
+      calls,
+      "combine",
+      sinceCombine,
+    );
+  }
+  for (const id of ["combined", "ai", "keep", "human"]) {
+    const b = latest.getByTestId(`choose-${id}`);
+    if ((await b.count()) && (await b.isEnabled())) {
+      await b.click();
+      return;
+    }
   }
 }
 
@@ -111,36 +163,44 @@ async function run(page, locale, n, calls) {
 
   await page.locator(".example").nth(n).click();
   await page.getByTestId("compose").click();
-  await until(page, page.getByTestId("to-negotiate"), calls, "interpret");
-  const approve = page.getByRole("button", {
-    name: APPROVE[locale],
-    exact: true,
-  });
-  while (await approve.count()) await approve.first().click();
-
-  await page.getByTestId("to-negotiate").click();
-  await page.getByTestId("suggest-1").click();
-  await page.getByTestId("send-request").click();
-  await until(page, page.getByTestId("round"), calls, "negotiate");
-
-  if (await page.getByTestId("combine").count()) {
-    await page.getByTestId("combine").click();
-    // Wait for the combine response itself, success or failure, then let the UI settle.
-    for (let i = 0; i < 720 && !calls.some((c) => c.kind === "combine"); i++)
-      await page.waitForTimeout(250);
-    await page.waitForTimeout(500);
-  }
-  for (const id of ["combined", "ai", "human"]) {
-    const b = page.getByTestId(`choose-${id}`);
-    if ((await b.count()) && (await b.isEnabled())) {
-      await b.click();
-      break;
+  await until(
+    page,
+    async () => (await page.getByTestId("to-negotiate").count()) > 0,
+    calls,
+    "interpret",
+  );
+  // Approve every proposed constraint. The engine refuses one the plan does
+  // not satisfy; that one is discarded instead and reported.
+  const blocked = [];
+  const proposed = page.locator("li.constraint.is-proposed");
+  for (let i = 0; i < 10 && (await proposed.count()); i++) {
+    const item = proposed.first();
+    const text = await item.locator(".constraint-text").innerText();
+    if (!blocked.includes(text)) {
+      await item
+        .getByRole("button", { name: APPROVE[locale], exact: true })
+        .click({ timeout: 10000 });
+      await page.waitForTimeout(300);
+      if (
+        (await proposed.count()) &&
+        (await proposed.first().locator(".constraint-text").innerText()) ===
+          text
+      ) {
+        blocked.push(text);
+      }
+      continue;
     }
+    await item
+      .getByRole("button", { name: DISCARD[locale], exact: true })
+      .click({ timeout: 10000 });
   }
-  return page.evaluate(
+  await page.getByTestId("to-negotiate").click();
+  for (const n of REQUESTS) await negotiateOnce(page, n, calls);
+  const session = await page.evaluate(
     (key) => JSON.parse(localStorage.getItem(key)),
     SESSION_KEY,
   );
+  return { session, blocked };
 }
 
 function stats(xs) {
@@ -194,6 +254,9 @@ async function main() {
         const context = await browser.newContext({
           viewport: { width: 1280, height: 900 },
         });
+        // Without a default, a click on a button that never becomes
+        // actionable waits forever.
+        context.setDefaultTimeout(60000);
         const page = await context.newPage();
         const calls = [];
         page.on("response", async (res) => {
@@ -216,13 +279,21 @@ async function main() {
           });
         });
         const tag = `${locale}-${n + 1}`;
+        if (only && !only.includes(tag)) {
+          await context.close();
+          continue;
+        }
         let session = null;
+        let blocked = [];
         let failure = null;
         try {
-          session = await run(page, locale, n, calls);
+          ({ session, blocked } = await run(page, locale, n, calls));
         } catch (e) {
           failure = String(e);
           console.error(`${tag}: ${failure}`);
+          await page
+            .screenshot({ path: join(out, `${tag}.failure.png`) })
+            .catch(() => {});
           if (e instanceof CallFailed && isFatal(e)) fatal = e;
         }
         if (session)
@@ -235,7 +306,20 @@ async function main() {
           JSON.stringify({ calls, failure }, null, 2),
         );
         all.push(...calls.map((c) => ({ ...c, run: tag })));
-        runs.push({ run: tag, ok: !failure, failure });
+        runs.push({
+          run: tag,
+          ok: !failure,
+          failure,
+          interpretation: session?.interpretationSource ?? null,
+          blockedConstraints: blocked,
+          rounds: (session?.rounds ?? []).map((r) => ({
+            request: r.request?.text,
+            requestKind: r.request?.kind,
+            requestSource: r.request?.source?.kind,
+            round: r.kind,
+            chosen: r.resolution?.optionId ?? null,
+          })),
+        });
         console.log(
           `${tag}: ${calls.map((c) => `${c.kind} ${c.status} ${c.meta?.latencyMs ?? "-"}ms`).join(", ")}${failure ? " (run failed)" : ""}`,
         );

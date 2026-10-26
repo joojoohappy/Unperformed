@@ -15,7 +15,7 @@ estimated or borrowed. Raw results are in
 | Core unit tests (vitest) | `pnpm --filter @unperformed/performance-core test` | 106 | all pass |
 | Web unit tests (vitest) | `pnpm --filter @unperformed/web test` | 18 | all pass |
 | End to end (Playwright, desktop 1440×900 and Pixel 7) | `pnpm test:e2e` | 14 × 2 projects = 28 | all pass |
-| Live AI service (pytest) | `pnpm test:ai` | 28 | all pass; ruff and mypy (strict) clean |
+| Live AI service (pytest) | `pnpm test:ai` | 28 (+2 live, opt-in) | all pass; ruff and mypy (strict) clean; the live tests pass against the real API |
 | Lint and types | `pnpm lint && pnpm typecheck` | | clean |
 
 What they cover:
@@ -196,27 +196,65 @@ How to measure:
 
 ## Live AI: model calls, latency and cost
 
-**Not measured.** No API key was available while building the MVP, so no real
-model call has been made. Nothing in this repository reports a real model's
-latency, token usage, cost or output quality.
+Measured on 2026-10-26 against the real Claude API with `claude-opus-5-5`
+(effort `low`, the service default), from the container described above.
+Raw results: [`evaluation/live-ai/2026-10-26/`](../../evaluation/live-ai/2026-10-26/)
+(`summary.json`, and per run the session export and every `/api` response).
 
-What is in place to measure it:
+**How.** `pnpm eval:live` starts the service and the studio, and for each of
+the six example ideas (three in English, three in Traditional Chinese) runs
+the workflow in Live AI mode in headless Chromium: compose, approve the
+proposed constraints, then four requests in turn (explode at the climax, more
+chaos in the fracture, faster, a warmer ending), asking for the combined
+version where one is offered. 36 model calls in all.
 
-- every Live AI response carries `latencyMs`, `attempts`, `inputTokens`,
-  `outputTokens` (summed over all attempts) and `estimatedCostUsd`;
-- the studio records them per session and shows them in the review telemetry
-  (model calls, tokens, cost, latency per call type);
-- the session JSON export contains all of it.
+| Call | Calls | Failures | Latency median | Latency max | Attempts (max) | Input tokens (median) | Output tokens (median / max) | Cost |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Interpret an idea | 6 | 0 | 8.9 s | 10.4 s | 1 | 3,116 | 800 / 932 | $0.171 |
+| Analyse a request | 24 | 0 | 2.9 s | 6.9 s | 1 | 1,631 | 82 / 274 | $0.216 |
+| Combined version (climax) | 6 | 0 | 2.7 s | 3.0 s | 1 | 792 | 102 / 111 | $0.031 |
+| **All** | **36** | **0** | | | | | | **$0.418** |
 
-How to measure (a follow-up task):
+Latency is measured in the service around the API call. Cost is the service's
+estimate from the token counts and the price table in
+`services/ai/src/unperformed_ai/config.py` ($4 / $20 per million input /
+output tokens), so one whole session (interpret, four requests, one combined
+version) costs about $0.07. Output tokens include the model's thinking.
 
-1. Start the service with a key and the studio (`pnpm dev:ai`, `pnpm dev`).
-2. In Live AI mode, run the workflow for a set of ideas (for example the three
-   examples in each language plus your own), with the climax request in each.
-3. Export each session from the review and record the median and maximum
-   latency per call type, attempts, tokens and cost, with the model id and
-   date.
-4. Note any validation retries or fallbacks, which the review records.
+What the runs showed:
+
+- **No retries, no fallbacks.** Every answer passed validation on the first
+  attempt; no call fell back to the rules.
+- **Classification: 24 of 24 correct**, in both languages (climax-burst,
+  more-chaos, faster, warm-ending).
+- **Objections.** The model raised a creative difference on the climax in 5
+  of 6 runs (holding the release 4 beats) and on none of the other requests,
+  as instructed: for those the engine's own rules decide, and they did
+  (more chaos: 2 proposals, 4 agreements; faster: 4 proposals, 2 agreements;
+  warm ending: 4 constraint conflicts with the approved silence, 2 agreements,
+  depending on each plan). Its combined versions held 2 to 4 beats.
+- **Interpretation.** Every plan had 5 or 6 phases, one climax, and only the
+  constraints the idea stated. Strategies and rationales were specific to the
+  idea, in the session's language.
+- **One prompt fix.** In a first pass, the model proposed "open in perfect
+  order" for the "out of total darkness" idea, a constraint the engine
+  refuses because the plan opens in a void. The interpret prompt now defines
+  each constraint kind exactly as the engine checks it; in the run above
+  neither language proposed a wrong constraint. The first-pass response is
+  kept in [`evaluation/live-ai/2026-10-26-before-prompt-fix/`](../../evaluation/live-ai/2026-10-26-before-prompt-fix/).
+
+The opt-in integration test (`UNPERFORMED_LIVE_TESTS=1` with a key,
+`services/ai/tests/test_live.py`) passed in both languages on the same day:
+interpret 8.2 s / 10.1 s, analyse 2.9 s / 7.1 s, combine 2.5 s / 2.6 s.
+
+**What this does not show.** Six ideas and four request types are a small
+sample: the numbers are this day's, from one network location, and latency
+varies with load. Creative quality was read by the developer, not rated by
+users. Ideas outside the examples, and longer sessions, are not measured.
+
+To repeat: set `ANTHROPIC_API_KEY` and run `pnpm eval:live` (it makes billed
+calls, about $0.40 for the whole batch). `UNPERFORMED_EVAL_ONLY=en-2,zh-TW-1`
+runs a subset.
 
 In demo mode the review shows 0 model calls and $0, which is a measurement,
 not a placeholder.

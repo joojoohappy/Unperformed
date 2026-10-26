@@ -7,12 +7,15 @@ do.
 
 ## Live AI
 
-- **Not yet verified against the real API.** The service was built and tested
-  without an API key. The tests replace the HTTP transport with an in-memory
-  fake: they prove the request shape, validation, retries, error mapping and
-  usage accounting, not the creative quality of a real model's answers or the
-  real latency and cost. See [evaluation](evaluation.md) for how to measure
-  them.
+- **Verified against the real API on a small sample only.** On 2026-10-26 the
+  full workflow ran against `claude-opus-5-5` for the six example ideas in both
+  languages: 36 calls, no failures or retries, every request classified
+  correctly (see [evaluation](evaluation.md#live-ai-model-calls-latency-and-cost)).
+  Ideas beyond the examples, other models, and creative quality as judged by
+  users have not been tested.
+- The model's short acknowledgement is written before the engine applies the
+  change, so it can describe the change loosely (for example "more chaos" on a
+  plan with no fracture section).
 - Cost estimates use a static price table in `services/ai/src/unperformed_ai/config.py`.
 - Live AI needs the service to be running. A static deployment can only offer
   demo mode.
@@ -31,8 +34,8 @@ do.
   more chaos in the fracture, and a faster tempo (see
   [negotiation protocol](negotiation-protocol.md#scenarios-with-rules)). The
   rest are constraint conflicts, safety notices or agreements.
-- Live AI classification into the new kinds is tested only against a mocked
-  service; no real model has been run on them yet.
+- Live AI classification into the new kinds has been run against the real
+  model only on the six examples (24 of 24 correct).
 
 ## Rendering and audio
 

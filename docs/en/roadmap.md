@@ -7,11 +7,10 @@ order. Each is sized to be one focused piece of work.
 
 ## Next
 
-1. **Verify Live AI with a real key.** Run the service with `ANTHROPIC_API_KEY`,
-   go through the full workflow, and record real latency, attempts, tokens and
-   cost in [evaluation](evaluation.md). Tune the system prompt on 10–20 varied
-   ideas in both languages. Add an opt-in integration test that runs only when a
-   key is present.
+1. **Broaden the Live AI evaluation.** The six examples have been run against
+   the real API (see [evaluation](evaluation.md#live-ai-model-calls-latency-and-cost)).
+   Next: 10–20 varied ideas of your own in both languages, other requests, and
+   a cheaper model for analysis, compared on the same runs.
 2. **Measure on real hardware.** Run `BENCH_GPU=1 pnpm bench:browser` on a
    GPU-backed desktop and the in-app review on a mid-range phone, and publish
    the numbers (see [evaluation](evaluation.md#real-hardware)). Adaptive

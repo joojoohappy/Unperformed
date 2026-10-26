@@ -126,8 +126,10 @@ labelled "rule-based fallback", and a failed interpretation asks whether to
 continue with demo rules. It never shows a rule-based answer as a model's.
 
 Configuration and error codes: [services/ai/README.md](services/ai/README.md).
-Live AI has been tested against a simulated transport only; see
-[limitations](docs/en/limitations.md).
+Live AI has been run against the real API (`claude-opus-5-5`) on the six
+example ideas: about 9 s to interpret an idea, 3 s per negotiation request,
+about $0.07 per session. See [evaluation](docs/en/evaluation.md#live-ai-model-calls-latency-and-cost)
+and [limitations](docs/en/limitations.md).
 
 ## What is AI and what is not
 

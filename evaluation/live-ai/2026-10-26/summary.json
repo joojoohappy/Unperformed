@@ -1,0 +1,326 @@
+{
+  "date": "2026-10-26",
+  "models": [
+    "claude-opus-5-5"
+  ],
+  "runs": [
+    {
+      "run": "en-1",
+      "ok": true,
+      "failure": null,
+      "interpretation": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "blockedConstraints": [],
+      "rounds": [
+        {
+          "request": "I want everything to explode at the climax.",
+          "requestKind": "climax-burst",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "combined"
+        },
+        {
+          "request": "More chaos in the fracture.",
+          "requestKind": "more-chaos",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "combined"
+        },
+        {
+          "request": "Make it faster.",
+          "requestKind": "faster",
+          "requestSource": "llm",
+          "round": "agreement",
+          "chosen": "human"
+        },
+        {
+          "request": "Make the ending warmer.",
+          "requestKind": "warm-ending",
+          "requestSource": "llm",
+          "round": "constraint-conflict",
+          "chosen": "ai"
+        }
+      ]
+    },
+    {
+      "run": "en-2",
+      "ok": true,
+      "failure": null,
+      "interpretation": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "blockedConstraints": [],
+      "rounds": [
+        {
+          "request": "I want everything to explode at the climax.",
+          "requestKind": "climax-burst",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "combined"
+        },
+        {
+          "request": "More chaos in the fracture.",
+          "requestKind": "more-chaos",
+          "requestSource": "llm",
+          "round": "agreement",
+          "chosen": "human"
+        },
+        {
+          "request": "Make it faster.",
+          "requestKind": "faster",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "ai"
+        },
+        {
+          "request": "Make the ending warmer.",
+          "requestKind": "warm-ending",
+          "requestSource": "llm",
+          "round": "agreement",
+          "chosen": "human"
+        }
+      ]
+    },
+    {
+      "run": "en-3",
+      "ok": true,
+      "failure": null,
+      "interpretation": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "blockedConstraints": [],
+      "rounds": [
+        {
+          "request": "I want everything to explode at the climax.",
+          "requestKind": "climax-burst",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "combined"
+        },
+        {
+          "request": "More chaos in the fracture.",
+          "requestKind": "more-chaos",
+          "requestSource": "llm",
+          "round": "agreement",
+          "chosen": "human"
+        },
+        {
+          "request": "Make it faster.",
+          "requestKind": "faster",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "ai"
+        },
+        {
+          "request": "Make the ending warmer.",
+          "requestKind": "warm-ending",
+          "requestSource": "llm",
+          "round": "constraint-conflict",
+          "chosen": "ai"
+        }
+      ]
+    },
+    {
+      "run": "zh-TW-1",
+      "ok": true,
+      "failure": null,
+      "interpretation": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "blockedConstraints": [],
+      "rounds": [
+        {
+          "request": "高潮的時候，我要一切都炸開。",
+          "requestKind": "climax-burst",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "combined"
+        },
+        {
+          "request": "崩解段落再混亂一點。",
+          "requestKind": "more-chaos",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "combined"
+        },
+        {
+          "request": "節奏再快一點。",
+          "requestKind": "faster",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "ai"
+        },
+        {
+          "request": "讓結尾暖一點。",
+          "requestKind": "warm-ending",
+          "requestSource": "llm",
+          "round": "constraint-conflict",
+          "chosen": "ai"
+        }
+      ]
+    },
+    {
+      "run": "zh-TW-2",
+      "ok": true,
+      "failure": null,
+      "interpretation": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "blockedConstraints": [],
+      "rounds": [
+        {
+          "request": "高潮的時候，我要一切都炸開。",
+          "requestKind": "climax-burst",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "combined"
+        },
+        {
+          "request": "崩解段落再混亂一點。",
+          "requestKind": "more-chaos",
+          "requestSource": "llm",
+          "round": "agreement",
+          "chosen": "human"
+        },
+        {
+          "request": "節奏再快一點。",
+          "requestKind": "faster",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "ai"
+        },
+        {
+          "request": "讓結尾暖一點。",
+          "requestKind": "warm-ending",
+          "requestSource": "llm",
+          "round": "agreement",
+          "chosen": "human"
+        }
+      ]
+    },
+    {
+      "run": "zh-TW-3",
+      "ok": true,
+      "failure": null,
+      "interpretation": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "blockedConstraints": [],
+      "rounds": [
+        {
+          "request": "高潮的時候，我要一切都炸開。",
+          "requestKind": "climax-burst",
+          "requestSource": "llm",
+          "round": "proposal",
+          "chosen": "combined"
+        },
+        {
+          "request": "崩解段落再混亂一點。",
+          "requestKind": "more-chaos",
+          "requestSource": "llm",
+          "round": "agreement",
+          "chosen": "human"
+        },
+        {
+          "request": "節奏再快一點。",
+          "requestKind": "faster",
+          "requestSource": "llm",
+          "round": "agreement",
+          "chosen": "human"
+        },
+        {
+          "request": "讓結尾暖一點。",
+          "requestKind": "warm-ending",
+          "requestSource": "llm",
+          "round": "constraint-conflict",
+          "chosen": "ai"
+        }
+      ]
+    }
+  ],
+  "totalCostUsd": 0.41807200000000005,
+  "byKind": {
+    "interpret": {
+      "calls": 6,
+      "failures": [],
+      "latencyMs": {
+        "n": 6,
+        "median": 8878,
+        "max": 10417
+      },
+      "attempts": {
+        "n": 6,
+        "median": 1,
+        "max": 1
+      },
+      "inputTokens": {
+        "n": 6,
+        "median": 3116,
+        "max": 3133
+      },
+      "outputTokens": {
+        "n": 6,
+        "median": 799.5,
+        "max": 932
+      },
+      "costUsd": 0.171456
+    },
+    "negotiate": {
+      "calls": 24,
+      "failures": [],
+      "latencyMs": {
+        "n": 24,
+        "median": 2936.5,
+        "max": 6857
+      },
+      "attempts": {
+        "n": 24,
+        "median": 1,
+        "max": 1
+      },
+      "inputTokens": {
+        "n": 24,
+        "median": 1631,
+        "max": 1725
+      },
+      "outputTokens": {
+        "n": 24,
+        "median": 81.5,
+        "max": 274
+      },
+      "costUsd": 0.21574800000000005
+    },
+    "combine": {
+      "calls": 6,
+      "failures": [],
+      "latencyMs": {
+        "n": 6,
+        "median": 2718.5,
+        "max": 3005
+      },
+      "attempts": {
+        "n": 6,
+        "median": 1,
+        "max": 1
+      },
+      "inputTokens": {
+        "n": 6,
+        "median": 792,
+        "max": 815
+      },
+      "outputTokens": {
+        "n": 6,
+        "median": 102,
+        "max": 111
+      },
+      "costUsd": 0.030867999999999996
+    }
+  }
+}

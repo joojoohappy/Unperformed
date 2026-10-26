@@ -99,7 +99,7 @@ pnpm dev                                 # 另開一個終端機
 
 在頂端列把模式切換為 **Live AI**。模型的輸出會標示模型 id。呼叫失敗時，工作室會明說：協商會改用規則並標示為「規則備援」，解讀失敗則會詢問是否改用示範規則繼續。它絕不會把規則產生的答案說成模型的答案。
 
-設定與錯誤碼見 [services/ai/README.md](services/ai/README.md)。Live AI 目前只以模擬的 transport 測試過；見[已知限制](docs/zh-TW/limitations.md)。
+設定與錯誤碼見 [services/ai/README.md](services/ai/README.md)。Live AI 已對真實 API（`claude-opus-5-5`）以六個範例構想執行過：解讀一個構想約 9 秒，每個協商請求約 3 秒，每個 session 約 $0.07。見[評估](docs/zh-TW/evaluation.md#live-ai模型呼叫延遲與成本)與[已知限制](docs/zh-TW/limitations.md)。
 
 ## 哪些是 AI，哪些不是
 

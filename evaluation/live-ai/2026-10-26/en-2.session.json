@@ -1,0 +1,1824 @@
+{
+  "version": 1,
+  "id": "7adbc7e0-e748-4fd3-8b9b-4178ee75164b",
+  "startedAt": 1793001002174,
+  "locale": "en",
+  "mode": "live",
+  "stage": "negotiate",
+  "intent": {
+    "text": "Out of total darkness, light slowly gathers until it breaks through.",
+    "mood": null,
+    "durationSec": 75
+  },
+  "interpretation": {
+    "title": "Gathering Light",
+    "summary": "The piece opens in total darkness and silence. Faint particles of light appear and slowly accumulate, drawing together into a ring that tightens and brightens until the light breaks through in a single climax, then settles into a sustained glow.",
+    "understood": [
+      "The piece begins in total darkness.",
+      "Light gathers slowly and gradually, not suddenly.",
+      "The arc builds steadily toward one breakthrough moment.",
+      "The breakthrough is the peak of the piece.",
+      "No specific ending was requested beyond the breakthrough."
+    ],
+    "mood": "defiant",
+    "palette": {
+      "base": "#05060a",
+      "accent": "#c8a45a",
+      "climax": "#ffe2b0"
+    },
+    "tempoBpm": 72,
+    "phases": [
+      {
+        "name": "Total Darkness",
+        "archetype": "silence",
+        "weight": 2,
+        "energyFrom": 0,
+        "energyTo": 0.05,
+        "geometry": "void",
+        "sound": "silence",
+        "note": "Black stage, no sound; a long held stillness."
+      },
+      {
+        "name": "First Motes",
+        "archetype": "drift",
+        "weight": 3,
+        "energyFrom": 0.05,
+        "energyTo": 0.25,
+        "geometry": "dust",
+        "sound": "drone",
+        "note": "Sparse faint particles appear and drift; a low drone barely emerges."
+      },
+      {
+        "name": "Gathering",
+        "archetype": "build",
+        "weight": 4,
+        "energyFrom": 0.25,
+        "energyTo": 0.75,
+        "geometry": "ring",
+        "sound": "swell",
+        "note": "Particles converge into a tightening ring; light and swell intensify slowly."
+      },
+      {
+        "name": "Breakthrough",
+        "archetype": "climax",
+        "weight": 2,
+        "energyFrom": 0.75,
+        "energyTo": 1,
+        "geometry": "monolith",
+        "sound": "pulse",
+        "note": "The gathered light breaks through as a solid bright form; warm, not white."
+      },
+      {
+        "name": "Afterglow",
+        "archetype": "release",
+        "weight": 2,
+        "energyFrom": 0.7,
+        "energyTo": 0.45,
+        "geometry": "ring",
+        "sound": "drone",
+        "note": "Light remains present and steady, settling into a warm glow."
+      }
+    ],
+    "climax": {
+      "phaseIndex": 3,
+      "release": "held",
+      "holdBeats": 8
+    },
+    "constraints": [],
+    "strategy": "Let the darkness last long enough to be felt, then build light with patient accumulation so the held breakthrough lands as earned rather than sudden."
+  },
+  "interpretationSource": {
+    "kind": "llm",
+    "model": "claude-opus-5-5"
+  },
+  "originalScore": {
+    "schemaVersion": 1,
+    "title": "Gathering Light",
+    "summary": "The piece opens in total darkness and silence. Faint particles of light appear and slowly accumulate, drawing together into a ring that tightens and brightens until the light breaks through in a single climax, then settles into a sustained glow.",
+    "mood": "defiant",
+    "tempoBpm": 72,
+    "rootNote": 43,
+    "seed": 1538684157,
+    "totalBeats": 92,
+    "palette": {
+      "base": "#05060a",
+      "accent": "#c8a45a",
+      "climax": "#ffe2b0"
+    },
+    "sections": [
+      {
+        "id": "s1",
+        "name": "Total Darkness",
+        "archetype": "silence",
+        "startBeat": 0,
+        "lengthBeats": 16,
+        "energy": {
+          "from": 0,
+          "to": 0.02,
+          "curve": "ease-out"
+        },
+        "lighting": {
+          "key": "#05060a",
+          "accent": "#c8a45a",
+          "intensity": 0.025,
+          "wash": "neutral",
+          "flicker": 0
+        },
+        "camera": {
+          "move": "static",
+          "speed": 0
+        },
+        "geometry": {
+          "form": "void",
+          "order": 0.6,
+          "density": 0.15
+        },
+        "sound": {
+          "texture": "silence",
+          "level": 0,
+          "pulseEvery": 4,
+          "pitch": 0
+        },
+        "transition": {
+          "type": "fade",
+          "beats": 4
+        }
+      },
+      {
+        "id": "s2",
+        "name": "First Motes",
+        "archetype": "drift",
+        "startBeat": 16,
+        "lengthBeats": 20,
+        "energy": {
+          "from": 0.05,
+          "to": 0.25,
+          "curve": "linear"
+        },
+        "lighting": {
+          "key": "#05060a",
+          "accent": "#c8a45a",
+          "intensity": 0.438,
+          "wash": "neutral",
+          "flicker": 0.05
+        },
+        "camera": {
+          "move": "drift",
+          "speed": 0.34
+        },
+        "geometry": {
+          "form": "dust",
+          "order": 0.5,
+          "density": 0.5
+        },
+        "sound": {
+          "texture": "drone",
+          "level": 0.45,
+          "pulseEvery": 4,
+          "pitch": -5
+        },
+        "transition": {
+          "type": "dissolve",
+          "beats": 4
+        }
+      },
+      {
+        "id": "s3",
+        "name": "Gathering",
+        "archetype": "build",
+        "startBeat": 36,
+        "lengthBeats": 24,
+        "energy": {
+          "from": 0.25,
+          "to": 0.75,
+          "curve": "ease-in"
+        },
+        "lighting": {
+          "key": "#05060a",
+          "accent": "#c8a45a",
+          "intensity": 0.813,
+          "wash": "neutral",
+          "flicker": 0.05
+        },
+        "camera": {
+          "move": "push-in",
+          "speed": 0.55
+        },
+        "geometry": {
+          "form": "ring",
+          "order": 0.8,
+          "density": 0.8
+        },
+        "sound": {
+          "texture": "swell",
+          "level": 0.75,
+          "pulseEvery": 2,
+          "pitch": 5
+        },
+        "transition": {
+          "type": "dissolve",
+          "beats": 4
+        }
+      },
+      {
+        "id": "s4",
+        "name": "Breakthrough",
+        "archetype": "climax",
+        "startBeat": 60,
+        "lengthBeats": 16,
+        "energy": {
+          "from": 0.75,
+          "to": 1,
+          "curve": "linear"
+        },
+        "lighting": {
+          "key": "#ffe2b0",
+          "accent": "#c8a45a",
+          "intensity": 1,
+          "wash": "neutral",
+          "flicker": 0.35
+        },
+        "camera": {
+          "move": "orbit",
+          "speed": 0.775
+        },
+        "geometry": {
+          "form": "monolith",
+          "order": 0.05,
+          "density": 0.95
+        },
+        "sound": {
+          "texture": "pulse",
+          "level": 0.9,
+          "pulseEvery": 1,
+          "pitch": 7
+        },
+        "transition": {
+          "type": "cut",
+          "beats": 0
+        },
+        "release": {
+          "mode": "held",
+          "holdBeats": 8
+        }
+      },
+      {
+        "id": "s5",
+        "name": "Afterglow",
+        "archetype": "release",
+        "startBeat": 76,
+        "lengthBeats": 16,
+        "energy": {
+          "from": 0.7,
+          "to": 0.45,
+          "curve": "ease-out"
+        },
+        "lighting": {
+          "key": "#05060a",
+          "accent": "#c8a45a",
+          "intensity": 0.775,
+          "wash": "neutral",
+          "flicker": 0.05
+        },
+        "camera": {
+          "move": "pull-back",
+          "speed": 0.595
+        },
+        "geometry": {
+          "form": "ring",
+          "order": 0.45,
+          "density": 0.77
+        },
+        "sound": {
+          "texture": "drone",
+          "level": 0.72,
+          "pulseEvery": 4,
+          "pitch": 0
+        },
+        "transition": {
+          "type": "dissolve",
+          "beats": 4
+        }
+      }
+    ],
+    "constraints": [],
+    "humanLocked": []
+  },
+  "score": {
+    "schemaVersion": 1,
+    "title": "Gathering Light",
+    "summary": "The piece opens in total darkness and silence. Faint particles of light appear and slowly accumulate, drawing together into a ring that tightens and brightens until the light breaks through in a single climax, then settles into a sustained glow.",
+    "mood": "defiant",
+    "tempoBpm": 80,
+    "rootNote": 43,
+    "seed": 1538684157,
+    "totalBeats": 92,
+    "palette": {
+      "base": "#05060a",
+      "accent": "#c8a45a",
+      "climax": "#ffe2b0"
+    },
+    "sections": [
+      {
+        "id": "s1",
+        "name": "Total Darkness",
+        "archetype": "silence",
+        "startBeat": 0,
+        "lengthBeats": 16,
+        "energy": {
+          "from": 0,
+          "to": 0.02,
+          "curve": "ease-out"
+        },
+        "lighting": {
+          "key": "#05060a",
+          "accent": "#c8a45a",
+          "intensity": 0.025,
+          "wash": "neutral",
+          "flicker": 0
+        },
+        "camera": {
+          "move": "static",
+          "speed": 0
+        },
+        "geometry": {
+          "form": "void",
+          "order": 0.6,
+          "density": 0.15
+        },
+        "sound": {
+          "texture": "silence",
+          "level": 0,
+          "pulseEvery": 4,
+          "pitch": 0
+        },
+        "transition": {
+          "type": "fade",
+          "beats": 4
+        }
+      },
+      {
+        "id": "s2",
+        "name": "First Motes",
+        "archetype": "drift",
+        "startBeat": 16,
+        "lengthBeats": 20,
+        "energy": {
+          "from": 0.05,
+          "to": 0.25,
+          "curve": "linear"
+        },
+        "lighting": {
+          "key": "#05060a",
+          "accent": "#c8a45a",
+          "intensity": 0.438,
+          "wash": "neutral",
+          "flicker": 0.05
+        },
+        "camera": {
+          "move": "drift",
+          "speed": 0.34
+        },
+        "geometry": {
+          "form": "dust",
+          "order": 0.5,
+          "density": 0.5
+        },
+        "sound": {
+          "texture": "drone",
+          "level": 0.45,
+          "pulseEvery": 4,
+          "pitch": -5
+        },
+        "transition": {
+          "type": "dissolve",
+          "beats": 4
+        }
+      },
+      {
+        "id": "s3",
+        "name": "Gathering",
+        "archetype": "build",
+        "startBeat": 36,
+        "lengthBeats": 24,
+        "energy": {
+          "from": 0.25,
+          "to": 0.85,
+          "curve": "ease-in"
+        },
+        "lighting": {
+          "key": "#05060a",
+          "accent": "#c8a45a",
+          "intensity": 0.813,
+          "wash": "neutral",
+          "flicker": 0.05
+        },
+        "camera": {
+          "move": "tremor",
+          "speed": 0.75
+        },
+        "geometry": {
+          "form": "ring",
+          "order": 0.55,
+          "density": 0.95
+        },
+        "sound": {
+          "texture": "swell",
+          "level": 0.75,
+          "pulseEvery": 2,
+          "pitch": 5
+        },
+        "transition": {
+          "type": "dissolve",
+          "beats": 4
+        }
+      },
+      {
+        "id": "s4",
+        "name": "Breakthrough",
+        "archetype": "climax",
+        "startBeat": 60,
+        "lengthBeats": 16,
+        "energy": {
+          "from": 1,
+          "to": 1,
+          "curve": "linear"
+        },
+        "lighting": {
+          "key": "#ffe2b0",
+          "accent": "#c8a45a",
+          "intensity": 1,
+          "wash": "neutral",
+          "flicker": 0.35
+        },
+        "camera": {
+          "move": "orbit",
+          "speed": 0.775
+        },
+        "geometry": {
+          "form": "monolith",
+          "order": 0,
+          "density": 1
+        },
+        "sound": {
+          "texture": "pulse",
+          "level": 1,
+          "pulseEvery": 1,
+          "pitch": 7
+        },
+        "transition": {
+          "type": "cut",
+          "beats": 0
+        },
+        "release": {
+          "mode": "held",
+          "holdBeats": 2
+        }
+      },
+      {
+        "id": "s5",
+        "name": "Afterglow",
+        "archetype": "release",
+        "startBeat": 76,
+        "lengthBeats": 16,
+        "energy": {
+          "from": 0.7,
+          "to": 0.45,
+          "curve": "ease-out"
+        },
+        "lighting": {
+          "key": "#2b0e00",
+          "accent": "#c8a45a",
+          "intensity": 0.775,
+          "wash": "warm",
+          "flicker": 0.05
+        },
+        "camera": {
+          "move": "pull-back",
+          "speed": 0.595
+        },
+        "geometry": {
+          "form": "ring",
+          "order": 0.45,
+          "density": 0.77
+        },
+        "sound": {
+          "texture": "drone",
+          "level": 0.72,
+          "pulseEvery": 4,
+          "pitch": 0
+        },
+        "transition": {
+          "type": "dissolve",
+          "beats": 4
+        }
+      }
+    ],
+    "constraints": [],
+    "humanLocked": [
+      "s3.camera.move",
+      "s3.camera.speed",
+      "s3.energy.to",
+      "s3.geometry.density",
+      "s3.geometry.order",
+      "s4.energy.from",
+      "s4.geometry.density",
+      "s4.geometry.order",
+      "s4.lighting.intensity",
+      "s4.release",
+      "s4.sound.level",
+      "s5.lighting.intensity",
+      "s5.lighting.key",
+      "s5.lighting.wash",
+      "tempoBpm"
+    ]
+  },
+  "localDecisions": [
+    {
+      "sectionId": "s1",
+      "field": "camera.move",
+      "value": "static",
+      "reason": {
+        "key": "decision.camera.silence",
+        "params": {
+          "move": "static"
+        }
+      }
+    },
+    {
+      "sectionId": "s1",
+      "field": "lighting.wash",
+      "value": "neutral",
+      "reason": {
+        "key": "decision.wash",
+        "params": {
+          "mood": "defiant",
+          "wash": "neutral"
+        }
+      }
+    },
+    {
+      "sectionId": "s2",
+      "field": "camera.move",
+      "value": "drift",
+      "reason": {
+        "key": "decision.camera.drift",
+        "params": {
+          "move": "drift"
+        }
+      }
+    },
+    {
+      "sectionId": "s3",
+      "field": "camera.move",
+      "value": "push-in",
+      "reason": {
+        "key": "decision.camera.build",
+        "params": {
+          "move": "push-in"
+        }
+      }
+    },
+    {
+      "sectionId": "s4",
+      "field": "camera.move",
+      "value": "orbit",
+      "reason": {
+        "key": "decision.camera.climax",
+        "params": {
+          "move": "orbit"
+        }
+      }
+    },
+    {
+      "sectionId": "s5",
+      "field": "camera.move",
+      "value": "pull-back",
+      "reason": {
+        "key": "decision.camera.release",
+        "params": {
+          "move": "pull-back"
+        }
+      }
+    }
+  ],
+  "rounds": [
+    {
+      "id": "58c8e570-9b35-4047-8909-402c23fb02ad",
+      "request": {
+        "id": "286293f2-3c55-4cf7-8961-3f99aa3db816",
+        "text": "I want everything to explode at the climax.",
+        "kind": "climax-burst",
+        "source": {
+          "kind": "llm",
+          "model": "claude-opus-5-5"
+        }
+      },
+      "topic": "climax-release",
+      "status": "resolved",
+      "canCombine": false,
+      "kind": "proposal",
+      "message": {
+        "literal": "An explosion lands harder after a brief suspended moment at peak. I suggest holding the release for 4 beats, down from 8, then letting everything burst at once so the 24-beat build pays off."
+      },
+      "options": [
+        {
+          "id": "human",
+          "label": {
+            "key": "option.human"
+          },
+          "description": {
+            "key": "option.human.climax"
+          },
+          "patch": {
+            "ops": [
+              {
+                "op": "setRelease",
+                "sectionId": "s4",
+                "mode": "immediate",
+                "holdBeats": 0
+              },
+              {
+                "op": "setEnergy",
+                "sectionId": "s4",
+                "from": 1
+              },
+              {
+                "op": "setLighting",
+                "sectionId": "s4",
+                "intensity": 1
+              },
+              {
+                "op": "setGeometry",
+                "sectionId": "s4",
+                "order": 0,
+                "density": 1
+              },
+              {
+                "op": "setSound",
+                "sectionId": "s4",
+                "level": 1
+              }
+            ]
+          },
+          "changes": [
+            {
+              "path": "s4.energy.from",
+              "before": 0.75,
+              "after": 1
+            },
+            {
+              "path": "s4.geometry.density",
+              "before": 0.95,
+              "after": 1
+            },
+            {
+              "path": "s4.geometry.order",
+              "before": 0.05,
+              "after": 0
+            },
+            {
+              "path": "s4.release.holdBeats",
+              "before": 8,
+              "after": 0
+            },
+            {
+              "path": "s4.release.mode",
+              "before": "held",
+              "after": "immediate"
+            },
+            {
+              "path": "s4.sound.level",
+              "before": 0.9,
+              "after": 1
+            }
+          ],
+          "allowed": true,
+          "blockedBy": null
+        },
+        {
+          "id": "ai",
+          "label": {
+            "key": "option.ai"
+          },
+          "description": {
+            "key": "option.ai.climax",
+            "params": {
+              "beats": 4
+            }
+          },
+          "patch": {
+            "ops": [
+              {
+                "op": "setRelease",
+                "sectionId": "s4",
+                "mode": "held",
+                "holdBeats": 4
+              },
+              {
+                "op": "setEnergy",
+                "sectionId": "s4",
+                "from": 1
+              },
+              {
+                "op": "setLighting",
+                "sectionId": "s4",
+                "intensity": 1
+              },
+              {
+                "op": "setGeometry",
+                "sectionId": "s4",
+                "order": 0,
+                "density": 1
+              },
+              {
+                "op": "setSound",
+                "sectionId": "s4",
+                "level": 1
+              }
+            ]
+          },
+          "changes": [
+            {
+              "path": "s4.energy.from",
+              "before": 0.75,
+              "after": 1
+            },
+            {
+              "path": "s4.geometry.density",
+              "before": 0.95,
+              "after": 1
+            },
+            {
+              "path": "s4.geometry.order",
+              "before": 0.05,
+              "after": 0
+            },
+            {
+              "path": "s4.release.holdBeats",
+              "before": 8,
+              "after": 4
+            },
+            {
+              "path": "s4.sound.level",
+              "before": 0.9,
+              "after": 1
+            }
+          ],
+          "allowed": true,
+          "blockedBy": null
+        },
+        {
+          "id": "combined",
+          "label": {
+            "key": "option.combined"
+          },
+          "description": {
+            "literal": "Keep your full explosion at maximum energy, density, disorder and sound, but hold for 2 beats first. The brief suspension sharpens the release while leaving 14 of the 16 climax beats for the explosion itself."
+          },
+          "patch": {
+            "ops": [
+              {
+                "op": "setRelease",
+                "sectionId": "s4",
+                "mode": "held",
+                "holdBeats": 2
+              },
+              {
+                "op": "setEnergy",
+                "sectionId": "s4",
+                "from": 1
+              },
+              {
+                "op": "setLighting",
+                "sectionId": "s4",
+                "intensity": 1
+              },
+              {
+                "op": "setGeometry",
+                "sectionId": "s4",
+                "order": 0,
+                "density": 1
+              },
+              {
+                "op": "setSound",
+                "sectionId": "s4",
+                "level": 1
+              }
+            ]
+          },
+          "changes": [
+            {
+              "path": "s4.energy.from",
+              "before": 0.75,
+              "after": 1
+            },
+            {
+              "path": "s4.geometry.density",
+              "before": 0.95,
+              "after": 1
+            },
+            {
+              "path": "s4.geometry.order",
+              "before": 0.05,
+              "after": 0
+            },
+            {
+              "path": "s4.release.holdBeats",
+              "before": 8,
+              "after": 2
+            },
+            {
+              "path": "s4.sound.level",
+              "before": 0.9,
+              "after": 1
+            }
+          ],
+          "allowed": true,
+          "blockedBy": null
+        }
+      ],
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "resolution": {
+        "optionId": "combined",
+        "changes": [
+          {
+            "path": "s4.energy.from",
+            "before": 0.75,
+            "after": 1
+          },
+          {
+            "path": "s4.geometry.density",
+            "before": 0.95,
+            "after": 1
+          },
+          {
+            "path": "s4.geometry.order",
+            "before": 0.05,
+            "after": 0
+          },
+          {
+            "path": "s4.release.holdBeats",
+            "before": 8,
+            "after": 2
+          },
+          {
+            "path": "s4.sound.level",
+            "before": 0.9,
+            "after": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "96eb1188-8361-451c-ac89-e4166013b4f1",
+      "request": {
+        "id": "74e986d1-d0d0-4535-932b-2f1e6ec6e623",
+        "text": "More chaos in the fracture.",
+        "kind": "more-chaos",
+        "source": {
+          "kind": "llm",
+          "model": "claude-opus-5-5"
+        }
+      },
+      "topic": "fracture",
+      "status": "resolved",
+      "canCombine": false,
+      "kind": "agreement",
+      "message": {
+        "key": "negotiate.agreement"
+      },
+      "options": [
+        {
+          "id": "human",
+          "label": {
+            "key": "option.applyHuman"
+          },
+          "description": {
+            "key": "option.applyHuman.desc"
+          },
+          "patch": {
+            "ops": [
+              {
+                "op": "setGeometry",
+                "sectionId": "s3",
+                "order": 0.55,
+                "density": 0.95
+              },
+              {
+                "op": "setCamera",
+                "sectionId": "s3",
+                "move": "tremor",
+                "speed": 0.75
+              },
+              {
+                "op": "setEnergy",
+                "sectionId": "s3",
+                "to": 0.85
+              }
+            ]
+          },
+          "changes": [
+            {
+              "path": "s3.camera.move",
+              "before": "push-in",
+              "after": "tremor"
+            },
+            {
+              "path": "s3.camera.speed",
+              "before": 0.55,
+              "after": 0.75
+            },
+            {
+              "path": "s3.energy.to",
+              "before": 0.75,
+              "after": 0.85
+            },
+            {
+              "path": "s3.geometry.density",
+              "before": 0.8,
+              "after": 0.95
+            },
+            {
+              "path": "s3.geometry.order",
+              "before": 0.8,
+              "after": 0.55
+            }
+          ],
+          "allowed": true,
+          "blockedBy": null
+        }
+      ],
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "resolution": {
+        "optionId": "human",
+        "changes": [
+          {
+            "path": "s3.camera.move",
+            "before": "push-in",
+            "after": "tremor"
+          },
+          {
+            "path": "s3.camera.speed",
+            "before": 0.55,
+            "after": 0.75
+          },
+          {
+            "path": "s3.energy.to",
+            "before": 0.75,
+            "after": 0.85
+          },
+          {
+            "path": "s3.geometry.density",
+            "before": 0.8,
+            "after": 0.95
+          },
+          {
+            "path": "s3.geometry.order",
+            "before": 0.8,
+            "after": 0.55
+          }
+        ]
+      }
+    },
+    {
+      "id": "b3d6fe24-7b93-4c14-a8f3-9ec4e92857ec",
+      "request": {
+        "id": "5f8e5824-39f5-4c4d-9d89-fb22ee42268f",
+        "text": "Make it faster.",
+        "kind": "faster",
+        "source": {
+          "kind": "llm",
+          "model": "claude-opus-5-5"
+        }
+      },
+      "topic": "tempo",
+      "status": "resolved",
+      "canCombine": false,
+      "kind": "proposal",
+      "message": {
+        "key": "negotiate.faster.proposal",
+        "params": {
+          "bpm": 90,
+          "seconds": "10.7",
+          "min": 12,
+          "counter": 80,
+          "counterSeconds": "12.0"
+        }
+      },
+      "options": [
+        {
+          "id": "human",
+          "label": {
+            "key": "option.human"
+          },
+          "description": {
+            "key": "option.human.tempo",
+            "params": {
+              "bpm": 90
+            }
+          },
+          "patch": {
+            "ops": [
+              {
+                "op": "setTempo",
+                "tempoBpm": 90
+              }
+            ]
+          },
+          "changes": [
+            {
+              "path": "tempoBpm",
+              "before": 72,
+              "after": 90
+            }
+          ],
+          "allowed": true,
+          "blockedBy": null
+        },
+        {
+          "id": "ai",
+          "label": {
+            "key": "option.ai"
+          },
+          "description": {
+            "key": "option.ai.faster",
+            "params": {
+              "bpm": 80,
+              "seconds": "12.0"
+            }
+          },
+          "patch": {
+            "ops": [
+              {
+                "op": "setTempo",
+                "tempoBpm": 80
+              }
+            ]
+          },
+          "changes": [
+            {
+              "path": "tempoBpm",
+              "before": 72,
+              "after": 80
+            }
+          ],
+          "allowed": true,
+          "blockedBy": null
+        }
+      ],
+      "source": {
+        "kind": "rules"
+      },
+      "resolution": {
+        "optionId": "ai",
+        "changes": [
+          {
+            "path": "tempoBpm",
+            "before": 72,
+            "after": 80
+          }
+        ]
+      }
+    },
+    {
+      "id": "1dbf800f-b36a-443f-a9f3-57db62b68cef",
+      "request": {
+        "id": "1dc86c62-f9a4-4c91-b309-fa225078d3db",
+        "text": "Make the ending warmer.",
+        "kind": "warm-ending",
+        "source": {
+          "kind": "llm",
+          "model": "claude-opus-5-5"
+        }
+      },
+      "topic": "ending-light",
+      "status": "resolved",
+      "canCombine": false,
+      "kind": "agreement",
+      "message": {
+        "key": "negotiate.agreement"
+      },
+      "options": [
+        {
+          "id": "human",
+          "label": {
+            "key": "option.applyHuman"
+          },
+          "description": {
+            "key": "option.applyHuman.desc"
+          },
+          "patch": {
+            "ops": [
+              {
+                "op": "setLighting",
+                "sectionId": "s5",
+                "wash": "warm",
+                "key": "#2b0e00",
+                "intensity": 0.775
+              }
+            ]
+          },
+          "changes": [
+            {
+              "path": "s5.lighting.key",
+              "before": "#05060a",
+              "after": "#2b0e00"
+            },
+            {
+              "path": "s5.lighting.wash",
+              "before": "neutral",
+              "after": "warm"
+            }
+          ],
+          "allowed": true,
+          "blockedBy": null
+        }
+      ],
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "resolution": {
+        "optionId": "human",
+        "changes": [
+          {
+            "path": "s5.lighting.key",
+            "before": "#05060a",
+            "after": "#2b0e00"
+          },
+          {
+            "path": "s5.lighting.wash",
+            "before": "neutral",
+            "after": "warm"
+          }
+        ]
+      }
+    }
+  ],
+  "memory": {
+    "entries": [
+      {
+        "topic": "climax-release",
+        "roundId": "58c8e570-9b35-4047-8909-402c23fb02ad",
+        "chosen": "combined",
+        "directorObjected": true
+      },
+      {
+        "topic": "fracture",
+        "roundId": "96eb1188-8361-451c-ac89-e4166013b4f1",
+        "chosen": "human",
+        "directorObjected": false
+      },
+      {
+        "topic": "tempo",
+        "roundId": "b3d6fe24-7b93-4c14-a8f3-9ec4e92857ec",
+        "chosen": "ai",
+        "directorObjected": true
+      },
+      {
+        "topic": "ending-light",
+        "roundId": "1dbf800f-b36a-443f-a9f3-57db62b68cef",
+        "chosen": "human",
+        "directorObjected": false
+      }
+    ]
+  },
+  "events": [
+    {
+      "seq": 1,
+      "at": 200,
+      "type": "intent",
+      "actor": "human",
+      "summary": {
+        "key": "event.intent"
+      },
+      "data": {
+        "text": "Out of total darkness, light slowly gathers until it breaks through.",
+        "mood": null,
+        "durationSec": 75
+      }
+    },
+    {
+      "seq": 2,
+      "at": 8186,
+      "type": "interpretation",
+      "actor": "ai",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "key": "event.interpretation",
+        "params": {
+          "title": "Gathering Light"
+        }
+      },
+      "data": {
+        "understood": [
+          "The piece begins in total darkness.",
+          "Light gathers slowly and gradually, not suddenly.",
+          "The arc builds steadily toward one breakthrough moment.",
+          "The breakthrough is the peak of the piece.",
+          "No specific ending was requested beyond the breakthrough."
+        ],
+        "strategy": "Let the darkness last long enough to be felt, then build light with patient accumulation so the held breakthrough lands as earned rather than sudden."
+      }
+    },
+    {
+      "seq": 3,
+      "at": 8186,
+      "type": "composed",
+      "actor": "system",
+      "summary": {
+        "key": "event.composed",
+        "params": {
+          "sections": 5,
+          "beats": 92
+        }
+      },
+      "data": {
+        "structure": [
+          {
+            "id": "s1",
+            "name": "Total Darkness",
+            "archetype": "silence",
+            "lengthBeats": 16
+          },
+          {
+            "id": "s2",
+            "name": "First Motes",
+            "archetype": "drift",
+            "lengthBeats": 20
+          },
+          {
+            "id": "s3",
+            "name": "Gathering",
+            "archetype": "build",
+            "lengthBeats": 24
+          },
+          {
+            "id": "s4",
+            "name": "Breakthrough",
+            "archetype": "climax",
+            "lengthBeats": 16
+          },
+          {
+            "id": "s5",
+            "name": "Afterglow",
+            "archetype": "release",
+            "lengthBeats": 16
+          }
+        ]
+      }
+    },
+    {
+      "seq": 4,
+      "at": 8186,
+      "type": "ai-local-decision",
+      "actor": "ai",
+      "source": {
+        "kind": "rules"
+      },
+      "summary": {
+        "key": "decision.camera.silence",
+        "params": {
+          "move": "static"
+        }
+      },
+      "data": {
+        "sectionId": "s1",
+        "field": "camera.move",
+        "value": "static"
+      }
+    },
+    {
+      "seq": 5,
+      "at": 8186,
+      "type": "ai-local-decision",
+      "actor": "ai",
+      "source": {
+        "kind": "rules"
+      },
+      "summary": {
+        "key": "decision.wash",
+        "params": {
+          "mood": "defiant",
+          "wash": "neutral"
+        }
+      },
+      "data": {
+        "sectionId": "s1",
+        "field": "lighting.wash",
+        "value": "neutral"
+      }
+    },
+    {
+      "seq": 6,
+      "at": 8186,
+      "type": "ai-local-decision",
+      "actor": "ai",
+      "source": {
+        "kind": "rules"
+      },
+      "summary": {
+        "key": "decision.camera.drift",
+        "params": {
+          "move": "drift"
+        }
+      },
+      "data": {
+        "sectionId": "s2",
+        "field": "camera.move",
+        "value": "drift"
+      }
+    },
+    {
+      "seq": 7,
+      "at": 8186,
+      "type": "ai-local-decision",
+      "actor": "ai",
+      "source": {
+        "kind": "rules"
+      },
+      "summary": {
+        "key": "decision.camera.build",
+        "params": {
+          "move": "push-in"
+        }
+      },
+      "data": {
+        "sectionId": "s3",
+        "field": "camera.move",
+        "value": "push-in"
+      }
+    },
+    {
+      "seq": 8,
+      "at": 8186,
+      "type": "ai-local-decision",
+      "actor": "ai",
+      "source": {
+        "kind": "rules"
+      },
+      "summary": {
+        "key": "decision.camera.climax",
+        "params": {
+          "move": "orbit"
+        }
+      },
+      "data": {
+        "sectionId": "s4",
+        "field": "camera.move",
+        "value": "orbit"
+      }
+    },
+    {
+      "seq": 9,
+      "at": 8186,
+      "type": "ai-local-decision",
+      "actor": "ai",
+      "source": {
+        "kind": "rules"
+      },
+      "summary": {
+        "key": "decision.camera.release",
+        "params": {
+          "move": "pull-back"
+        }
+      },
+      "data": {
+        "sectionId": "s5",
+        "field": "camera.move",
+        "value": "pull-back"
+      }
+    },
+    {
+      "seq": 10,
+      "at": 13716,
+      "type": "request",
+      "actor": "human",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "key": "event.request",
+        "params": {
+          "kind": "climax-burst"
+        }
+      },
+      "data": {
+        "text": "I want everything to explode at the climax.",
+        "kind": "climax-burst"
+      }
+    },
+    {
+      "seq": 11,
+      "at": 13716,
+      "type": "proposal",
+      "actor": "ai",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "literal": "An explosion lands harder after a brief suspended moment at peak. I suggest holding the release for 4 beats, down from 8, then letting everything burst at once so the 24-beat build pays off."
+      },
+      "data": {
+        "roundId": "58c8e570-9b35-4047-8909-402c23fb02ad",
+        "kind": "proposal",
+        "options": [
+          "human",
+          "ai"
+        ]
+      }
+    },
+    {
+      "seq": 12,
+      "at": 16714,
+      "type": "proposal",
+      "actor": "ai",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "key": "event.combined"
+      },
+      "data": {
+        "roundId": "58c8e570-9b35-4047-8909-402c23fb02ad",
+        "options": [
+          "human",
+          "ai",
+          "combined"
+        ]
+      }
+    },
+    {
+      "seq": 13,
+      "at": 16816,
+      "type": "decision",
+      "actor": "human",
+      "summary": {
+        "key": "event.decision",
+        "params": {
+          "option": "combined"
+        }
+      },
+      "data": {
+        "roundId": "58c8e570-9b35-4047-8909-402c23fb02ad",
+        "optionId": "combined",
+        "topic": "climax-release"
+      }
+    },
+    {
+      "seq": 14,
+      "at": 16816,
+      "type": "revision",
+      "actor": "system",
+      "summary": {
+        "key": "event.revision",
+        "params": {
+          "count": 5
+        }
+      },
+      "changes": [
+        {
+          "path": "s4.energy.from",
+          "before": 0.75,
+          "after": 1
+        },
+        {
+          "path": "s4.geometry.density",
+          "before": 0.95,
+          "after": 1
+        },
+        {
+          "path": "s4.geometry.order",
+          "before": 0.05,
+          "after": 0
+        },
+        {
+          "path": "s4.release.holdBeats",
+          "before": 8,
+          "after": 2
+        },
+        {
+          "path": "s4.sound.level",
+          "before": 0.9,
+          "after": 1
+        }
+      ]
+    },
+    {
+      "seq": 15,
+      "at": 22538,
+      "type": "request",
+      "actor": "human",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "key": "event.request",
+        "params": {
+          "kind": "more-chaos"
+        }
+      },
+      "data": {
+        "text": "More chaos in the fracture.",
+        "kind": "more-chaos"
+      }
+    },
+    {
+      "seq": 16,
+      "at": 22538,
+      "type": "proposal",
+      "actor": "ai",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "key": "negotiate.agreement"
+      },
+      "data": {
+        "roundId": "96eb1188-8361-451c-ac89-e4166013b4f1",
+        "kind": "agreement",
+        "options": [
+          "human"
+        ]
+      }
+    },
+    {
+      "seq": 17,
+      "at": 22583,
+      "type": "decision",
+      "actor": "human",
+      "summary": {
+        "key": "event.decision",
+        "params": {
+          "option": "human"
+        }
+      },
+      "data": {
+        "roundId": "96eb1188-8361-451c-ac89-e4166013b4f1",
+        "optionId": "human",
+        "topic": "fracture"
+      }
+    },
+    {
+      "seq": 18,
+      "at": 22583,
+      "type": "revision",
+      "actor": "system",
+      "summary": {
+        "key": "event.revision",
+        "params": {
+          "count": 5
+        }
+      },
+      "changes": [
+        {
+          "path": "s3.camera.move",
+          "before": "push-in",
+          "after": "tremor"
+        },
+        {
+          "path": "s3.camera.speed",
+          "before": 0.55,
+          "after": 0.75
+        },
+        {
+          "path": "s3.energy.to",
+          "before": 0.75,
+          "after": 0.85
+        },
+        {
+          "path": "s3.geometry.density",
+          "before": 0.8,
+          "after": 0.95
+        },
+        {
+          "path": "s3.geometry.order",
+          "before": 0.8,
+          "after": 0.55
+        }
+      ]
+    },
+    {
+      "seq": 19,
+      "at": 25089,
+      "type": "request",
+      "actor": "human",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "key": "event.request",
+        "params": {
+          "kind": "faster"
+        }
+      },
+      "data": {
+        "text": "Make it faster.",
+        "kind": "faster"
+      }
+    },
+    {
+      "seq": 20,
+      "at": 25089,
+      "type": "proposal",
+      "actor": "ai",
+      "source": {
+        "kind": "rules"
+      },
+      "summary": {
+        "key": "negotiate.faster.proposal",
+        "params": {
+          "bpm": 90,
+          "seconds": "10.7",
+          "min": 12,
+          "counter": 80,
+          "counterSeconds": "12.0"
+        }
+      },
+      "data": {
+        "roundId": "b3d6fe24-7b93-4c14-a8f3-9ec4e92857ec",
+        "kind": "proposal",
+        "options": [
+          "human",
+          "ai"
+        ]
+      }
+    },
+    {
+      "seq": 21,
+      "at": 25266,
+      "type": "decision",
+      "actor": "human",
+      "summary": {
+        "key": "event.decision",
+        "params": {
+          "option": "ai"
+        }
+      },
+      "data": {
+        "roundId": "b3d6fe24-7b93-4c14-a8f3-9ec4e92857ec",
+        "optionId": "ai",
+        "topic": "tempo"
+      }
+    },
+    {
+      "seq": 22,
+      "at": 25266,
+      "type": "revision",
+      "actor": "system",
+      "summary": {
+        "key": "event.revision",
+        "params": {
+          "count": 1
+        }
+      },
+      "changes": [
+        {
+          "path": "tempoBpm",
+          "before": 72,
+          "after": 80
+        }
+      ]
+    },
+    {
+      "seq": 23,
+      "at": 27575,
+      "type": "request",
+      "actor": "human",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "key": "event.request",
+        "params": {
+          "kind": "warm-ending"
+        }
+      },
+      "data": {
+        "text": "Make the ending warmer.",
+        "kind": "warm-ending"
+      }
+    },
+    {
+      "seq": 24,
+      "at": 27575,
+      "type": "proposal",
+      "actor": "ai",
+      "source": {
+        "kind": "llm",
+        "model": "claude-opus-5-5"
+      },
+      "summary": {
+        "key": "negotiate.agreement"
+      },
+      "data": {
+        "roundId": "1dbf800f-b36a-443f-a9f3-57db62b68cef",
+        "kind": "agreement",
+        "options": [
+          "human"
+        ]
+      }
+    },
+    {
+      "seq": 25,
+      "at": 27717,
+      "type": "decision",
+      "actor": "human",
+      "summary": {
+        "key": "event.decision",
+        "params": {
+          "option": "human"
+        }
+      },
+      "data": {
+        "roundId": "1dbf800f-b36a-443f-a9f3-57db62b68cef",
+        "optionId": "human",
+        "topic": "ending-light"
+      }
+    },
+    {
+      "seq": 26,
+      "at": 27717,
+      "type": "revision",
+      "actor": "system",
+      "summary": {
+        "key": "event.revision",
+        "params": {
+          "count": 2
+        }
+      },
+      "changes": [
+        {
+          "path": "s5.lighting.key",
+          "before": "#05060a",
+          "after": "#2b0e00"
+        },
+        {
+          "path": "s5.lighting.wash",
+          "before": "neutral",
+          "after": "warm"
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "modelCalls": 6,
+    "inputTokens": 10233,
+    "outputTokens": 1374,
+    "estimatedCostUsd": 0.068412,
+    "latenciesMs": [
+      {
+        "kind": "interpret",
+        "ms": 7983.699999999953,
+        "source": "claude-opus-5-5"
+      },
+      {
+        "kind": "negotiate",
+        "ms": 4882.699999999953,
+        "source": "claude-opus-5-5"
+      },
+      {
+        "kind": "combine",
+        "ms": 2744.1999999999534,
+        "source": "claude-opus-5-5"
+      },
+      {
+        "kind": "negotiate",
+        "ms": 5619.200000000186,
+        "source": "claude-opus-5-5"
+      },
+      {
+        "kind": "negotiate",
+        "ms": 2405.5,
+        "source": "rules"
+      },
+      {
+        "kind": "negotiate",
+        "ms": 2205.5999999998603,
+        "source": "claude-opus-5-5"
+      }
+    ],
+    "compileMs": [
+      1.3999999999068677
+    ],
+    "performances": []
+  },
+  "lastError": null
+}

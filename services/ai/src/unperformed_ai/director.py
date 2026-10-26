@@ -84,7 +84,15 @@ Guidance:
   Choose its release: "immediate" (all at once), "held" (hold back first) or "staggered" (ramp in).
 - `understood`: up to 5 short statements of what you understood, so the person can correct you.
 - `constraints`: only things the person clearly asked for (e.g. ending in silence). They will be shown as
-  proposals for the person to approve; do not invent preferences.
+  proposals for the person to approve; do not invent preferences. Each kind is checked by the engine exactly
+  as defined here, so use a kind only when the person's words mean that check; otherwise leave it out:
+  - ending-silence: the last phase is silent and dark (archetype "silence", sound "silence", energy ending near 0)
+  - opening-order: the first phase is strict geometric order (archetype "order", a grid or lattice); not
+    darkness or stillness
+  - no-strobe: no rapid flashing anywhere
+  - max-energy: energy never exceeds `value` (0..1)
+  - keep-climax: the piece keeps a climax
+  Your phases must already satisfy every constraint you propose.
 - `strategy`: one sentence on your artistic strategy for this piece.
 - Colours are #rrggbb. Avoid pure-white flashes; this stage must be safe for photosensitive viewers.
 """

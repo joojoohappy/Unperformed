@@ -11,7 +11,7 @@
 | 核心單元測試（vitest） | `pnpm --filter @unperformed/performance-core test` | 106 | 全部通過 |
 | Web 單元測試（vitest） | `pnpm --filter @unperformed/web test` | 18 | 全部通過 |
 | 端對端測試（Playwright，桌面 1440×900 與 Pixel 7） | `pnpm test:e2e` | 14 × 2 個 project = 28 | 全部通過 |
-| Live AI 服務（pytest） | `pnpm test:ai` | 28 | 全部通過；ruff 與 mypy（strict）無問題 |
+| Live AI 服務（pytest） | `pnpm test:ai` | 28（另有 2 個選用的 live 測試） | 全部通過；ruff 與 mypy（strict）無問題；live 測試對真實 API 通過 |
 | Lint 與型別檢查 | `pnpm lint && pnpm typecheck` | | 無問題 |
 
 涵蓋範圍：
@@ -110,20 +110,32 @@ Bundle：初始 JavaScript 為 339 KB（gzip 後 105 KB），另有 33 KB 的 CS
 
 ## Live AI：模型呼叫、延遲與成本
 
-**尚未量測。** 開發 MVP 時沒有可用的 API key，因此沒有發出過任何真實的模型呼叫。本 repository 中沒有任何地方回報真實模型的延遲、token 用量、成本或輸出品質。
+2026-10-26 在上述的 container 中，以 `claude-opus-5-5`（effort `low`，服務預設值）對真實的 Claude API 量測。原始結果見 [`evaluation/live-ai/2026-10-26/`](../../evaluation/live-ai/2026-10-26/)（`summary.json`，以及每一輪的 session 匯出與每一個 `/api` 回應）。
 
-已備妥的量測機制：
+**量測方式。** `pnpm eval:live` 會啟動服務與工作室，並在 headless Chromium 中以 Live AI 模式，對六個範例構想（英文與繁體中文各三個）各跑一次流程：編排、核准提出的限制條件，然後依序提出四個請求（高潮時炸開、崩解段落更混亂、加快、讓結尾更溫暖），有折衷版本時就要求折衷版本。總共 36 次模型呼叫。
 
-- 每個 Live AI 回應都帶有 `latencyMs`、`attempts`、`inputTokens`、`outputTokens`（所有嘗試的總和）與 `estimatedCostUsd`；
-- 工作室會在每個 session 中記錄它們，並顯示在回顧的遙測區（模型呼叫次數、token、成本、各類呼叫的延遲）；
-- 匯出的 session JSON 包含以上所有資料。
+| 呼叫 | 次數 | 失敗 | 延遲中位數 | 延遲最大值 | 嘗試次數（最大） | 輸入 token（中位數） | 輸出 token（中位數／最大） | 成本 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 解讀構想 | 6 | 0 | 8.9 s | 10.4 s | 1 | 3,116 | 800 / 932 | $0.171 |
+| 分析請求 | 24 | 0 | 2.9 s | 6.9 s | 1 | 1,631 | 82 / 274 | $0.216 |
+| 折衷版本（高潮） | 6 | 0 | 2.7 s | 3.0 s | 1 | 792 | 102 / 111 | $0.031 |
+| **合計** | **36** | **0** | | | | | | **$0.418** |
 
-量測方式（後續工作）：
+延遲是服務在 API 呼叫前後量測的。成本是服務依 token 數與 `services/ai/src/unperformed_ai/config.py` 中的價格表（每百萬輸入／輸出 token $4 / $20）估算的，因此一整個 session（解讀、四個請求、一個折衷版本）約 $0.07。輸出 token 包含模型的 thinking。
 
-1. 帶著 key 啟動服務與工作室（`pnpm dev:ai`、`pnpm dev`）。
-2. 在 Live AI 模式下，用一組構想跑完流程（例如兩種語言各三個範例加上自己的構想），每次都提出高潮請求。
-3. 從回顧匯出每個 session，記錄各類呼叫的延遲中位數與最大值、嘗試次數、token 與成本，並註明模型 id 與日期。
-4. 記下任何驗證重試或備援，回顧中都有紀錄。
+結果：
+
+- **沒有重試，也沒有備援。** 每個回答第一次嘗試就通過驗證；沒有任何呼叫改用規則。
+- **請求分類：24 次全部正確**，兩種語言皆是（climax-burst、more-chaos、faster、warm-ending）。
+- **反對意見。** 模型在 6 輪中有 5 輪對高潮提出創作分歧（把釋放壓住 4 拍），對其他請求一次都沒有，這符合指示：那些請求由引擎自己的規則判斷，而規則也依各個計畫做出了判斷（更混亂：2 次提案、4 次同意；加快：4 次提案、2 次同意；更溫暖的結尾：4 次與已核准的寂靜限制條件衝突、2 次同意）。它的折衷版本壓住 2 到 4 拍。
+- **解讀。** 每個計畫都有 5 或 6 個階段、一個高潮，且只包含構想中明說的限制條件。策略與理由都針對該構想，並使用 session 的語言。
+- **一處 prompt 修正。** 第一輪時，模型對「從完全的黑暗中」這個構想提出了「以完美的秩序開場」，而引擎拒絕了這個限制條件，因為計畫是從虛空開場。現在解讀用的 prompt 會依引擎的檢查方式精確定義每種限制條件；在上表這一輪中，兩種語言都沒有再提出錯誤的限制條件。第一輪的回應保留在 [`evaluation/live-ai/2026-10-26-before-prompt-fix/`](../../evaluation/live-ai/2026-10-26-before-prompt-fix/)。
+
+選用的整合測試（設定 key 與 `UNPERFORMED_LIVE_TESTS=1`，`services/ai/tests/test_live.py`）同一天在兩種語言都通過：解讀 8.2 s / 10.1 s、分析 2.9 s / 7.1 s、折衷 2.5 s / 2.6 s。
+
+**這些數字不代表什麼。** 六個構想與四種請求是很小的樣本：數字只代表這一天、這一個網路位置，延遲會隨負載變動。創作品質是開發者自己讀過判斷的，沒有使用者評分。範例以外的構想與更長的 session 都沒有量測。
+
+重複量測：設定 `ANTHROPIC_API_KEY` 並執行 `pnpm eval:live`（會產生計費的呼叫，整批約 $0.40）。`UNPERFORMED_EVAL_ONLY=en-2,zh-TW-1` 只跑其中幾輪。
 
 在示範模式下，回顧顯示 0 次模型呼叫與 $0，這是量測結果，不是佔位符。
 

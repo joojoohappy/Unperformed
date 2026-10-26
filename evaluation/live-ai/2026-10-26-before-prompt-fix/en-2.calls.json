@@ -1,0 +1,123 @@
+{
+  "calls": [
+    {
+      "kind": "interpret",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 12778,
+        "attempts": 1,
+        "inputTokens": 2888,
+        "outputTokens": 881,
+        "estimatedCostUsd": 0.029172
+      },
+      "error": null,
+      "body": {
+        "interpretation": {
+          "title": "Breakthrough",
+          "summary": "The piece begins in total darkness and silence. Faint particles of light slowly gather and organize, energy builds steadily, and the accumulated light finally breaks through in a single peak before settling into a lit afterglow.",
+          "understood": [
+            "The opening is total darkness.",
+            "Light gathers slowly, not suddenly.",
+            "The arc is a long, patient build.",
+            "The peak is a breakthrough of light.",
+            "There is no explicit request about how it ends."
+          ],
+          "mood": "defiant",
+          "palette": {
+            "base": "#05060a",
+            "accent": "#3a5a8c",
+            "climax": "#ffd9a0"
+          },
+          "tempoBpm": 72,
+          "phases": [
+            {
+              "name": "Total Dark",
+              "archetype": "silence",
+              "weight": 2,
+              "energyFrom": 0,
+              "energyTo": 0.05,
+              "geometry": "void",
+              "sound": "silence",
+              "note": "Near-black stage, no visible form; a held stillness."
+            },
+            {
+              "name": "First Motes",
+              "archetype": "drift",
+              "weight": 2,
+              "energyFrom": 0.05,
+              "energyTo": 0.2,
+              "geometry": "dust",
+              "sound": "drone",
+              "note": "Sparse, dim particles appear and drift; a low drone barely surfaces."
+            },
+            {
+              "name": "Gathering",
+              "archetype": "build",
+              "weight": 3,
+              "energyFrom": 0.2,
+              "energyTo": 0.6,
+              "geometry": "ring",
+              "sound": "swell",
+              "note": "Particles converge into a slowly tightening ring; brightness and sound swell together."
+            },
+            {
+              "name": "Pressure",
+              "archetype": "build",
+              "weight": 2,
+              "energyFrom": 0.6,
+              "energyTo": 0.85,
+              "geometry": "lattice",
+              "sound": "pulse",
+              "note": "Light strains against a dense lattice; a steady pulse adds tension."
+            },
+            {
+              "name": "Breakthrough",
+              "archetype": "climax",
+              "weight": 2,
+              "energyFrom": 0.85,
+              "energyTo": 1,
+              "geometry": "shards",
+              "sound": "noise",
+              "note": "The lattice breaks and warm light floods the stage; no strobing, a single sustained bloom."
+            },
+            {
+              "name": "Afterglow",
+              "archetype": "release",
+              "weight": 2,
+              "energyFrom": 0.6,
+              "energyTo": 0.3,
+              "geometry": "monolith",
+              "sound": "drone",
+              "note": "A calm, lit monolith remains; sound settles into a warm drone."
+            }
+          ],
+          "climax": {
+            "phaseIndex": 4,
+            "release": "held",
+            "holdBeats": 8
+          },
+          "constraints": [
+            {
+              "kind": "opening-order",
+              "text": "Open in total darkness before any light appears.",
+              "value": null
+            }
+          ],
+          "strategy": "Withhold light almost entirely, let it accumulate with patient, convergent geometry, then hold the tension briefly before releasing one warm, sustained bloom."
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 12778,
+          "attempts": 1,
+          "inputTokens": 2888,
+          "outputTokens": 881,
+          "estimatedCostUsd": 0.029172
+        }
+      }
+    }
+  ],
+  "failure": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Approve', exact: true }).first()\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn btn-small\">Approve</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n"
+}

@@ -1,0 +1,263 @@
+{
+  "calls": [
+    {
+      "kind": "interpret",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 7971,
+        "attempts": 1,
+        "inputTokens": 3100,
+        "outputTokens": 761,
+        "estimatedCostUsd": 0.02762
+      },
+      "error": null,
+      "body": {
+        "interpretation": {
+          "title": "Gathering Light",
+          "summary": "The piece opens in total darkness and silence. Faint particles of light appear and slowly accumulate, drawing together into a ring that tightens and brightens until the light breaks through in a single climax, then settles into a sustained glow.",
+          "understood": [
+            "The piece begins in total darkness.",
+            "Light gathers slowly and gradually, not suddenly.",
+            "The arc builds steadily toward one breakthrough moment.",
+            "The breakthrough is the peak of the piece.",
+            "No specific ending was requested beyond the breakthrough."
+          ],
+          "mood": "defiant",
+          "palette": {
+            "base": "#05060a",
+            "accent": "#c8a45a",
+            "climax": "#ffe2b0"
+          },
+          "tempoBpm": 72,
+          "phases": [
+            {
+              "name": "Total Darkness",
+              "archetype": "silence",
+              "weight": 2,
+              "energyFrom": 0,
+              "energyTo": 0.05,
+              "geometry": "void",
+              "sound": "silence",
+              "note": "Black stage, no sound; a long held stillness."
+            },
+            {
+              "name": "First Motes",
+              "archetype": "drift",
+              "weight": 3,
+              "energyFrom": 0.05,
+              "energyTo": 0.25,
+              "geometry": "dust",
+              "sound": "drone",
+              "note": "Sparse faint particles appear and drift; a low drone barely emerges."
+            },
+            {
+              "name": "Gathering",
+              "archetype": "build",
+              "weight": 4,
+              "energyFrom": 0.25,
+              "energyTo": 0.75,
+              "geometry": "ring",
+              "sound": "swell",
+              "note": "Particles converge into a tightening ring; light and swell intensify slowly."
+            },
+            {
+              "name": "Breakthrough",
+              "archetype": "climax",
+              "weight": 2,
+              "energyFrom": 0.75,
+              "energyTo": 1,
+              "geometry": "monolith",
+              "sound": "pulse",
+              "note": "The gathered light breaks through as a solid bright form; warm, not white."
+            },
+            {
+              "name": "Afterglow",
+              "archetype": "release",
+              "weight": 2,
+              "energyFrom": 0.7,
+              "energyTo": 0.45,
+              "geometry": "ring",
+              "sound": "drone",
+              "note": "Light remains present and steady, settling into a warm glow."
+            }
+          ],
+          "climax": {
+            "phaseIndex": 3,
+            "release": "held",
+            "holdBeats": 8
+          },
+          "constraints": [],
+          "strategy": "Let the darkness last long enough to be felt, then build light with patient accumulation so the held breakthrough lands as earned rather than sudden."
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 7971,
+          "attempts": 1,
+          "inputTokens": 3100,
+          "outputTokens": 761,
+          "estimatedCostUsd": 0.02762
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 4862,
+        "attempts": 1,
+        "inputTokens": 1595,
+        "outputTokens": 274,
+        "estimatedCostUsd": 0.01186
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "climax-burst",
+          "creativeDifference": true,
+          "rationale": "An explosion lands harder after a brief suspended moment at peak. I suggest holding the release for 4 beats, down from 8, then letting everything burst at once so the 24-beat build pays off.",
+          "counter": {
+            "releaseMode": "held",
+            "holdBeats": 4
+          }
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 4862,
+          "attempts": 1,
+          "inputTokens": 1595,
+          "outputTokens": 274,
+          "estimatedCostUsd": 0.01186
+        }
+      }
+    },
+    {
+      "kind": "combine",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2736,
+        "attempts": 1,
+        "inputTokens": 757,
+        "outputTokens": 90,
+        "estimatedCostUsd": 0.004828
+      },
+      "error": null,
+      "body": {
+        "advice": {
+          "holdBeats": 2,
+          "rationale": "Keep your full explosion at maximum energy, density, disorder and sound, but hold for 2 beats first. The brief suspension sharpens the release while leaving 14 of the 16 climax beats for the explosion itself."
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2736,
+          "attempts": 1,
+          "inputTokens": 757,
+          "outputTokens": 90,
+          "estimatedCostUsd": 0.004828
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 5604,
+        "attempts": 1,
+        "inputTokens": 1594,
+        "outputTokens": 91,
+        "estimatedCostUsd": 0.008196
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "more-chaos",
+          "creativeDifference": false,
+          "rationale": "Understood: you want the fracture to be more chaotic. Note the current plan has no explicit breakdown phase; the engine will apply added chaos to the fracture as you describe.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 5604,
+          "attempts": 1,
+          "inputTokens": 1594,
+          "outputTokens": 91,
+          "estimatedCostUsd": 0.008196
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2395,
+        "attempts": 1,
+        "inputTokens": 1590,
+        "outputTokens": 82,
+        "estimatedCostUsd": 0.008
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "faster",
+          "creativeDifference": false,
+          "rationale": "Understood: raising the tempo. The phase structure stays the same, so the darkness, build, and held breakthrough keep their proportions at the quicker pace.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2395,
+          "attempts": 1,
+          "inputTokens": 1590,
+          "outputTokens": 82,
+          "estimatedCostUsd": 0.008
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2193,
+        "attempts": 1,
+        "inputTokens": 1597,
+        "outputTokens": 76,
+        "estimatedCostUsd": 0.007908
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "warm-ending",
+          "creativeDifference": false,
+          "rationale": "Understood: the Afterglow phase will shift toward warmer colour as it settles, leaving the earlier phases unchanged.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2193,
+          "attempts": 1,
+          "inputTokens": 1597,
+          "outputTokens": 76,
+          "estimatedCostUsd": 0.007908
+        }
+      }
+    }
+  ],
+  "failure": null
+}

@@ -1,0 +1,274 @@
+{
+  "calls": [
+    {
+      "kind": "interpret",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 8446,
+        "attempts": 1,
+        "inputTokens": 3112,
+        "outputTokens": 788,
+        "estimatedCostUsd": 0.028208
+      },
+      "error": null,
+      "body": {
+        "interpretation": {
+          "title": "Order, Collapse, Silence",
+          "summary": "A strict grid holds the stage, then slowly loses alignment, fractures into shards and dust at a chaotic peak, and is cut to complete darkness and silence.",
+          "understood": [
+            "The piece opens in perfect geometric order.",
+            "Order erodes gradually rather than breaking suddenly.",
+            "The collapse reaches full chaos as the high point.",
+            "It ends in complete silence and darkness.",
+            "No specific mood was given; I read it as tense."
+          ],
+          "mood": "tense",
+          "palette": {
+            "base": "#0b0f14",
+            "accent": "#5a7a9a",
+            "climax": "#c0392b"
+          },
+          "tempoBpm": 96,
+          "phases": [
+            {
+              "name": "Perfect Grid",
+              "archetype": "order",
+              "weight": 2,
+              "energyFrom": 0.2,
+              "energyTo": 0.3,
+              "geometry": "grid",
+              "sound": "pulse",
+              "note": "Rigid grid, steady pulse, locked camera."
+            },
+            {
+              "name": "Drift Out of Line",
+              "archetype": "build",
+              "weight": 2,
+              "energyFrom": 0.3,
+              "energyTo": 0.55,
+              "geometry": "lattice",
+              "sound": "drone",
+              "note": "Lattice nodes slip out of alignment; pulse loosens into drone."
+            },
+            {
+              "name": "Fracture",
+              "archetype": "fracture",
+              "weight": 2,
+              "energyFrom": 0.55,
+              "energyTo": 0.8,
+              "geometry": "shards",
+              "sound": "noise",
+              "note": "Structure splits into shards; noise creeps in."
+            },
+            {
+              "name": "Chaos",
+              "archetype": "climax",
+              "weight": 2,
+              "energyFrom": 0.8,
+              "energyTo": 0.95,
+              "geometry": "dust",
+              "sound": "noise",
+              "note": "Full disorder of scattered dust and dense noise, no strobing."
+            },
+            {
+              "name": "Silence",
+              "archetype": "silence",
+              "weight": 1,
+              "energyFrom": 0.05,
+              "energyTo": 0,
+              "geometry": "void",
+              "sound": "silence",
+              "note": "Abrupt cut to dark void and complete silence."
+            }
+          ],
+          "climax": {
+            "phaseIndex": 3,
+            "release": "staggered",
+            "holdBeats": 0
+          },
+          "constraints": [
+            {
+              "kind": "opening-order",
+              "text": "Start with perfect geometric order.",
+              "value": null
+            },
+            {
+              "kind": "ending-silence",
+              "text": "End in complete silence and darkness.",
+              "value": null
+            }
+          ],
+          "strategy": "Let order decay step by step through geometry and sound so the chaos feels earned, then cut everything away to make the final silence absolute."
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 8446,
+          "attempts": 1,
+          "inputTokens": 3112,
+          "outputTokens": 788,
+          "estimatedCostUsd": 0.028208
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2961,
+        "attempts": 1,
+        "inputTokens": 1636,
+        "outputTokens": 108,
+        "estimatedCostUsd": 0.008704
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "climax-burst",
+          "creativeDifference": true,
+          "rationale": "An instant burst spends the climax in one hit. If we hold the release for 4 beats at peak tension, the explosion lands harder and the cut to silence feels more absolute.",
+          "counter": {
+            "releaseMode": "held",
+            "holdBeats": 4
+          }
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2961,
+          "attempts": 1,
+          "inputTokens": 1636,
+          "outputTokens": 108,
+          "estimatedCostUsd": 0.008704
+        }
+      }
+    },
+    {
+      "kind": "combine",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 3005,
+        "attempts": 1,
+        "inputTokens": 783,
+        "outputTokens": 102,
+        "estimatedCostUsd": 0.005172
+      },
+      "error": null,
+      "body": {
+        "advice": {
+          "holdBeats": 2,
+          "rationale": "Your full explosion stays intact: maximum energy, density, light and sound, with geometry breaking apart. A 2-beat hold before release lets the stage pause just long enough for the blast to land harder, leaving 22 of the 24 beats for the explosion."
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 3005,
+          "attempts": 1,
+          "inputTokens": 783,
+          "outputTokens": 102,
+          "estimatedCostUsd": 0.005172
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2343,
+        "attempts": 1,
+        "inputTokens": 1633,
+        "outputTokens": 78,
+        "estimatedCostUsd": 0.008092
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "more-chaos",
+          "creativeDifference": false,
+          "rationale": "Understood: the fracture phase will break down harder, with more irregular geometry and sound, while still leading into the full chaos of the climax.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2343,
+          "attempts": 1,
+          "inputTokens": 1633,
+          "outputTokens": 78,
+          "estimatedCostUsd": 0.008092
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 2522,
+        "attempts": 1,
+        "inputTokens": 1633,
+        "outputTokens": 77,
+        "estimatedCostUsd": 0.008072
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "faster",
+          "creativeDifference": false,
+          "rationale": "Understood: raising the tempo across the piece. The phase order and the decay from grid to chaos to silence stay intact; only the pace increases.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 2522,
+          "attempts": 1,
+          "inputTokens": 1633,
+          "outputTokens": 77,
+          "estimatedCostUsd": 0.008072
+        }
+      }
+    },
+    {
+      "kind": "negotiate",
+      "status": 200,
+      "meta": {
+        "provider": "anthropic",
+        "model": "claude-opus-5-5",
+        "latencyMs": 4285,
+        "attempts": 1,
+        "inputTokens": 1636,
+        "outputTokens": 259,
+        "estimatedCostUsd": 0.011724
+      },
+      "error": null,
+      "body": {
+        "analysis": {
+          "kind": "warm-ending",
+          "creativeDifference": false,
+          "rationale": "Understood: the ending will be warmer. Since the piece must still end in complete darkness, the warmth will color the last light of Chaos and the fade into Silence before everything goes dark.",
+          "counter": null
+        },
+        "meta": {
+          "provider": "anthropic",
+          "model": "claude-opus-5-5",
+          "latencyMs": 4285,
+          "attempts": 1,
+          "inputTokens": 1636,
+          "outputTokens": 259,
+          "estimatedCostUsd": 0.011724
+        }
+      }
+    }
+  ],
+  "failure": null
+}
