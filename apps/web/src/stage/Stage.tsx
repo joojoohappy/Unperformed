@@ -4,6 +4,7 @@ import { Canvas2DStage } from "./canvas2d";
 import { webglAvailable } from "./detect";
 import { AdaptiveQuality, QUALITY, qualityModeFromSearch, type Quality } from "./quality";
 import type { StageRenderer } from "./types";
+import { wordKey, wordsFor } from "./words";
 
 // three.js is most of the bundle's weight, and the first screens do not need it:
 // load the WebGL stage on first use, once, and share it between stages.
@@ -31,6 +32,8 @@ interface Props {
   onStats?: (stats: FrameStats) => void;
   className?: string;
   label: string;
+  /** Show the current section's name and note over the stage. */
+  captions?: boolean;
 }
 
 function qualityMode() {
@@ -53,10 +56,11 @@ function forceCanvas(): boolean {
 }
 
 /** The real-time stage. Rendering reads the score and the transport clock every frame; React does not re-render per frame. */
-export function Stage({ score, beat, options, reducedMotion, onFrame, measure, onStats, className, label }: Props) {
+export function Stage({ score, beat, options, reducedMotion, onFrame, measure, onStats, className, label, captions }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const veilRef = useRef<HTMLDivElement>(null);
+  const captionRef = useRef<HTMLDivElement>(null);
   const live = useRef({ score, beat, options, reducedMotion, onFrame, onStats, measure });
   live.current = { score, beat, options, reducedMotion, onFrame, onStats, measure };
   const [rendererName, setRendererName] = useState<string>("");
@@ -92,6 +96,8 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
 
       let last = performance.now();
       let statTick = 0;
+      let spelled = "";
+      let captioned = "";
       const loop = () => {
         const t = performance.now();
         const L = live.current;
@@ -100,9 +106,16 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
           applyQuality();
           resize();
         }
+        // Respell only when a section name changes (negotiation can rename).
+        const key = wordKey(L.score);
+        if (key !== spelled) {
+          spelled = key;
+          renderer.setWords(wordsFor(L.score));
+        }
         const frame = sample(L.score, L.beat(), L.options);
         renderer.render(frame, L.score.seed, L.reducedMotion);
         if (veilRef.current) veilRef.current.style.opacity = String(frame.blackout);
+        if (captionRef.current) captioned = caption(captionRef.current, L.score, frame, captioned);
         L.onFrame?.(frame);
         if (L.measure) {
           times.push(t - last);
@@ -145,8 +158,30 @@ export function Stage({ score, beat, options, reducedMotion, onFrame, measure, o
     <div ref={wrapRef} className={`stage ${className ?? ""}`} role="img" aria-label={label} data-renderer={rendererName}>
       <canvas ref={canvasRef} />
       <div ref={veilRef} className="stage-veil" aria-hidden="true" />
+      {captions && (
+        <div ref={captionRef} className="stage-caption" aria-hidden="true" data-testid="stage-caption">
+          <span className="stage-caption-step" />
+          <span className="stage-caption-name" />
+          <span className="stage-caption-note" />
+        </div>
+      )}
     </div>
   );
+}
+
+/** Write the section's caption when it changes; returns what is now shown. */
+function caption(el: HTMLDivElement, score: PerformanceScore, frame: StageFrame, shown: string): string {
+  el.style.opacity = String(1 - frame.blackout);
+  const s = score.sections[frame.sectionIndex];
+  if (!s) return shown;
+  const step = `${String(frame.sectionIndex + 1).padStart(2, "0")} / ${String(score.sections.length).padStart(2, "0")}`;
+  const key = `${step}\u0000${s.name}\u0000${s.note ?? ""}`;
+  if (key === shown) return shown;
+  const [a, b, c] = el.children as unknown as [HTMLElement, HTMLElement, HTMLElement];
+  a.textContent = step;
+  b.textContent = s.name;
+  c.textContent = s.note ?? "";
+  return key;
 }
 
 function stats(times: number[], renderer: string, quality: Quality): FrameStats {

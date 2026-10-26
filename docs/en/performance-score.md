@@ -48,7 +48,8 @@ same guarantees.
 | Field | Type | Notes |
 | --- | --- | --- |
 | `id` | `s<n>` | Unique. |
-| `name` | string | Shown on the stage HUD and timeline. |
+| `name` | string | Spelled by the stage elements, and shown in the caption, HUD and timeline. |
+| `note` | string, optional | Up to 160 characters: what happens in this section, from the interpretation. Shown as the stage caption. |
 | `archetype` | enum | `order`, `build`, `fracture`, `climax`, `release`, `silence`, `drift`. |
 | `startBeat`, `lengthBeats` | int | `startBeat` must equal the previous section's end. Length 4–256. |
 | `energy` | `{ from, to, curve }` | 0–1. Curve: `linear`, `ease-in`, `ease-out`, `step`. |

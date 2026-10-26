@@ -36,6 +36,14 @@ describe("compiler", () => {
     }
   });
 
+  it("keeps each phase's note on its section, for the stage caption", () => {
+    for (const lang of ["en", "zh-TW"] as const) {
+      const interp = demoInterpret({ intent: EXAMPLE_INTENTS[lang][0]!, locale: lang });
+      const { score } = compile(interp, { durationSec: 75, seed: 1 });
+      expect(score.sections.map((s) => s.note)).toEqual(interp.phases.map((p) => p.note.trim() || undefined));
+    }
+  });
+
   it("allocates bars exactly with a minimum per phase", () => {
     expect(allocateBars([3, 2, 2, 2, 2], 38).reduce((a, b) => a + b, 0)).toBe(38);
     expect(Math.min(...allocateBars([5, 1, 1], 12))).toBeGreaterThanOrEqual(2);

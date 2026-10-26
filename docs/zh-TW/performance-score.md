@@ -38,7 +38,8 @@ Score 中沒有任何可執行的內容。每個欄位都是列舉值或有界�
 | 欄位 | 型別 | 說明 |
 | --- | --- | --- |
 | `id` | `s<n>` | 不可重複。 |
-| `name` | string | 顯示在舞台 HUD 與時間軸上。 |
+| `name` | string | 由舞台元素拼出，並顯示在字幕、HUD 與時間軸上。 |
+| `note` | string，選填 | 最多 160 字：這一段發生什麼，來自解讀。顯示為舞台字幕。 |
 | `archetype` | 列舉 | `order`、`build`、`fracture`、`climax`、`release`、`silence`、`drift`。 |
 | `startBeat`、`lengthBeats` | 整數 | `startBeat` 必須等於前一段的結尾。長度 4–256。 |
 | `energy` | `{ from, to, curve }` | 0–1。曲線：`linear`、`ease-in`、`ease-out`、`step`。 |

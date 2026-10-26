@@ -53,6 +53,8 @@ export const Palette = z.object({
 export const Section = z.object({
   id: z.string().regex(/^s[0-9]+$/),
   name: z.string().min(1).max(48),
+  /** One line on what happens in this section, shown on stage as a caption. */
+  note: z.string().max(160).optional(),
   archetype: Archetype,
   startBeat: z.number().int().min(0),
   lengthBeats: z.number().int().min(4).max(256),

@@ -45,8 +45,14 @@ do.
 - Adaptive quality has one reduced level and only steps down. Its rule was
   tuned once, from iPhone measurements, and measured with one run since; on
   that iPhone it still reduces quality.
-- The 3D stage is a single instanced mesh of 240 elements with simple lights. It
-  is deliberately restrained and not yet art-directed per section.
+- The 3D stage is a single instanced mesh of 240 elements with simple lights,
+  art-directed per section type.
+- Section names are spelled with only 240 dots. Long names are spelled smaller
+  and coarser, and a name longer than about sixteen Latin letters or seven CJK
+  characters is not spelled at all (the caption still names it). Glyphs come
+  from the device's own fonts, so the dot pattern can differ a little between
+  devices. Words have only been checked in headless Chromium screenshots, not
+  on a phone.
 - The 2D fallback has no lighting model and draws a flat projection.
 - Sound is synthesised from oscillators and filtered noise; timbres are simple.
 - three.js is loaded on demand, but it is still a 471 KB chunk (119 KB gzip)

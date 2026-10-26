@@ -86,6 +86,10 @@
                 "minLength": 1,
                 "maxLength": 48
               },
+              "note": {
+                "type": "string",
+                "maxLength": 160
+              },
               "archetype": {
                 "type": "string",
                 "enum": [

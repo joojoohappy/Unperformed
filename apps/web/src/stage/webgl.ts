@@ -9,6 +9,7 @@ import { computeLayout, createLayout, ELEMENT_COUNT } from "./layout";
 import { LOOKS, lookFor } from "./look";
 import { pixelRatio, QUALITY, type QualitySettings } from "./quality";
 import type { StageRenderer } from "./types";
+import type { Words } from "./words";
 
 const HAZE = 420;
 const HAZE_HEIGHT = 6;
@@ -64,6 +65,7 @@ export class WebGLStage implements StageRenderer {
   private accent = new THREE.Color();
   private dir = new THREE.Vector3();
   private layout = createLayout();
+  private words: Words = [];
   private quality: QualitySettings = QUALITY.full;
   private m = new THREE.Matrix4();
   private q = new THREE.Quaternion();
@@ -205,7 +207,7 @@ export class WebGLStage implements StageRenderer {
       this.hazePos.needsUpdate = true;
     }
 
-    computeLayout(f, seed, this.layout, reducedMotion, L);
+    computeLayout(f, seed, this.layout, reducedMotion, L, this.words);
     const { position, rotation, scale } = this.layout;
     // At reduced quality every n-th element is packed into the first instance slots.
     let n = 0;
@@ -227,6 +229,10 @@ export class WebGLStage implements StageRenderer {
     this.camera.updateProjectionMatrix();
     this.camera.lookAt(c.target[0], c.target[1], c.target[2]);
     this.renderer.render(this.scene, this.camera);
+  }
+
+  setWords(words: Words): void {
+    this.words = words;
   }
 
   setQuality(q: QualitySettings): void {

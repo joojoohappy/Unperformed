@@ -28,7 +28,7 @@ export function Compose() {
             {t("compose.duration", { seconds: Math.round(durationSeconds(score)), beats: score.totalBeats, bpm: score.tempoBpm })} · {t(`enum.${score.mood}`)}
           </p>
         </div>
-        <Stage score={score} beat={loopBeat} reducedMotion={prefs.reducedMotion} className="stage-preview" label={score.title} />
+        <Stage score={score} beat={loopBeat} reducedMotion={prefs.reducedMotion} className="stage-preview" label={score.title} captions />
       </div>
 
       <div className="score-strip">

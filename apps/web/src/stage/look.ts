@@ -49,23 +49,25 @@ export interface Look {
   gather: number;
   /** A slow horizontal current. */
   current: number;
+  /** How firmly elements hold the shape of the section's name (see words.ts). */
+  word: number;
 }
 
 export const LOOKS: Record<Archetype, Look> = {
   // Precise and cold: a narrow top light, a wet floor, a ruled grid.
-  order: { fog: 0.035, haze: 0.35, hazeLift: 0.004, beam: 0.48, beamWidth: 1.4, keyX: 0, rim: 0.5, glow: 0.6, gloss: 0.9, accent: 0, scale: 1.15, floorGrid: 0.35, breathe: 1, lift: 0, split: 0, burst: 0, sink: 0, gather: 0, current: 0 },
+  order: { fog: 0.035, haze: 0.35, hazeLift: 0.004, beam: 0.48, beamWidth: 1.4, keyX: 0, rim: 0.5, glow: 0.6, gloss: 0.9, accent: 0, scale: 1.15, floorGrid: 0.35, breathe: 1, lift: 0, split: 0, burst: 0, sink: 0, gather: 0, current: 0, word: 1 },
   // Pressure gathering: haze rises, the beam opens, elements climb.
-  build: { fog: 0.05, haze: 0.8, hazeLift: 0.02, beam: 0.6, beamWidth: 2.0, keyX: 0, rim: 1.1, glow: 1, gloss: 0.6, accent: 0.2, scale: 1.1, floorGrid: 0.08, breathe: 0.2, lift: 1, split: 0, burst: 0, sink: 0, gather: 0, current: 0 },
+  build: { fog: 0.05, haze: 0.8, hazeLift: 0.02, beam: 0.6, beamWidth: 2.0, keyX: 0, rim: 1.1, glow: 1, gloss: 0.6, accent: 0.2, scale: 1.1, floorGrid: 0.08, breathe: 0.2, lift: 1, split: 0, burst: 0, sink: 0, gather: 0, current: 0, word: 0.9 },
   // Broken: light from the side, hard contrast, a gap tearing open.
-  fracture: { fog: 0.03, haze: 0.5, hazeLift: 0.006, beam: 0.36, beamWidth: 1.2, keyX: 3.2, rim: 1.6, glow: 1.2, gloss: 0.4, accent: 0.55, scale: 1, floorGrid: 0, breathe: 0, lift: 0, split: 1, burst: 0, sink: 0, gather: 0, current: 0 },
+  fracture: { fog: 0.03, haze: 0.5, hazeLift: 0.006, beam: 0.36, beamWidth: 1.2, keyX: 3.2, rim: 1.6, glow: 1.2, gloss: 0.4, accent: 0.55, scale: 1, floorGrid: 0, breathe: 0, lift: 0, split: 1, burst: 0, sink: 0, gather: 0, current: 0, word: 0.9 },
   // Everything at once: thick air, a wide beam, hot elements thrown outward.
-  climax: { fog: 0.06, haze: 1.3, hazeLift: 0.03, beam: 0.9, beamWidth: 3.2, keyX: 0, rim: 1.5, glow: 1.6, gloss: 0.5, accent: 0.35, scale: 1.9, floorGrid: 0, breathe: 0, lift: 0, split: 0, burst: 1, sink: 0, gather: 0, current: 0 },
+  climax: { fog: 0.06, haze: 1.3, hazeLift: 0.03, beam: 0.9, beamWidth: 3.2, keyX: 0, rim: 1.5, glow: 1.6, gloss: 0.5, accent: 0.35, scale: 1.9, floorGrid: 0, breathe: 0, lift: 0, split: 0, burst: 1, sink: 0, gather: 0, current: 0, word: 0.75 },
   // Afterglow: warm low haze, soft light, everything settling.
-  release: { fog: 0.065, haze: 1, hazeLift: -0.012, beam: 0.42, beamWidth: 2.6, keyX: -0.8, rim: 0.6, glow: 0.8, gloss: 0.7, accent: 0.15, scale: 1.4, floorGrid: 0, breathe: 0, lift: 0, split: 0, burst: 0, sink: 1, gather: 0, current: 0 },
+  release: { fog: 0.065, haze: 1, hazeLift: -0.012, beam: 0.42, beamWidth: 2.6, keyX: -0.8, rim: 0.6, glow: 0.8, gloss: 0.7, accent: 0.15, scale: 1.4, floorGrid: 0, breathe: 0, lift: 0, split: 0, burst: 0, sink: 1, gather: 0, current: 0, word: 0.6 },
   // Almost nothing: one thin shaft of light and what is left in it.
-  silence: { fog: 0.08, haze: 0.25, hazeLift: -0.002, beam: 1.1, beamWidth: 0.55, keyX: 0, rim: 0.1, glow: 0.4, gloss: 0.95, accent: 0, scale: 1, floorGrid: 0, breathe: 0, lift: 0, split: 0, burst: 0, sink: 0, gather: 1, current: 0 },
+  silence: { fog: 0.08, haze: 0.25, hazeLift: -0.002, beam: 1.1, beamWidth: 0.55, keyX: 0, rim: 0.1, glow: 0.4, gloss: 0.95, accent: 0, scale: 1, floorGrid: 0, breathe: 0, lift: 0, split: 0, burst: 0, sink: 0, gather: 1, current: 0, word: 0 },
   // Weightless: deep fog, a broad soft beam, a slow current across the stage.
-  drift: { fog: 0.075, haze: 0.9, hazeLift: 0.003, beam: 0.3, beamWidth: 3.6, keyX: 1.2, rim: 0.7, glow: 0.9, gloss: 0.5, accent: 0.25, scale: 1.6, floorGrid: 0, breathe: 0, lift: 0, split: 0, burst: 0, sink: 0, gather: 0, current: 1 }
+  drift: { fog: 0.075, haze: 0.9, hazeLift: 0.003, beam: 0.3, beamWidth: 3.6, keyX: 1.2, rim: 0.7, glow: 0.9, gloss: 0.5, accent: 0.25, scale: 1.6, floorGrid: 0, breathe: 0, lift: 0, split: 0, burst: 0, sink: 0, gather: 0, current: 1, word: 0.65 }
 };
 
 const KEYS = Object.keys(LOOKS.order) as (keyof Look)[];

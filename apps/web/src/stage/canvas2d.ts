@@ -7,11 +7,13 @@ import { computeLayout, createLayout, ELEMENT_COUNT } from "./layout";
 import { LOOKS, lookFor } from "./look";
 import { pixelRatio, QUALITY, type QualitySettings } from "./quality";
 import type { StageRenderer } from "./types";
+import type { Words } from "./words";
 
 export class Canvas2DStage implements StageRenderer {
   readonly name = "canvas2d" as const;
   private ctx: CanvasRenderingContext2D;
   private layout = createLayout();
+  private words: Words = [];
   private look = { ...LOOKS.order };
   private w = 1;
   private h = 1;
@@ -74,7 +76,7 @@ export class Canvas2DStage implements StageRenderer {
       ctx.fill();
     }
 
-    computeLayout(f, seed, this.layout, reducedMotion, L);
+    computeLayout(f, seed, this.layout, reducedMotion, L, this.words);
     const [cx, cy, cz] = f.camera.position;
     const [tx, ty, tz] = f.camera.target;
     // Camera basis
@@ -127,6 +129,10 @@ export class Canvas2DStage implements StageRenderer {
       ctx.fillStyle = `rgba(${er},${eg},${eb},${Math.min(1, brightness * fog)})`;
       ctx.fillRect(sx - w / 2, sy - h / 2, w, h);
     }
+  }
+
+  setWords(words: Words): void {
+    this.words = words;
   }
 
   setQuality(q: QualitySettings): void {

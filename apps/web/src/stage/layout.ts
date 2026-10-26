@@ -4,8 +4,11 @@
  */
 import { type GeometryForm, type StageFrame, clamp, lerp, noise1, rng, smoothstep } from "@unperformed/performance-core";
 import { type Look, lookFor } from "./look";
+import type { Words } from "./words";
 
 export const ELEMENT_COUNT = 240;
+/** Size of one dot of a spelled word. */
+const WORD_DOT = 0.1;
 
 export interface Layout {
   /** x, y, z per element */
@@ -91,8 +94,12 @@ export function createLayout(): Layout {
   };
 }
 
-/** Fill `out` for this frame. Deterministic for (frame, seed). */
-export function computeLayout(frame: StageFrame, seed: number, out: Layout, reducedMotion = false, look: Look = lookFor(frame)): Layout {
+/**
+ * Fill `out` for this frame. Deterministic for (frame, seed, words).
+ * `words` holds per-section dot targets for the section names; a null entry
+ * (or none) leaves that section to its geometric form alone.
+ */
+export function computeLayout(frame: StageFrame, seed: number, out: Layout, reducedMotion = false, look: Look = lookFor(frame), words: Words = []): Layout {
   const from = baseForm(frame.geometry.from, seed);
   const to = baseForm(frame.geometry.to, seed);
   const mix = frame.geometry.mix;
@@ -102,6 +109,13 @@ export function computeLayout(frame: StageFrame, seed: number, out: Layout, redu
   const t = frame.beat * 0.12;
   const ease = smoothstep(frame.progress);
   const L = look;
+  // The name moves with the art direction: during a transition the previous section's word dissolves into this one.
+  const wordTo = words[frame.sectionIndex] ?? null;
+  const wordFrom = frame.look.mix < 1 ? (words[frame.sectionIndex - 1] ?? null) : wordTo;
+  // Dots a fraction of the way between word and form read as neither, so the hold is sharpened:
+  // ordered sections spell clearly, broken ones only hint at their word.
+  const hold = smoothstep(clamp((L.word * (0.6 + 0.4 * frame.geometry.order) - 0.3) / 0.5));
+  const wordMix = wordFrom === wordTo ? 1 : frame.look.mix;
   for (let i = 0; i < ELEMENT_COUNT; i++) {
     const a = from[i]!;
     const b = to[i]!;
@@ -118,12 +132,33 @@ export function computeLayout(frame: StageFrame, seed: number, out: Layout, redu
     let z = lerp(a.p[2], b.p[2], mix) + dz;
     let sy = lerp(a.s[1], b.s[1], mix);
     let rz = lerp(a.r[2], b.r[2], mix);
+    let sx = lerp(a.s[0], b.s[0], mix);
+    let sz = lerp(a.s[2], b.s[2], mix);
+
+    // The section's name, spelled in dots. A section without a legible word fades its hold in or out.
+    let w = 0;
+    if (hold > 0 && (wordFrom || wordTo)) {
+      const src = wordFrom ?? wordTo!;
+      const dst = wordTo ?? wordFrom!;
+      w = hold * (wordFrom && wordTo ? 1 : wordTo ? wordMix : 1 - wordMix);
+      const wx = lerp(src[i * 2]!, dst[i * 2]!, wordMix);
+      const wy = lerp(src[i * 2 + 1]!, dst[i * 2 + 1]!, wordMix);
+      x = lerp(x, wx + dx * 0.12, w);
+      y = lerp(y, wy + dy * 0.12, w);
+      z = lerp(z, dz * 0.15, w);
+      sx = lerp(sx, WORD_DOT, w);
+      sy = lerp(sy, WORD_DOT, w);
+      sz = lerp(sz, WORD_DOT, w);
+      rz = lerp(rz, 0, w);
+    }
 
     // Art direction by section type (see look.ts). Weights blend during transitions.
     if (L.breathe > 0) sy *= 1 + 0.2 * L.breathe * motion * Math.sin(x * 0.8 + t * 2);
     if (L.lift > 0) {
-      const rise = smoothstep(clamp(frame.progress * 1.6 - u * 0.6));
-      y = lerp(y, 0.04 + (y - 0.04) * rise + 0.5 * u * rise, L.lift);
+      // A spelled word rises as one piece, so it stays legible.
+      const stagger = u * (1 - w);
+      const rise = smoothstep(clamp(frame.progress * 1.6 - stagger * 0.6));
+      y = lerp(y, 0.04 + (y - 0.04) * rise + 0.5 * stagger * rise, L.lift);
       sy *= lerp(1, 0.25 + 0.75 * rise, L.lift);
     }
     if (L.split > 0) {
@@ -162,10 +197,11 @@ export function computeLayout(frame: StageFrame, seed: number, out: Layout, redu
     out.rotation[k] = lerp(a.r[0], b.r[0], mix) + noise1(seed + i * 17, 2.2) * spin;
     out.rotation[k + 1] = lerp(a.r[1], b.r[1], mix) + noise1(seed + i * 19, 4.4 + t * 0.3 * motion) * spin;
     out.rotation[k + 2] = rz + noise1(seed + i * 23, 6.6) * spin;
-    const fade = clamp(visible - i) * L.scale;
-    out.scale[k] = lerp(a.s[0], b.s[0], mix) * fade;
+    // While a word holds, all of it shows; density thins only the geometric form.
+    const fade = Math.max(clamp(visible - i), w) * L.scale;
+    out.scale[k] = sx * fade;
     out.scale[k + 1] = sy * fade;
-    out.scale[k + 2] = lerp(a.s[2], b.s[2], mix) * fade;
+    out.scale[k + 2] = sz * fade;
   }
   return out;
 }

@@ -8,6 +8,13 @@ All notable changes are recorded here. The format follows
 
 ### Added
 
+- The stage now says what it is performing. The elements spell each section's
+  name in dots (for example "Order", or 「秩序」), and the section type acts on
+  the word: it rises in a build, tears down the middle in a fracture, is thrown
+  apart at the climax and gathers into nothing in silence. A caption names the
+  section ("02 / 05 · Tremor") with the interpretation's one-line note for it;
+  the perform HUD shows the same note. Sections keep that note as an optional
+  `note` field in the score.
 - Three more negotiation scenarios with deterministic creative-difference
   rules: a warmer ending (warm afterglow instead of lighting a silent ending),
   more chaos in the fracture (keep the climax the most broken moment) and a

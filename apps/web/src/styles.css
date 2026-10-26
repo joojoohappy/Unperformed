@@ -629,6 +629,41 @@ input[type="range"] {
   aspect-ratio: 16 / 10;
   width: 100%;
 }
+/* The current section, named the way a surtitle names a scene. */
+.stage-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 32px 16px 12px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  color: var(--ink);
+  pointer-events: none;
+}
+.stage-caption-step {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  opacity: 0.6;
+}
+.stage-caption-name {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.2;
+}
+.stage-caption-note {
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0.85;
+  max-width: 36em;
+}
+.stage-caption-note:empty {
+  display: none;
+}
+
 .stage-rehearse {
   aspect-ratio: 16 / 9;
   width: 100%;
@@ -1037,6 +1072,11 @@ input[type="range"] {
 .hud-section {
   font-family: var(--serif);
   font-size: 26px;
+}
+.hud-note {
+  font-size: 13px;
+  color: var(--ink-2);
+  max-width: 36em;
 }
 .hud-controls {
   display: flex;

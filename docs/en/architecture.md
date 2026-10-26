@@ -59,7 +59,13 @@ dispatches actions to the core's reducer, renders `StageFrame`s and plays sound.
   2D renderer is used when WebGL is missing or `?renderer=canvas` is set.
   `stage/look.ts` holds the art direction per section type (light, fog, haze,
   floor, motion); the frame's `look` field says which section type to use and
-  how far a transition has blended it. `webgl.ts` and three.js are loaded on
+  how far a transition has blended it. `stage/words.ts` rasterises each
+  section's name once (a 2D canvas, in the device's fonts) into dot targets;
+  the layout holds the elements on that word as firmly as the section type and
+  its order allow, so an ordered section spells its name and a fracture tears
+  it apart. A name too long to spell legibly in 240 dots is left to the
+  geometric form. The stage also captions the current section with its name
+  and the note from the interpretation. `webgl.ts` and three.js are loaded on
   demand, so the first screens do not download them.
 - **Audio.** `audio/engine.ts` schedules oscillators, filtered noise and
   envelopes per section: a bed chosen by the sound texture, plus a voice chosen

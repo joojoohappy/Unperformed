@@ -88,7 +88,7 @@ export function Rehearse() {
     <section className="view rehearse" aria-labelledby="rehearse-title">
       <div className="rehearse-grid">
         <div className="rehearse-stage">
-          <Stage score={score} beat={beatFn} reducedMotion={prefs.reducedMotion} onFrame={onFrame} className="stage-rehearse" label={score.title} />
+          <Stage score={score} beat={beatFn} reducedMotion={prefs.reducedMotion} onFrame={onFrame} className="stage-rehearse" label={score.title} captions />
           <div className="transport">
             <button className="btn btn-primary" onClick={() => void toggle()} data-testid="rehearse-play">
               {playing ? t("rehearse.pause") : t("rehearse.play")}

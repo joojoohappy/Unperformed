@@ -195,6 +195,7 @@ export function compile(interp: Interpretation, opts: CompileOptions): CompileRe
     const section: Section = {
       id,
       name: phase.name,
+      ...(phase.note.trim() ? { note: phase.note.trim() } : {}),
       archetype: phase.archetype,
       startBeat: cursor,
       lengthBeats,

@@ -75,6 +75,9 @@ test("demo mode: imagine → compose → negotiate → rehearse → perform → 
 
   // REHEARSE: adjust one decision and see it in the score
   await expect(page.locator(".stage")).toBeVisible();
+  // The stage names the section it is playing, with the interpretation's note for it.
+  await expect(page.locator(".rehearse .stage-caption-step")).toHaveText(/^\d{2} \/ \d{2}$/);
+  await expect(page.locator(".rehearse .stage-caption-note")).not.toBeEmpty();
   await page.getByTestId("camera-select").selectOption("static");
   await expect(page.locator(".human-note")).toBeVisible();
   await page.getByTestId("rehearse-play").click();
@@ -85,6 +88,7 @@ test("demo mode: imagine → compose → negotiate → rehearse → perform → 
   // PERFORM
   await page.getByTestId("begin").click();
   await expect(page.locator(".hud")).toBeVisible();
+  await expect(page.locator(".hud-note")).not.toBeEmpty();
   await page.waitForTimeout(1500);
   await page.getByTestId("pause").click();
   await expect(page.getByTestId("pause")).toHaveText("Resume");

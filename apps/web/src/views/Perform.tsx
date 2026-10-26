@@ -13,7 +13,7 @@ export function Perform() {
   const score = state.score!;
   const transport = useRef(new Transport());
   const [phase, setPhase] = useState<Phase>("ready");
-  const [hud, setHud] = useState({ section: score.sections[0]!.name, seconds: 0 });
+  const [hud, setHud] = useState({ section: score.sections[0]!.name, note: score.sections[0]!.note ?? "", seconds: 0 });
   const [master, setMaster] = useState(1);
   const [blackout, setBlackout] = useState(false);
   const [stats, setStats] = useState<FrameStats | null>(null);
@@ -98,7 +98,8 @@ export function Perform() {
     const now = performance.now();
     if (now - lastHud.current > 200) {
       lastHud.current = now;
-      setHud({ section: score.sections[f.sectionIndex]!.name, seconds: f.seconds });
+      const s = score.sections[f.sectionIndex]!;
+      setHud({ section: s.name, note: s.note ?? "", seconds: f.seconds });
     }
   };
 
@@ -153,6 +154,7 @@ export function Perform() {
         <div className="hud">
           <div className="hud-left mono">
             <span className="hud-section">{hud.section}</span>
+            {hud.note && <span className="hud-note">{hud.note}</span>}
             <span>
               {hud.seconds.toFixed(1)} / {durationSeconds(score).toFixed(0)} s
             </span>
